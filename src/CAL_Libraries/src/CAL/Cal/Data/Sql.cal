@@ -4597,6 +4597,9 @@ data public Statement =
     |
     private CompoundStatement 
         statements        :: [Statement]
+    |
+    private FreehandSqlStatement
+        statementText     :: !String
     ;
 
 makeCreateDatabaseStatement :: DatabaseReference -> Boolean -> Statement;
@@ -4673,6 +4676,15 @@ public makeCompoundStatement statements =
            ;
     in
         CompoundStatement (concatMap makeCompoundStatementHelper statements); 
+
+/**
+ * Creates a statement using the SQL statement text specified.
+ * This could be useful in a compound statement to insert database-specific statements.
+ * This must be used carefully as the statement cannot be analyzed or tailored based on the SqlBuilder being used.
+ */
+makeFreehandSqlStatement :: String -> Statement;
+public makeFreehandSqlStatement !statementText = 
+    FreehandSqlStatement statementText;
 
 /**
  * Linearizes the structure of the given statement by extracting all
@@ -4757,6 +4769,8 @@ public statementText !builder !forDisplay statement =
                     buildCommitStatementFn;
                 CompoundStatement {statements} -> 
                     buildCompoundStatementFn $ List.map docForStatement statements;
+                FreehandSqlStatement {statementText} -> 
+                    text statementText;
                 ;
         in
             PrettyPrinter.pretty width (docForStatement statement);
