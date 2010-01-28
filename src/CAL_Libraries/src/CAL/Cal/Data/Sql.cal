@@ -3770,8 +3770,8 @@ data public SqlBuilder =
             (TableReference -> Boolean -> Document)
             
         buildInsertValuesStatementFn ::
-            // (tableRef maybeDestColumns rowValues)
-            (TableReference -> Maybe [String] -> [Expr] -> Document)
+            // (tableRef maybeDestColumns rowsOfValues)
+            (TableReference -> Maybe [String] -> [[Expr]] -> Document)
 
         buildInsertQueryValuesStatementFn :: 
             // (tableRef maybeDestColumns insertQuery)
@@ -3787,7 +3787,11 @@ data public SqlBuilder =
 
         buildCommitStatementFn ::
             Document
-            
+        
+        buildCompoundStatementFn :: 
+            // (statementDocs)
+            ([Document] -> Document)
+        
         buildFieldDescriptionFn ::
             // (fieldDesc)
             (FieldDescription -> Document)
@@ -3836,116 +3840,6 @@ data public SqlBuilder =
         
         ;
 
-///**
-// * Constructs a new SQL builder with the specified functions.
-// */
-//makeSqlBuilder :: (SqlBuilderState -> Query -> Query)                                    // prepareQuery(builderState
-//                                                                                         // query)
-//                   
-//                   -> (SqlBuilderState -> Document -> Document -> Document -> 
-//                                      Document -> Document -> Document -> Document)      // constructQuery
-//                                                                                         // (builderState
-//                                                                                         // selectBody
-//                                                                                         // fromBody
-//                                                                                         // whereBody
-//                                                                                         // groupByBody
-//                                                                                         // havingBody
-//                                                                                         // orderByBody)
-//                   -> (SqlBuilderState -> Document -> Document -> Boolean -> Document)   // constructUnionQuery
-//                                                                                         // (builderState
-//                                                                                         // query1Text
-//                                                                                         // query2Text
-//                                                                                         // unionAll)
-//
-//                   -> (SqlBuilderState -> [QueryOption] -> [(Expr, String)] -> Document) // buildSelectClause
-//                                                                                         // (builderState
-//                                                                                         // options
-//                                                                                         // exprsAndAliases)
-//                   -> (SqlBuilderState -> [JoinNode] -> Document)                        // buildFromClause
-//                                                                                         // (builderState
-//                                                                                         // joins)
-//                   -> (SqlBuilderState -> (Maybe Expr) -> [JoinNode] -> Document)        // buildWhereClause
-//                                                                                         // (builderState
-//                                                                                         // restrictions
-//                                                                                         // joins)
-//                   -> (SqlBuilderState -> [(Expr, Boolean)] -> Document)                 // buildOrderByClause
-//                                                                                         // (builderState
-//                                                                                         // orderExpressions)
-//                   -> (SqlBuilderState -> [Expr] -> Document)                            // buildGroupByClause
-//                                                                                         // (builderState
-//                                                                                         // groupExpressions)
-//                   -> (SqlBuilderState -> (Maybe Expr) -> Document)                      // buildHavingClause
-//                                                                                         // (builderState
-//                                                                                         // groupRestrictions)
-//
-//                   -> (DatabaseReference -> Boolean -> Document)                         // buildCreateDatabaseStatement
-//                                                                                         // (databaseRef
-//                                                                                         // skipIfDatabaseExists)
-//                   -> (DatabaseReference -> Boolean -> Document)                         // buildDropDatabaseStatement
-//                                                                                         // (databaseRef
-//                                                                                         // onlyIfDatabaseExists)
-//                   -> (TableDescription -> Boolean -> Document)                          // buildCreateTableStatement
-//                                                                                         // (table
-//                                                                                         // fieldDescriptions
-//                                                                                         // constraints
-//                                                                                         // skipIfTableExists)
-//                   -> (TableReference -> Query -> Boolean -> Document)                   // buildCreateViewStatement
-//                                                                                         // (viewRef
-//                                                                                         // viewDefinition)
-//                   -> (TableReference -> Boolean -> Document)                            // buildDropTableStatement
-//                                                                                         // (table
-//                                                                                         // onlyIfTableExists)
-//                   -> (TableReference -> Boolean -> Document)                            // buildDropViewStatement
-//                                                                                         // (viewRef
-//                                                                                         // onlyIfViewExists)
-//                   -> (TableReference -> Maybe [String] -> [Expr] -> Document)           // buildInsertValuesStatement
-//                                                                                         // (table
-//                                                                                         // rowValues)
-//                   -> (TableReference -> Maybe [String] -> Query -> Document)            // buildInsertQueryValuesStatement
-//                                                                                         // (table
-//                                                                                         // insertQuery)
-//                   
-//                   -> (SqlBuilderState -> TableReference -> [String] -> [Expr] -> TypedExpr Boolean -> Document) // buildUpdateValuesStatementFn
-//                                                                                         // (table
-//                                                                                         // destColumns
-//                                                                                         // newValues
-//                                                                                         // condition
-//            
-//                   -> (SqlBuilderState -> TableReference -> TypedExpr Boolean -> Document) // buildDeleteRowsStatementFn 
-//                                                                                         // (table
-//                                                                                         // condition)
-//                   -> Document
-//                   -> (FieldDescription -> Document)                                     // buildFieldDescription
-//                                                                                         // (fieldDesc)
-//                   -> (SqlType -> Document)                                              // buildFieldType
-//                                                                                         // (dataType)
-//
-//                   -> (Parameter -> Document)
-//                   -> (SqlBuilderState -> [Expr] -> Document)                            // listToSql
-//                                                                                         // (builderState
-//                                                                                         //  exprList)
-//                   -> (SqlBuilderState -> DbFunction -> [Expr] -> Document)              // functionToSql
-//                                                                                         // (builderState
-//                                                                                         //  func
-//                                                                                         //  argExprs)
-//                   -> (DbFunction -> String)                                             // functionName (function)
-//                   -> (DbFunction -> String)                                             // operatorText (function)
-//        
-//                   -> (Document -> Document)                                             // addParens
-//                                                                                         // (exprText)
-//                   -> (String -> Document)                                               // quoteIdentifier
-//                                                                                         // (indentifierText)
-//
-//                   -> (SqlBuilderState -> QueryTable -> Document)                        // buildTableAndAliasText
-//                                                                                         // (queryTable)
-//
-//                   -> (String -> String)                                                 // makeSafeName
-//                                                                                         // (name)
-//
-//                   -> PrimitiveValueBuilder                                              // primitiveValueBuilder
-//                   -> SqlBuilder;
-//public makeSqlBuilder = SqlBuilder;
-
 /**
  * Constructs a SqlBuilder using the functions provided in a record.
  * The advantage of this approach is that a SqlBuilder can easily override selected functions from the record of another SqlBuilder.
@@ -3967,11 +3861,12 @@ makeSqlBuilder :: { prepareQuery                    :: SqlBuilderState -> Query 
                     buildCreateViewStatement        :: SqlBuilder -> TableReference -> Query -> Boolean -> Document,
                     buildDropTableStatement         :: SqlBuilder -> TableReference -> Boolean -> Document,
                     buildDropViewStatement          :: SqlBuilder -> TableReference -> Boolean -> Document,
-                    buildInsertValuesStatement      :: SqlBuilder -> TableReference -> Maybe [String] -> [Expr] -> Document,
+                    buildInsertValuesStatement      :: SqlBuilder -> TableReference -> Maybe [String] -> [[Expr]] -> Document,
                     buildInsertQueryValuesStatement :: SqlBuilder -> TableReference -> Maybe [String] -> Query -> Document,
                     buildUpdateValuesStatement      :: SqlBuilder -> SqlBuilderState -> TableReference -> [String] -> [Expr] -> TypedExpr Boolean -> Document,
                     buildDeleteRowsStatement        :: SqlBuilder -> SqlBuilderState -> TableReference -> TypedExpr Boolean -> Document,
                     buildCommitStatement            :: SqlBuilder -> Document,
+                    buildCompoundStatement          :: [Document] -> Document,
                      
                     buildFieldDescription           :: SqlBuilder -> FieldDescription -> Document,
                     buildFieldType                  :: SqlType -> Document,
@@ -4025,6 +3920,7 @@ public makeSqlBuilder sqlBuilderFns =
                                 (sqlBuilderFns.buildUpdateValuesStatement sqlBuilder)
                                 (sqlBuilderFns.buildDeleteRowsStatement sqlBuilder)
                                 (sqlBuilderFns.buildCommitStatement sqlBuilder)
+                                (sqlBuilderFns.buildCompoundStatement)
                                 (sqlBuilderFns.buildFieldDescription sqlBuilder)
                                 (sqlBuilderFns.buildFieldType)
                                 (sqlBuilderFns.parameterToSql sqlBuilder)
@@ -4107,6 +4003,11 @@ private buildGroupByClause !sqlBuilder builderState groupExpressions =
 buildHavingClause :: SqlBuilder -> SqlBuilderState -> (Maybe Expr) -> Document;
 private buildHavingClause !sqlBuilder builderState groupRestrictions = 
     (sqlBuilder.SqlBuilder.buildHavingClauseFn) builderState groupRestrictions;
+
+/** Combines the text for a number of individual statements into a single text document for a compound statement. */
+buildCompoundStatement :: SqlBuilder -> [Document] -> Document;
+public buildCompoundStatement !sqlBuilder componentDocs = 
+    sqlBuilder.SqlBuilder.buildCompoundStatementFn componentDocs;
 
 /**
  * Returns the primitive value builder associated with the SQL builder.
@@ -4667,7 +4568,7 @@ data public Statement =
     private InsertValuesStatement 
         tableRef          :: TableReference 
         maybeDestColumns  :: (Maybe [String])
-        rowValues         :: [Expr]
+        rowsOfValues      :: [[Expr]]       // Potentially multiple rows of values.
     |
     private InsertQueryValuesStatement 
         tableRef          :: TableReference 
@@ -4708,13 +4609,26 @@ public makeDropTableStatement = DropTableStatement;
 makeDropViewStatement :: TableReference -> Boolean -> Statement;
 public makeDropViewStatement = DropViewStatement;
 
+/**
+ * Construct an Insert statement to insert one row of values.
+ */
 makeInsertValuesStatement :: TableReference -> [Expr] -> Statement;
 public makeInsertValuesStatement tableRef rowValues = 
-    InsertValuesStatement tableRef Nothing rowValues;
+    InsertValuesStatement tableRef Nothing [rowValues];
 
 makeInsertValuesByColumnStatement :: TableReference -> [String] -> [Expr] -> Statement;
 public makeInsertValuesByColumnStatement tableRef destColumns rowValues = 
-    InsertValuesStatement tableRef (Just destColumns) rowValues;
+    InsertValuesStatement tableRef (Just destColumns) [rowValues];
+
+/** Build an INSERT statement which will insert a number of rows of data. */
+makeMultiRowInsertValuesStatement :: TableReference -> [[Expr]] -> Statement;
+public makeMultiRowInsertValuesStatement tableRef rowsOfValues = 
+    InsertValuesStatement tableRef Nothing rowsOfValues;
+
+/** Build an INSERT statement which will insert a number of rows of data. */
+makeMultiRowInsertValuesByColumnStatement :: TableReference -> [String] -> [[Expr]] -> Statement;
+public makeMultiRowInsertValuesByColumnStatement tableRef destColumns rowsOfValues = 
+    InsertValuesStatement tableRef (Just destColumns) rowsOfValues;
 
 makeInsertQueryValuesStatement :: TableReference -> Query -> Statement;
 public makeInsertQueryValuesStatement tableRef insertQuery = 
@@ -4803,7 +4717,8 @@ public statementText !builder !forDisplay statement =
                 buildInsertQueryValuesStatementFn,
                 buildUpdateValuesStatementFn,
                 buildDeleteRowsStatementFn,
-                buildCommitStatementFn} ->
+                buildCommitStatementFn,
+                buildCompoundStatementFn} ->
         let
             displayWidth = 1 :: Int;
             width = if forDisplay then displayWidth :: Int else Prelude.maxBound;
@@ -4822,8 +4737,8 @@ public statementText !builder !forDisplay statement =
                     buildDropTableStatementFn tableRef onlyIfTableExists;
                 DropViewStatement {viewRef, onlyIfViewExists} -> 
                     buildDropViewStatementFn viewRef onlyIfViewExists;
-                InsertValuesStatement {tableRef, maybeDestColumns, rowValues} -> 
-                    buildInsertValuesStatementFn tableRef maybeDestColumns rowValues;
+                InsertValuesStatement {tableRef, maybeDestColumns, rowsOfValues} -> 
+                    buildInsertValuesStatementFn tableRef maybeDestColumns rowsOfValues;
                 InsertQueryValuesStatement {tableRef, maybeDestColumns, insertQuery} -> 
                     buildInsertQueryValuesStatementFn tableRef maybeDestColumns insertQuery;
                 UpdateValuesStatement {tableRef, destColumns, newValues, condition} -> 
@@ -4833,8 +4748,7 @@ public statementText !builder !forDisplay statement =
                 CommitStatement ->
                     buildCommitStatementFn;
                 CompoundStatement {statements} -> 
-                    // Include a ';' after each statement in a compound statement.
-                    PrettyPrinter.group $ PrettyPrinter.stack $ List.map (\stmt -> docForStatement stmt ++ text ";") statements;
+                    buildCompoundStatementFn $ List.map docForStatement statements;
                 ;
         in
             PrettyPrinter.pretty width (docForStatement statement);

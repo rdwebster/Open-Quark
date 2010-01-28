@@ -139,11 +139,12 @@ public defaultSqlBuilderFunctions =
         buildCreateViewStatement        = default_buildCreateViewStatement,
         buildDropTableStatement         = default_buildDropTableStatement,
         buildDropViewStatement          = default_buildDropViewStatement,
-        buildInsertValuesStatement      = default_buildInsertValuesStatement,
+        buildInsertValuesStatement      = default_buildSingleRowInsertValuesStatement,
         buildInsertQueryValuesStatement = default_buildInsertQueryValuesStatement,
         buildUpdateValuesStatement      = default_buildUpdateValuesStatement,
         buildDeleteRowsStatement        = default_buildDeleteRowsStatement,
         buildCommitStatement            = default_buildCommitStatement,
+        buildCompoundStatement          = default_buildCompoundStatement,
  
         buildFieldDescription   = default_buildFieldDescription,
         buildFieldType          = default_buildFieldType,
@@ -393,21 +394,47 @@ default_buildDropViewStatement :: SqlBuilder -> TableReference -> Boolean -> Doc
 default_buildDropViewStatement builder viewRef onlyIfViewExists = 
     text "DROP VIEW" ++ singleSpace ++ Sql.quoteIdentifier builder (getTableNameFromReference viewRef);
 
-default_buildInsertValuesStatement :: SqlBuilder -> TableReference -> Maybe [String] -> [Expr] -> Document;
-default_buildInsertValuesStatement builder tableRef maybeDestColumns rowValues = 
+// By default, break up a multi-row INSERT statement to create N individual INSERT statements.
+// The buildMultiRowInsertValuesStatement function can be used for cases where INSERT supports multiple rows in one statement.
+default_buildSingleRowInsertValuesStatement :: SqlBuilder -> TableReference -> Maybe [String] -> [[Expr]] -> Document;
+default_buildSingleRowInsertValuesStatement builder tableRef maybeDestColumns rowsOfValues = 
+    case rowsOfValues of
+    [] -> empty;
+    firstRowValues : rest -> 
+        case rest of
+        [] -> default_buildMultiRowInsertValuesStatement builder tableRef maybeDestColumns [firstRowValues];
+        _ -> 
+            let
+                separateInsertDocs :: [Document];
+                separateInsertDocs = List.map (\rowValues -> default_buildMultiRowInsertValuesStatement builder tableRef maybeDestColumns [rowValues]) rowsOfValues;
+            in
+                Sql.buildCompoundStatement builder separateInsertDocs;
+        ;
+    ;
+
+default_buildMultiRowInsertValuesStatement :: SqlBuilder -> TableReference -> Maybe [String] -> [[Expr]] -> Document;
+public default_buildMultiRowInsertValuesStatement builder tableRef maybeDestColumns rowsOfValues = 
     let
+        destColumnText :: Document;
         destColumnText = 
             case maybeDestColumns of
             Nothing -> empty;
             Just destColumns -> 
                 text "(" ++ join (text ", ") (map (Sql.quoteIdentifier builder) destColumns) ++ text ")";
             ;
+        
+        rowValuesText :: [Expr] -> Document;
+        rowValuesText rowValues = 
+            text ("(" ++ join ", " (map (Sql.expressionText builder) rowValues) ++ ")");
+        
+        allRowsText :: Document;
+        allRowsText = join (text ", ") $ List.map rowValuesText rowsOfValues;
     in
         spread [text "INSERT INTO",
                 Sql.quoteIdentifier builder (getTableNameFromReference tableRef),
                 destColumnText,
                 text "VALUES",
-                text ("(" ++ join ", " (map (Sql.expressionText builder) rowValues) ++ ")")
+                allRowsText
                ];
 
 default_buildInsertQueryValuesStatement :: SqlBuilder -> TableReference -> Maybe [String] -> Query -> Document;
@@ -466,6 +493,11 @@ default_buildDeleteRowsStatement builder builderState tableRef condition =
 
 default_buildCommitStatement :: SqlBuilder -> Document;
 default_buildCommitStatement builder = text "COMMIT";
+
+default_buildCompoundStatement :: [Document] -> Document;
+default_buildCompoundStatement componentDocs = 
+    // Include a ';' after each statement in a compound statement.
+    group $ stack $ List.map (\stmtDoc -> stmtDoc ++ text ";") componentDocs;
 
 default_buildFieldDescription :: SqlBuilder -> FieldDescription -> Document;
 default_buildFieldDescription builder fieldDesc = 
