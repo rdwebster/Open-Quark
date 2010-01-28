@@ -2630,6 +2630,7 @@ public exprUsesAggregation expr =
     SubQueryExpr) {} -> False;
     ListExpr {listValues} -> any exprUsesAggregation listValues;
     FunctionExpr {func, arguments} -> isAggregationFunction func || (any exprUsesAggregation arguments);
+    _ -> False;
     ;
 
 
@@ -3119,6 +3120,7 @@ public getExpressionTables includeSubqueryTables expr =
             ListExpr  {listValues} -> concatMap expressionTablesHelper listValues;
             FunctionExpr {arguments} -> concatMap expressionTablesHelper arguments;
             SubQueryExpr {subquery} -> if (includeSubqueryTables) then getQueryTables True subquery else [];
+            _ -> [];
             ;
     in
         removeDuplicates (expressionTablesHelper expr);
@@ -3249,6 +3251,7 @@ public modifyTablesInExpr updateTableFn !expr =
     ListExpr {listValues} -> ListExpr (map (modifyTablesInExpr updateTableFn) listValues);
     FunctionExpr {func, arguments} -> FunctionExpr func (map (modifyTablesInExpr updateTableFn) arguments);
     SubQueryExpr {subquery} -> SubQueryExpr (modifyTablesInQuery updateTableFn subquery);
+    _ -> expr;
     ;
 
 /**
@@ -3309,6 +3312,7 @@ public modifyQueries updateQueryFn query =
                 ListExpr listValues -> ListExpr (map updateExprQueries listValues);
                 FunctionExpr func arguments -> FunctionExpr func (map updateExprQueries arguments);
                 SubQueryExpr subquery -> SubQueryExpr (modifyQueries updateQueryFn subquery);
+                _ -> expr;
                 ;
 
             updateTypedExprQueries expr = toTypedExpr (updateExprQueries (toUntypedExpr expr));
@@ -3581,6 +3585,7 @@ private fixQueryForGroupBy query =
                         if (isAggregationFunction func) then curGrouping
                         else foldLeftStrict addGroupExprs curGrouping arguments;
                     SubQueryExpr {} -> curGrouping;
+                    _ -> curGrouping;
                     ;
 
             newGrouping = foldLeftStrict addGroupExprs groups allExprs;
@@ -3633,6 +3638,7 @@ isExprConstant !expr =
         // For now, just assume that subqueries are never constant.
         // TODO: should the case where the subquery contains only constant values be handled?
         False;
+    ParameterExpr {} -> True;
     ;
 
 
@@ -4523,6 +4529,8 @@ private checkValidGroupByQuery query =
                     SubQueryExpr {} -> 
                         // TODO: is this ok?
                         True;
+                    
+                    _ -> True;
                     ;
 
             columnExprs  = map fst columns;
@@ -4843,6 +4851,7 @@ public exprUsesBinaryFunction expr =
     ListExpr  listValues -> any exprUsesBinaryFunction listValues;
     FunctionExpr func arguments -> isBinaryFunction func || (any exprUsesBinaryFunction arguments);
     SubQueryExpr subquery -> False;
+    _ -> False;
     ;
 
 /**
