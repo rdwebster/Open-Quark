@@ -586,7 +586,21 @@ public insert !key value !map =
         EQ -> Bin sz key value l r;
         ;
     ;
-    
+
+/**
+ * A strict version of {@link insert @} which will reduce the new value to WHNF (weak head normal form) 
+ * before inserting it into the map.  This should be used carefully, but can help to control space usage
+ * in some situations.
+ * 
+ * @arg key the key.
+ * @arg value the value.
+ * @arg map the map into which the key-value pair is to be inserted.
+ * @return the map with the key-value pair inserted.
+ */
+insertStrict :: Ord k => k -> a -> Map k a -> Map k a;
+public insertStrict !key !value !map = 
+    insert key value map;
+
 //
 //-- | /O(log n)/. Insert with a combining function.
 //insertWith :: Ord k => (a -> a -> a) -> k -> a -> Map k a -> Map k a
