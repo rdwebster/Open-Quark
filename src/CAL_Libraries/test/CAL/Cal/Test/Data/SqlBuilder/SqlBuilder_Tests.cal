@@ -149,7 +149,6 @@ extractStringWithTrimming :: Int -> ResultRow -> String;
 extractStringWithTrimming !columnN !resultRow = 
     String.trim $ extractString columnN resultRow;
 
-
 customerTableName :: String;
 customerTableName = tablePrefix ++ "customer";
 

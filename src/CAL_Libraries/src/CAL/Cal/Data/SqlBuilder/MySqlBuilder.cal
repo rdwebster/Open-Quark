@@ -103,6 +103,7 @@ import Cal.Collections.List using
  * 7. Different Time interval constants are used (YEAR, MONTH, DAY, etc).
  * 8. SQL type names and the related CONVERT functions are customized for MySQL.
  * 9. Parens are not omitted for calls to zero-argument functions -- for example NOW().
+ * 10. INSERT statements can specify multiple rows of values in one statement.
  */
 mySqlBuilder :: SqlBuilder;
 public mySqlBuilder = Sql.makeSqlBuilder mySqlBuilderFunctions;
@@ -118,7 +119,8 @@ public mySqlBuilderFunctions =
                   buildFieldType    := mySql_buildFieldType,
                   functionToSql     := mySql_functionToSql,
                   functionName      := mySql_functionNameText,
-                  timeIntervalToSql := mySql_timeIntervalToSql
+                  timeIntervalToSql := mySql_timeIntervalToSql,
+                  buildInsertValuesStatement := DefaultSqlBuilder.default_buildMultiRowInsertValuesStatement
             };
 
 // MySQL uses back-quotes to quote identifiers.
