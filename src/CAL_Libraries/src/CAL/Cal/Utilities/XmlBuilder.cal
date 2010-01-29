@@ -556,9 +556,9 @@ public elementAttributeValueMaybe !xmlElement attrName =
  * An error is thrown if the node is not an XML element.
  */
 elementChildValue :: XmlElementInputable a => XmlNode -> String -> a;
-public elementChildValue !xmlElement attrName =
-    fromXmlElement (elementFirstChildElementByName xmlElement attrName);
-
+public elementChildValue !xmlElement !childElementName =
+    fromXmlElement (elementFirstChildElementByName xmlElement childElementName);
+    
 /**
  * Returns the deserialized value from the specified child for an XML element.
  * If the element is not present, then {@link Nothing@} will be returned.
@@ -575,6 +575,13 @@ public elementChildValueMaybe !xmlElement elementName =
         Just childNode -> Just (fromXmlElement childNode);
     ;
 
+/**
+ * Returns the deserialized values from any child elements with the specified name.
+ */
+elementChildValues :: XmlElementInputable a => XmlNode -> String -> [a];
+public elementChildValues !xmlElement !childElementName =
+    List.map fromXmlElement $ elementChildElementsByName xmlElement childElementName;
+    
 /**
  * Adds the specified attributes to an XML element.
  * An error will be thrown if the specified node is not an Element.
@@ -1170,6 +1177,16 @@ public inputFromXmlElementInputable either =
     _ -> error "inputFromXmlElementInputable used with an xml attribute";
     ;
 
+/**
+ * Helper for implementing fromXml from types that are both XmlAttributeInputable and XmlElementInputable. 
+ */
+inputFromXmlAttributeOrElement :: (XmlAttributeInputable a, XmlElementInputable a) => Either XmlAttribute XmlNode -> a;
+public inputFromXmlAttributeOrElement !either =
+    case either of 
+    Left attribute -> fromXmlAttribute attribute;
+    Right node -> fromXmlElement node;
+    ;
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // String 
@@ -1181,6 +1198,14 @@ instance XmlAttributeOutputable String where
 outputXmlAttributeForString :: String -> String -> XmlAttribute;
 outputXmlAttributeForString name value = 
     makeXmlAttribute name value;
+
+instance XmlElementOutputable String where
+    toXmlElement = outputXmlElementForString;
+    ;
+
+outputXmlElementForString :: String -> String -> XmlNode;
+outputXmlElementForString !elemName !value = 
+    makeXmlTextElement Nothing elemName value;
 
 instance XmlOutputable String where
     toXml = outputStringXml;
@@ -1198,13 +1223,21 @@ inputStringXmlAttribute :: XmlAttribute -> String;
 inputStringXmlAttribute attribute = 
     attributeValue attribute;
 
+instance XmlElementInputable String where
+    fromXmlElement = inputStringXmlElement;
+    ;
+
+inputStringXmlElement :: XmlNode -> String;
+inputStringXmlElement !element = 
+    elementChildText element;
+
 instance XmlInputable String where
     fromXml = inputStringXml;
     ;
 
 inputStringXml :: Either XmlAttribute XmlNode -> String;
 inputStringXml value =
-    inputFromXmlAttributeInputable value;
+    inputFromXmlAttributeOrElement value;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Boolean 
@@ -1218,6 +1251,14 @@ instance XmlAttributeOutputable Boolean where
 outputXmlAttributeForBoolean :: String -> Boolean -> XmlAttribute;
 outputXmlAttributeForBoolean name value = 
     makeXmlAttribute name (if value then trueTag else falseTag);
+
+instance XmlElementOutputable Boolean where
+    toXmlElement = outputXmlElementForBoolean;
+    ;
+
+outputXmlElementForBoolean :: String -> Boolean -> XmlNode;
+outputXmlElementForBoolean !elemName !value = 
+    makeXmlTextElement Nothing elemName (if value then trueTag else falseTag);
 
 instance XmlOutputable Boolean where
     toXml = outputBooleanXml;
@@ -1233,7 +1274,15 @@ instance XmlAttributeInputable Boolean where
 
 inputBooleanXmlAttribute :: XmlAttribute -> Boolean;
 inputBooleanXmlAttribute attribute = 
-    equalsIgnoreCase (attributeValue attribute) trueTag;
+    attributeValue attribute `equalsIgnoreCase` trueTag;
+
+instance XmlElementInputable Boolean where
+    fromXmlElement = inputBooleanXmlElement;
+    ;
+
+inputBooleanXmlElement :: XmlNode -> Boolean;
+inputBooleanXmlElement !element = 
+    elementChildText element `equalsIgnoreCase` trueTag;
 
 instance XmlInputable Boolean where
     fromXml = inputBooleanXml;
@@ -1241,7 +1290,7 @@ instance XmlInputable Boolean where
 
 inputBooleanXml :: Either XmlAttribute XmlNode -> Boolean;
 inputBooleanXml value =
-    inputFromXmlAttributeInputable value;
+    inputFromXmlAttributeOrElement value;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Int 
@@ -1253,6 +1302,14 @@ instance XmlAttributeOutputable Int where
 outputXmlAttributeForInt :: String -> Int -> XmlAttribute;
 outputXmlAttributeForInt name value = 
     makeXmlAttribute name (intToString value);
+
+instance XmlElementOutputable Int where
+    toXmlElement = outputXmlElementForInt;
+    ;
+
+outputXmlElementForInt :: String -> Int -> XmlNode;
+outputXmlElementForInt !elemName !value = 
+    makeXmlTextElement Nothing elemName $ intToString value;
 
 instance XmlOutputable Int where
     toXml = outputIntXml;
@@ -1270,13 +1327,21 @@ inputIntXmlAttribute :: XmlAttribute -> Int;
 inputIntXmlAttribute attribute = 
     stringToInt (attributeValue attribute);
 
+instance XmlElementInputable Int where
+    fromXmlElement = inputIntXmlElement;
+    ;
+
+inputIntXmlElement :: XmlNode -> Int;
+inputIntXmlElement !element = 
+    stringToInt $ elementChildText element;
+    
 instance XmlInputable Int where
     fromXml = inputIntXml;
     ;
 
 inputIntXml :: Either XmlAttribute XmlNode -> Int;
 inputIntXml value =
-    inputFromXmlAttributeInputable value;
+    inputFromXmlAttributeOrElement value;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Long 
@@ -1288,6 +1353,14 @@ instance XmlAttributeOutputable Long where
 outputXmlAttributeForLong :: String -> Long -> XmlAttribute;
 outputXmlAttributeForLong name value = 
     makeXmlAttribute name (longToString value);
+
+instance XmlElementOutputable Long where
+    toXmlElement = outputXmlElementForLong;
+    ;
+
+outputXmlElementForLong :: String -> Long -> XmlNode;
+outputXmlElementForLong !elemName !value = 
+    makeXmlTextElement Nothing elemName $ longToString value;
 
 instance XmlOutputable Long where
     toXml = outputLongXml;
@@ -1305,13 +1378,21 @@ inputLongXmlAttribute :: XmlAttribute -> Long;
 inputLongXmlAttribute attribute = 
     stringToLong (attributeValue attribute);
 
+instance XmlElementInputable Long where
+    fromXmlElement = inputLongXmlElement;
+    ;
+
+inputLongXmlElement :: XmlNode -> Long;
+inputLongXmlElement !element = 
+    stringToLong $ elementChildText element;
+
 instance XmlInputable Long where
     fromXml = inputLongXml;
     ;
 
 inputLongXml :: Either XmlAttribute XmlNode -> Long;
 inputLongXml value =
-    inputFromXmlAttributeInputable value;
+    inputFromXmlAttributeOrElement value;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Integer 
@@ -1323,6 +1404,14 @@ instance XmlAttributeOutputable Integer where
 outputXmlAttributeForInteger :: String -> Integer -> XmlAttribute;
 outputXmlAttributeForInteger name value = 
     makeXmlAttribute name (integerToString value);
+
+instance XmlElementOutputable Integer where
+    toXmlElement = outputXmlElementForInteger;
+    ;
+
+outputXmlElementForInteger :: String -> Integer -> XmlNode;
+outputXmlElementForInteger !elemName !value = 
+    makeXmlTextElement Nothing elemName $ integerToString value;
 
 instance XmlOutputable Integer where
     toXml = outputIntegerXml;
@@ -1340,13 +1429,21 @@ inputIntegerXmlAttribute :: XmlAttribute -> Integer;
 inputIntegerXmlAttribute attribute = 
     stringToInteger (attributeValue attribute);
 
+instance XmlElementInputable Integer where
+    fromXmlElement = inputIntegerXmlElement;
+    ;
+
+inputIntegerXmlElement :: XmlNode -> Integer;
+inputIntegerXmlElement !element = 
+    stringToInteger $ elementChildText element;
+
 instance XmlInputable Integer where
     fromXml = inputIntegerXml;
     ;
 
 inputIntegerXml :: Either XmlAttribute XmlNode -> Integer;
 inputIntegerXml value =
-    inputFromXmlAttributeInputable value;
+    inputFromXmlAttributeOrElement value;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Double 
@@ -1358,6 +1455,14 @@ instance XmlAttributeOutputable Double where
 outputXmlAttributeForDouble :: String -> Double -> XmlAttribute;
 outputXmlAttributeForDouble name value = 
     makeXmlAttribute name (doubleToString value);
+
+instance XmlElementOutputable Double where
+    toXmlElement = outputXmlElementForDouble;
+    ;
+
+outputXmlElementForDouble :: String -> Double -> XmlNode;
+outputXmlElementForDouble !elemName !value = 
+    makeXmlTextElement Nothing elemName $ doubleToString value;
 
 instance XmlOutputable Double where
     toXml = outputDoubleXml;
@@ -1375,13 +1480,21 @@ inputDoubleXmlAttribute :: XmlAttribute -> Double;
 inputDoubleXmlAttribute attribute = 
     stringToDouble (attributeValue attribute);
 
+instance XmlElementInputable Double where
+    fromXmlElement = inputDoubleXmlElement;
+    ;
+
+inputDoubleXmlElement :: XmlNode -> Double;
+inputDoubleXmlElement !element = 
+    stringToDouble $ elementChildText element;
+
 instance XmlInputable Double where
     fromXml = inputDoubleXml;
     ;
 
 inputDoubleXml :: Either XmlAttribute XmlNode -> Double;
 inputDoubleXml value =
-    inputFromXmlAttributeInputable value;
+    inputFromXmlAttributeOrElement value;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Time 
@@ -1393,6 +1506,14 @@ instance XmlAttributeOutputable Time where
 outputXmlAttributeForTime :: String -> Time -> XmlAttribute;
 outputXmlAttributeForTime name value = 
     makeXmlAttribute name (Time.serializeTimeValue value);
+
+instance XmlElementOutputable Time where
+    toXmlElement = outputXmlElementForTime;
+    ;
+
+outputXmlElementForTime :: String -> Time -> XmlNode;
+outputXmlElementForTime !elemName !value = 
+    makeXmlTextElement Nothing elemName $ Time.serializeTimeValue value;
 
 instance XmlOutputable Time where
     toXml = outputTimeXml;
@@ -1410,13 +1531,21 @@ inputTimeXmlAttribute :: XmlAttribute -> Time;
 inputTimeXmlAttribute attribute = 
     Time.deserializeTimeValue (attributeValue attribute);
 
+instance XmlElementInputable Time where
+    fromXmlElement = inputTimeXmlElement;
+    ;
+
+inputTimeXmlElement :: XmlNode -> Time;
+inputTimeXmlElement !element = 
+    Time.deserializeTimeValue $ elementChildText element;
+
 instance XmlInputable Time where
     fromXml = inputTimeXml;
     ;
 
 inputTimeXml :: Either XmlAttribute XmlNode -> Time;
 inputTimeXml value =
-    inputFromXmlAttributeInputable value;
+    inputFromXmlAttributeOrElement value;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Color 
