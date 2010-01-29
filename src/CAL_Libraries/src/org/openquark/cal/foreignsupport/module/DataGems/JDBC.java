@@ -37,6 +37,7 @@
  */
 package org.openquark.cal.foreignsupport.module.DataGems;
 
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -1160,6 +1161,21 @@ public class JDBC {
             try {
                 final Statement stmt = getJdbcConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
+                // For MySQL, enable streaming results to avoid running out of memory when processing large result sets.
+                // For some reason, this doesn't seem to be the default behaviour -- even for forward-only read-only resultsets.
+                // Try to reflectively invoke the MySQL 'enableStreamingResults' method.
+                try {
+                    Class jdbcStmtClass = Class.forName("com.mysql.jdbc.Statement");
+                    if (jdbcStmtClass.isInstance(stmt)) {
+                        Method enableStreamingResultsMethod = jdbcStmtClass.getMethod("enableStreamingResults");
+                        enableStreamingResultsMethod.invoke(stmt);
+                    }
+                }
+                catch (Exception e)
+                {
+                    // Ignore exceptions (likely meaning that the MySQL classes aren't available.
+                }
+                
                 return new RestartableQueryResults() {
                     @Override
                     protected QueryResult createResultSet() throws DatabaseException {
