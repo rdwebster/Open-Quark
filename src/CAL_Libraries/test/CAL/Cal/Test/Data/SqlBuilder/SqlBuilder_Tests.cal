@@ -18,7 +18,7 @@ import Cal.Data.DataGems using
     function =
         extractBoolean, extractDecimal, extractDouble, extractInt, extractLong,
         extractMaybeBytes, extractString, extractTime, extractTuple2,
-        extractTuple3, extractTuple4, extractTuple6;
+        extractTuple3, extractTuple4, extractTuple6, jdbcCloseConnection;
     typeConstructor = JDBCConnection, ResultRow, ResultSet;
     ;
 
@@ -39,10 +39,10 @@ import Cal.Data.SqlBuilder.PostgreSqlBuilder;
 import Cal.Data.SqlBuilder.SQLiteBuilder;
 
 import Cal.Data.DatabaseMetadata using
-    typeConstructor = TableDescription, TableReference;
+    typeConstructor = DatabaseReference, TableDescription, TableReference;
     function =
-        getTableReference, makeFieldDescription, makeTableDescription,
-        makeTableReference;
+        getTableReference, makeDatabaseReference, makeFieldDescription,
+        makeTableDescription, makeTableReference;
     dataConstructor = PrimaryKeyConstraint;
     ;
 
@@ -85,11 +85,19 @@ import Cal.Collections.Array using
 
 
 /** This is the connection to be used for the tests in this module. */
-testConnection :: JDBCConnection;
-testConnection = 
-    DataGems.jdbcConnectionWithDriverCheck "com.mysql.jdbc.Driver" "jdbc:mysql://localhost/sandbox" "root" "";
-//    DataGems.jdbcConnectionWithDriverCheck "org.postgresql.Driver" "jdbc:postgresql://localhost/sandbox" "postgres" "pg123";
-//    DataGems.jdbcConnectionWithDriverCheck "org.sqlite.JDBC" "jdbc:sqlite:/Users/rdwebster/Dev/SQLite/dbs/test.db" "" "";
+testConnection :: String -> JDBCConnection;
+testConnection !databaseName = 
+    DataGems.jdbcConnectionWithDriverCheck "com.mysql.jdbc.Driver" ("jdbc:mysql://localhost/" ++ databaseName) "root" "";
+//    DataGems.jdbcConnectionWithDriverCheck "org.postgresql.Driver" ("jdbc:postgresql://localhost/" ++ databaseName) "postgres" "pg123";
+//    DataGems.jdbcConnectionWithDriverCheck "org.sqlite.JDBC" ("jdbc:sqlite:/Users/rdwebster/Dev/SQLite/dbs/" ++ databaseName ++ ".db") "" "";
+
+/** A connection to the server with no database specified.  This will be used to create and destroy the test database. */
+connectionNoDB :: JDBCConnection;
+connectionNoDB = testConnection "";
+
+/** A connection to the test database. */
+connectionTestDB :: JDBCConnection;
+connectionTestDB = testConnection databaseName;
 
 /** This is the SqlBuilder to be used for the tests in this module. */
 testSqlBuilder :: SqlBuilder;
@@ -98,9 +106,14 @@ testSqlBuilder =
 //    PostgreSqlBuilder.postgreSqlBuilder;
 //    SQLiteBuilder.sqliteBuilder;
 
+
+/** This is the name of the database which will be created, populated, and dropped during this test. */
+databaseName :: String;
+databaseName = "sandbox2";
+
 /** This prefix will be added to all tables used in this test in order to reduce the chance of destroying existing tables. */
 tablePrefix :: String;
-tablePrefix = "sbtest_";
+tablePrefix = "sb_";
 
 
 
@@ -540,7 +553,7 @@ createTable !tableDesc =
         commandText :: String;
         commandText = Sql.statementText testSqlBuilder False createTableCommand;
     in
-        DataGems.executeUpdate testConnection commandText `seq` 
+        runUpdateSql commandText `seq` 
         Debug.trace ("created table: " ++ show (getTableReference tableDesc) ++ "\n") ();
 
 populateTable :: TableDescription -> [[Expr]] -> ();
@@ -560,19 +573,12 @@ populateTable !tableDesc !rowsData =
 Debug.traceShowable "populateTable:commandText = " $ 
             Sql.statementText testSqlBuilder False compoundStatement;
         
+//        // MySQL doesn't allow multiple INSERT statements to be submitted together, so execute them one-at-a-time for now.
+//        DataGems.executeUpdate mySqlConnection commandText;
+//        DataGems.addBatch mySqlConnection commandText `seq` Array.sum $ DataGems.executeBatch mySqlConnection;
+//        List.foldLeftStrict (\!count !rowData -> (DataGems.executeUpdate mySqlConnection $ Sql.statementText testSqlBuilder False $ insertRowStatement rowData) `seq` count + 1) 0 rowsData;
         nRowsAffected :: Int;
-        nRowsAffected = 
-// MySQL doesn't allow multiple INSERT statements to be submitted together, so execute them one-at-a-time for now.
-//            DataGems.executeUpdate mySqlConnection commandText;
-//            DataGems.addBatch mySqlConnection commandText `seq` Array.sum $ DataGems.executeBatch mySqlConnection;
-//            List.foldLeftStrict (\!count !rowData -> (DataGems.executeUpdate mySqlConnection $ Sql.statementText testSqlBuilder False $ insertRowStatement rowData) `seq` count + 1) 0 rowsData;
-// 
-            // Add each INSERT to a batch (one at a time), then execute the batch at once.
-            // TODO: is this more efficient than executing each INSERT directly one-at-a-time?
-            // TODO: execute the batches in chunks?
-            List.foldLeftStrict (\!cur !rowData -> (DataGems.addBatch testConnection $ Sql.statementText testSqlBuilder False $ insertRowStatement rowData) `seq` ()) () rowsData
-            `seq` 
-            Array.sum $ DataGems.executeBatch testConnection;
+        nRowsAffected = runBatchSql $ List.map (\rowData -> Sql.statementText testSqlBuilder False $ insertRowStatement rowData) rowsData;
     in
         nRowsAffected `seq` 
         Debug.trace ("inserted " ++ intToString nRowsAffected ++ " row(s) into table: " ++ show tableRef ++ "\n") ();
@@ -589,7 +595,7 @@ dropTable !ignoreErrors !tableDesc =
         commandText :: String;
         commandText = Sql.statementText testSqlBuilder False dropTableCommand;
     in
-        (DataGems.executeUpdate testConnection commandText `seq` 
+        (runUpdateSql commandText `seq` 
          Debug.trace ("dropped table: " ++ show tableRef ++ "\n") ())
         `catch`
         (
@@ -609,7 +615,7 @@ runQuery !queryName !query !answerRows !extractor =
         sql = queryText testSqlBuilder False query;
         
         rs :: ResultSet;
-        rs = Debug.trace ("executing query: " ++ sql ++ "\n") $ DataGems.jdbcQueryToResultSet testConnection sql;
+        rs = Debug.trace ("executing query: " ++ sql ++ "\n") $ DataGems.jdbcQueryToResultSet connectionTestDB sql;
         
         queryResults = 
 //Debug.trace ("resultset:\n" ++ DataGems.resultSetText 100 rs ++ "\n") $
@@ -620,6 +626,46 @@ runQuery !queryName !query !answerRows !extractor =
 Debug.trace ("queryResults:\n" ++ show queryResults ++ "\n" ++ "answerRows:\n" ++ show answerRows ++ "\n") $ 
             error ("query '" ++ queryName ++ "' results do not match the expected values");
 
+createDatabase :: ();
+createDatabase = 
+    let
+        databaseDef :: DatabaseReference;
+        databaseDef = makeDatabaseReference databaseName;
+        
+        createDbCommand :: Sql.Statement;
+        createDbCommand = 
+            Sql.makeCreateDatabaseStatement databaseDef False;
+        
+        commandText :: String;
+        commandText = Sql.statementText testSqlBuilder False createDbCommand;
+    in
+        DataGems.executeUpdate connectionNoDB commandText `seq` 
+        Debug.trace ("created database: " ++ databaseName ++ "\n") ();
+
+dropDatabase :: Boolean -> ();
+dropDatabase !ignoreErrors = 
+    let
+        databaseDef :: DatabaseReference;
+        databaseDef = makeDatabaseReference databaseName;
+        
+        dropDbCommand :: Sql.Statement;
+        dropDbCommand = Sql.makeDropDatabaseStatement databaseDef ignoreErrors;
+        
+        commandText :: String;
+        commandText = Sql.statementText testSqlBuilder False dropDbCommand;
+    in
+        (DataGems.executeUpdate connectionNoDB commandText `seq` 
+         Debug.trace ("dropped database: " ++ databaseName ++ "\n") ())
+        `catch`
+        (
+            let
+                handler :: JThrowable -> ();
+                handler throwable = 
+                    if  ignoreErrors then Debug.trace ("failed to drop database '" ++ databaseName ++ "' -- may not exist.\n") ()
+                    else throw throwable;
+            in
+                handler
+        );
 
 createAllTables :: ();
 createAllTables = 
@@ -646,22 +692,52 @@ runAllQueries =
             ];
 
 
+/**
+ * This function 'runs' each task, which must return (), in sequence.
+ * This is safer than using 'seq' directly since it checks the types properly (whereas it is easy to forget an argument with seq and have it do nothing).
+ */
 runAll :: [()] -> ();
 runAll !tasks = 
     List.foldLeftStrict (\!cur !task -> ())  () tasks;
 
+/**
+ * Run the full set of tests -- creating a DB, creating tables, populating tables, running queries and validating the results, dropping tables, and dropping the DB.
+ * For safety, this will fail if the specified database already exists.
+ * If an error occurs, the clean up step may not run.  Run cleanUpDB to remove the database in this case.
+ */
 runFullTest :: ();
 runFullTest = 
-    runAll [dropAllTables True,      // Clean-up before rebuilding the tables.
+    runAll [createDatabase,
             createAllTables,
             populateAllTables,
             runAllQueries,
             dropAllTables False,
+            jdbcCloseConnection connectionTestDB,
+            dropDatabase False,
+            jdbcCloseConnection connectionNoDB,
             Debug.trace "complete\n" ()
            ];
 
+/** Remove the test database, if it exists.  Use this with care! */
+cleanUpDB :: ();
+cleanUpDB = dropDatabase True;
+
+/** Run a SQL update command on the test database. */
+runUpdateSql :: String -> ();
+runUpdateSql !commandText = 
+    DataGems.executeUpdate connectionTestDB commandText `seq` ();
+
+/** Add the specified statements to a batch and execute it.  Returns the total number of rows impacted. */
+runBatchSql :: [String] -> Int;
+runBatchSql !commands = 
+    // TODO: is this more efficient than executing each INSERT directly one-at-a-time?
+    // TODO: execute the batches in chunks?
+    List.foldLeftStrict (\!cur !commandText -> DataGems.addBatch connectionTestDB commandText `seq` ()) () commands
+    `seq` 
+    Array.sum $ DataGems.executeBatch connectionTestDB;
+
+
 /* TODO: 
-     - create and drop the entire database as well?  Does MySQL support this?
      - use Monads to control sequence?
      - do batching of requests, especially the insert/updates
          - split up large lists into chunks

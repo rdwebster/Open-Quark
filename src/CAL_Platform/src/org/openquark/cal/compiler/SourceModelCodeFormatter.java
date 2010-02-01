@@ -318,7 +318,7 @@ public final class SourceModelCodeFormatter {
     public static final class OptionsBuilder {
 
         /** the line length for the Options that are built */
-        private int lineLength = 80;
+        private int lineLength = 160;
 
         private boolean keepParen = true;
 
