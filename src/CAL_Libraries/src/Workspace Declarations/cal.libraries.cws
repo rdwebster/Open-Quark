@@ -78,6 +78,7 @@ StandardVault Cal.Data.SqlBuilder.MySqlBuilder
 StandardVault Cal.Data.SqlBuilder.OdbcSqlBuilder
 StandardVault Cal.Data.SqlBuilder.OracleSqlBuilder
 StandardVault Cal.Data.SqlBuilder.PostgreSqlBuilder
+StandardVault Cal.Data.SqlBuilder.SQLiteBuilder
 StandardVault Cal.Data.SqlBuilder.TeradataSqlBuilder
 StandardVault Cal.Data.SqlType
 StandardVault Cal.Utilities.DirectedGraph

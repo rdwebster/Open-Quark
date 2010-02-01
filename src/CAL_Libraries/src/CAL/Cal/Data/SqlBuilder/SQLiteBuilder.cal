@@ -45,7 +45,8 @@ import Cal.Core.Prelude using
 import Cal.Data.Sql using
     typeConstructor = DbFunction, Expr, SqlBuilder, SqlBuilderState;
     dataConstructor = FunctionOther, NowFunction, OpMod;
-    function = expressionText2, stringConstant, toUntypedExpr;
+    function =
+        expressionText2, stringConstant, toUntypedExpr, untypedFunctionExpr;
     ;
 
 import Cal.Data.SqlBuilder.DefaultSqlBuilder using
@@ -201,9 +202,14 @@ sqlite_buildFieldType !dataType =
 sqlite_functionToSql :: SqlBuilder -> SqlBuilderState -> Sql.DbFunction -> [Expr] -> Document;
 sqlite_functionToSql builder builderState func arguments = 
     let
+        // Extract the date component using the strftime function, then cast the result to an INTEGER type.
         datePartExpr :: String -> Document;
         datePartExpr !datePartString = 
-            defaultSqlBuilderFunctions.functionToSql builder builderState (FunctionOther "strftime") [head arguments, toUntypedExpr $ stringConstant datePartString];
+            let
+                extractComponentExpr :: Expr;
+                extractComponentExpr = Sql.untypedFunctionExpr (FunctionOther "strftime") [toUntypedExpr $ stringConstant datePartString, head arguments];
+            in
+                expressionText2 builder builderState $ Sql.untypedFunctionExpr Sql.ConvertToIntFunction [extractComponentExpr];
         
         // CAST (<expr> AS <type-name>)
         convertFunctionSql :: String -> Document;
