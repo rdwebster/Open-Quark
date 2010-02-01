@@ -99,6 +99,7 @@ import Cal.Data.SqlBuilder.MySqlBuilder;
 import Cal.Data.SqlBuilder.OdbcSqlBuilder;
 import Cal.Data.SqlBuilder.OracleSqlBuilder;
 import Cal.Data.SqlBuilder.PostgreSqlBuilder;
+import Cal.Data.SqlBuilder.SQLiteBuilder;
 import Cal.Data.SqlBuilder.TeradataSqlBuilder;
 import Cal.Utilities.Time;
 import Cal.Utilities.UniqueIdentifier;
