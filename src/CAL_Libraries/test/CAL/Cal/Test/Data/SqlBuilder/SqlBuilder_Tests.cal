@@ -36,6 +36,7 @@ import Cal.Data.Sql using
 
 import Cal.Data.SqlBuilder.MySqlBuilder;
 import Cal.Data.SqlBuilder.PostgreSqlBuilder;
+import Cal.Data.SqlBuilder.SQLiteBuilder;
 
 import Cal.Data.DatabaseMetadata using
     typeConstructor = TableDescription, TableReference;
@@ -88,12 +89,14 @@ testConnection :: JDBCConnection;
 testConnection = 
     DataGems.jdbcConnectionWithDriverCheck "com.mysql.jdbc.Driver" "jdbc:mysql://localhost/sandbox" "root" "";
 //    DataGems.jdbcConnectionWithDriverCheck "org.postgresql.Driver" "jdbc:postgresql://localhost/sandbox" "postgres" "pg123";
+//    DataGems.jdbcConnectionWithDriverCheck "org.sqlite.JDBC" "jdbc:sqlite:/Users/rdwebster/Dev/SQLite/dbs/test.db" "" "";
 
 /** This is the SqlBuilder to be used for the tests in this module. */
 testSqlBuilder :: SqlBuilder;
 testSqlBuilder = 
     MySqlBuilder.mySqlBuilder;
 //    PostgreSqlBuilder.postgreSqlBuilder;
+//    SQLiteBuilder.sqliteBuilder;
 
 /** This prefix will be added to all tables used in this test in order to reduce the chance of destroying existing tables. */
 tablePrefix :: String;
