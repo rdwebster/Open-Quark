@@ -1,0 +1,244 @@
+/* 
+ * Cal.Data.SqlBuilder.SQLiteBuilder
+ * A SqlBuilder implementation for SQLite.
+ * 
+ * Orig Author: Richard Webster
+ * 
+ * Copyright (C) 2010 - Indicee Inc.   All Rights Reserved
+ * 
+ *     Redistribution and use in source and binary forms, with or without
+ *     modification, are permitted provided that the following conditions are met:
+ * 
+ *     * Redistributions of source code must retain the above copyright notice,
+ *       this list of conditions and the following disclaimer.
+ *  
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *  
+ *     * The names of the authors and contributors may be used to endorse or promote 
+ *       products derived from this software without specific prior written permission.
+ *  
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/**
+ * A SqlBuilder implementation for SQLite.
+ */
+module Cal.Data.SqlBuilder.SQLiteBuilder;
+
+import Cal.Core.Prelude using
+    function = error, intToString, isEmpty;
+    typeConstructor = Boolean, String;
+    ;
+
+import Cal.Data.Sql using
+    typeConstructor = DbFunction, Expr, SqlBuilder, SqlBuilderState;
+    dataConstructor = FunctionOther, NowFunction, OpMod;
+    function = expressionText2, stringConstant, toUntypedExpr;
+    ;
+
+import Cal.Data.SqlBuilder.DefaultSqlBuilder using
+    function =
+        defaultSqlBuilderFunctions, default_quotesNeeded,
+        quoteIdentifierHelper;
+    ;
+
+import Cal.Utilities.PrettyPrinter using
+    typeConstructor = Document;
+    function = text;
+    ;
+
+import Cal.Utilities.Time using
+    typeConstructor = Time;
+    ;
+
+import Cal.Utilities.TimeZone using
+    typeConstructor = TimeZone;
+    ;
+
+import Cal.Data.SqlType using
+    typeConstructor = SqlType;
+    dataConstructor =
+        SqlType_TinyInt, SqlType_SmallInt, SqlType_Integer, SqlType_BigInt,
+        SqlType_Decimal, SqlType_Numeric, SqlType_Real, SqlType_Float,
+        SqlType_Double, SqlType_Bit, SqlType_Boolean, SqlType_Char,
+        SqlType_VarChar, SqlType_LongVarChar, SqlType_Clob, SqlType_Binary,
+        SqlType_VarBinary, SqlType_LongVarBinary, SqlType_Blob, SqlType_Date,
+        SqlType_Time, SqlType_TimeStamp;
+    ;
+
+import Cal.Utilities.Locale;
+
+import Cal.Core.Debug using
+    function = show;
+    ;
+
+import Cal.Collections.List using
+    function = head;
+    ;
+
+
+
+/**
+ * A SqlBuilder implementation for SQLite.
+ *
+ * The SQL builder for SQLite differs from the default SQL builder in that:
+ * 1. Identifiers are quoted using double-quotes.
+ * 2. DateTime literals are of the form datetime('1999-12-31 23:59:59.000').
+ * 3. 1 and 0 are used for Boolean literals.
+ * 4. SQLite uses || for the concatenation operator and % for the modulus operator.
+ * 5. There are a number of functions not suuported by SQLite.
+ * 6. Different function names are used for a variety of functions (random, lower, upper, substr).
+ * 7. Type conversion is done using:  CAST (<expr> AS <typename>) in SQLite.
+ * 8. Date part extraction is done using the strftime function in SQLite.
+ * 9. Data type names are customized, though SQLite doesn't enforce column data types for the most part.
+ */
+sqliteBuilder :: SqlBuilder;
+public sqliteBuilder = Sql.makeSqlBuilder sqliteBuilderFunctions;
+
+/**
+ * The SqlBuilder functions for SQLite.
+ */
+public sqliteBuilderFunctions = 
+            { defaultSqlBuilderFunctions | 
+                  quoteIdentifier   := sqlite_quoteIdentifier,
+                  timeToSql         := sqlite_timeToSql,
+                  operatorText      := sqlite_operatorText,
+                  booleanToSql      := sqlite_booleanToSql,
+                  buildFieldType    := sqlite_buildFieldType,
+                  functionToSql     := sqlite_functionToSql,
+                  functionName      := sqlite_functionNameText,
+                  timeIntervalToSql := sqlite_timeIntervalToSql
+            };
+
+// SQLite uses double-quotes to quote identifiers.
+sqlite_quoteIdentifier :: String -> Document;
+sqlite_quoteIdentifier = quoteIdentifierHelper default_quotesNeeded "\"" "\"";
+
+
+// Generates timestamps in the following form:  '2005-05-20 13:23:45.0'
+sqlite_timestampPattern :: String;
+sqlite_timestampPattern = "''yyyy-MM-dd HH:mm:ss''";
+
+sqlite_timestampPattern_fractional :: String;
+sqlite_timestampPattern_fractional = "''yyyy-MM-dd HH:mm:ss.S''";
+
+sqlite_timeToSql :: Time -> TimeZone -> Document;
+sqlite_timeToSql timeVal timeZone = 
+    let
+        pattern :: String;
+        pattern = if (Time.timeParts timeZone timeVal).ticks == 0 then sqlite_timestampPattern
+                  else sqlite_timestampPattern_fractional;
+    in
+        text ("datetime(" ++ Time.formatTime timeVal timeZone Time.gregorianCalendar pattern Locale.defaultLocale ++ ")");
+
+/** SQLite uses || for the concatenation operator and % for the modulus operator. */
+sqlite_operatorText :: DbFunction -> String;
+sqlite_operatorText operator =
+    case operator of
+    Sql.OpCat -> "||";
+    Sql.OpMod -> "%";
+    _ -> defaultSqlBuilderFunctions.operatorText operator;
+    ;
+
+sqlite_functionNameText :: Sql.DbFunction -> String;
+sqlite_functionNameText func =
+    case func of
+    Sql.RandFunction        -> "RANDOM";
+    Sql.LcaseFunction       -> "LOWER";
+    Sql.UcaseFunction       -> "UPPER";
+    Sql.SubstringFunction   -> "SUBSTR";
+    
+// TODO: throw an error when using an unsupported function.
+//        error ("Unsupported function '" ++ defaultSqlBuilderFunctions.functionName func ++ "'");
+    _ -> defaultSqlBuilderFunctions.functionName func;
+    ;
+
+// SQLite uses 1 and 0 for Boolean literals.
+sqlite_booleanToSql :: Boolean -> Document;
+sqlite_booleanToSql !boolVal =
+    text (if boolVal then "1" else "0");
+
+sqlite_buildFieldType :: SqlType -> Document;
+sqlite_buildFieldType !dataType = 
+    case dataType of
+    SqlType_TinyInt            -> text $ "TINYINT";
+    SqlType_SmallInt           -> text $ "SMALLINT";
+    SqlType_Integer            -> text $ "INTEGER";
+    SqlType_BigInt             -> text $ "BIGINT";
+    SqlType_Decimal {}         -> text $ "NUMERIC";
+    SqlType_Numeric {}         -> text $ "NUMERIC";
+    SqlType_Real               -> text $ "REAL";
+    SqlType_Float              -> text $ "FLOAT";
+    SqlType_Double             -> text $ "DOUBLE";
+    SqlType_Bit                -> text $ "INTEGER";
+    SqlType_Boolean            -> text $ "INTEGER";
+    SqlType_Char {length}      -> text $ "CHARACTER(" ++ intToString length ++ ")";
+    SqlType_VarChar {length}   -> text $ "VARCHAR(" ++ intToString length ++ ")";
+    SqlType_LongVarChar        -> text $ "TEXT";
+    SqlType_Clob               -> text $ "CLOB";
+    SqlType_Binary {length}    -> text $ "BLOB";
+    SqlType_VarBinary {length} -> text $ "BLOB";
+    SqlType_LongVarBinary      -> text $ "BLOB";
+    SqlType_Blob               -> text $ "BLOB";
+    SqlType_Date               -> text $ "DATE";
+    SqlType_Time               -> text $ "DATETIME";
+    SqlType_TimeStamp          -> text $ "DATETIME";
+    _ -> error ("Unsupported data type '" ++ show dataType ++ "'.");
+    ;
+
+sqlite_functionToSql :: SqlBuilder -> SqlBuilderState -> Sql.DbFunction -> [Expr] -> Document;
+sqlite_functionToSql builder builderState func arguments = 
+    let
+        datePartExpr :: String -> Document;
+        datePartExpr !datePartString = 
+            defaultSqlBuilderFunctions.functionToSql builder builderState (FunctionOther "strftime") [head arguments, toUntypedExpr $ stringConstant datePartString];
+        
+        // CAST (<expr> AS <type-name>)
+        convertFunctionSql :: String -> Document;
+        convertFunctionSql !typeName = 
+            text "CAST (" ++ expressionText2 builder builderState (head arguments) ++ text (" AS " ++ typeName ++ ")");
+    in
+        case func of
+        Sql.NowFunction -> defaultSqlBuilderFunctions.functionToSql builder builderState (FunctionOther "datetime") [toUntypedExpr $ stringConstant "now"];
+        
+        Sql.DayOfWeekFunction -> datePartExpr "%w";
+        Sql.DayOfMonthFunction -> datePartExpr "%d";
+        Sql.DayOfYearFunction -> datePartExpr "%j";
+        Sql.HourFunction -> datePartExpr "%H";
+        Sql.MinuteFunction -> datePartExpr "%M";
+        Sql.MonthFunction -> datePartExpr "%m";
+        Sql.SecondFunction -> datePartExpr "%S";
+        Sql.WeekFunction -> datePartExpr "%W";
+        Sql.YearFunction -> datePartExpr "%Y";
+    
+        Sql.ConvertToStringFunction -> convertFunctionSql "TEXT";
+        Sql.ConvertToIntFunction    -> convertFunctionSql "INTEGER";
+        Sql.ConvertToDoubleFunction -> convertFunctionSql "DOUBLE";
+//        Sql.ConvertToTimeFunction   -> convertFunctionSql "???";
+
+        _ -> defaultSqlBuilderFunctions.functionToSql builder builderState func arguments;
+        ;
+
+sqlite_timeIntervalToSql :: Sql.TimeInterval -> Document;
+sqlite_timeIntervalToSql !timeInterval = 
+    case timeInterval of
+    Sql.YearInterval    -> text "'%Y'"; 
+    Sql.QuarterInterval -> error "Quarter time interval is not supported in SQLite.";
+    Sql.MonthInterval   -> text "'%m'";
+    Sql.DayInterval     -> text "'%d'";
+    Sql.HourInterval    -> text "'%H'";
+    Sql.MinuteInterval  -> text "'%M'";
+    Sql.SecondInterval  -> text "'%S'";
+    ;
