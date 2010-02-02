@@ -1013,27 +1013,10 @@ public resultSetText !maxDisplayRows !resultSet =
         columnHeadings :: [String];
         columnHeadings = columnNames resultSet;
 
-        makeUnderline :: String -> String;
-        makeUnderline heading = fromList (replicate (String.length heading) '-');
-        
-        underlines :: [String];
-        underlines = map makeUnderline columnHeadings;
-
         allResultRows :: [[String]];
         allResultRows = dataFromResultSet resultSet (extractList $ extractStringWithDefault "");
-
-        rowsTruncated :: Boolean;
-        rowsTruncated = (maxDisplayRows > 0) && not (isEmpty (drop maxDisplayRows allResultRows));
-        
-        continuationRow :: [String];
-        continuationRow = replicate (length columnHeadings) "...";
-
-        resultRows :: [[String]];
-        resultRows = if (maxDisplayRows <= 0) then allResultRows
-                     else if (rowsTruncated) then (take maxDisplayRows allResultRows) ++ [continuationRow]
-                     else take maxDisplayRows allResultRows;
     in
-        Format.formatTable 2 (columnHeadings : underlines : resultRows);
+        Format.formatTableWithLines maxDisplayRows columnHeadings allResultRows;
 
 
 // Extractor functions which work on the current row of a resultset.

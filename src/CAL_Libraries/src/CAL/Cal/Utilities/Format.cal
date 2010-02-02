@@ -42,18 +42,16 @@
  * @author Richard Webster (original Prelude function), Bo Ilic 
  */
 module Cal.Utilities.Format;
+
 import Cal.Core.Prelude using
     typeConstructor = Int, String;
-    function = concat, isEmpty, max, seq;
+    function = concat, isEmpty, max;
     ;
 import Cal.Collections.List using
-    function = 
-        chop, foldLeftStrict, foldRight, head, join, length, map, 
-        replicate, transpose, zipWith;
+    function = chop, head, join, length, replicate, transpose;
     ; 
-import Cal.Core.String using
-    function = fromList;
-    ;
+import Cal.Core.String;
+
 
 /**
  * Returns a string which can be used to display the specified rows of values in a nice table.
@@ -64,36 +62,39 @@ import Cal.Core.String using
  * @return         a string representing the specified cells formatted in a table.
  */
 formatTable :: Int -> [[String]] -> String;
-public formatTable columnGap !rows =
+public formatTable !columnGap !rows =
     let
         // Assume that each row has the name number of values.
-        nColumns = length (head rows);
+        nColumns :: Int;
+        nColumns = length $ head rows;
 
         // Determine the length of the longest item in each column.
-//        colSizes = foldLeft (\cur row -> zipWith max cur (map String.length row)) (replicate nColumns 0) rows;
+        colSizes :: [Int];
         colSizes = 
             let
-                newLengthsForRow curLengths row = 
+                newLengthsForRow :: [Int] -> [String] -> [Int];
+                newLengthsForRow !curLengths !row = 
                     let
-                        newLengths = zipWith max curLengths (map String.length row);
+                        newLengths :: [Int];
+                        newLengths = List.zipWith max curLengths $ List.map String.length row;
                     in
-                        foldRight seq newLengths newLengths;
+                        List.strictList newLengths;
             in
-                foldLeftStrict newLengthsForRow (replicate nColumns 0) rows;
+                List.foldLeftStrict newLengthsForRow (replicate nColumns 0) rows;
 
         textForRow :: [String] -> String;
-        textForRow row = concat (zipWith textForCol row colSizes);
+        textForRow row = concat $ List.zipWith textForCol row colSizes;
 
         textForCol :: String -> Int -> String;
         textForCol val rowSize = 
                 let
-                    nPadChars = rowSize - (String.length val) + columnGap;
-                    padding = fromList (replicate nPadChars ' ');
+                    nPadChars = rowSize - String.length val + columnGap;
+                    padding = String.fromList $ replicate nPadChars ' ';
                 in
                     val ++ padding;
     in
-        if (isEmpty rows) then ""
-        else join "\n" (map textForRow rows) ++ "\n";
+        if isEmpty rows then ""
+        else join "\n" (List.map textForRow rows) ++ "\n";
 
 /**
  * Returns a string which can be used to display the specified rows of values in a nice table.
@@ -113,7 +114,7 @@ public formatTruncatedTable maxNRows columnGap !rows =
     let
         continuationRow :: [String] -> [String];
         continuationRow row = 
-            map (\val -> "...") row;
+            List.map (\val -> "...") row;
 
         truncatedRows :: [[String]];
         truncatedRows = 
@@ -122,6 +123,76 @@ public formatTruncatedTable maxNRows columnGap !rows =
     in
         formatTable columnGap truncatedRows;
 
+
+/**
+ * Returns a string which can be used to display the specified rows of values in a nice table.
+ * The table will be generated with "lines" around the table and headings and between the columns.
+ * The headings will be displayed at the top of the table.
+ * It is assumed that the heading row and each data row has the same number of values.
+ * The table will be truncated to the specified number of data rows.
+ * If the results need to be truncated then a '...' will be included at the end of each column.
+ * If maxNRows is less than one, then the full table will be formatted.
+ * 
+ * @arg maxNRows   the maximum number of rows to be displayed in the table;  0 for unlimited
+ * @arg headings   the column headings for the table
+ * @arg rows       a list of the rows of cells to form the table.
+ * @return         a string representing the specified cells formatted in a table.
+ */
+formatTableWithLines :: Int -> [String] -> [[String]] -> String;
+public formatTableWithLines !maxNRows !headings !rows = 
+    let
+        // Assume that each row has the name number of values.
+        nColumns :: Int;
+        nColumns = length headings;
+        
+        continuationRow :: [String] -> [String];
+        continuationRow row = 
+            List.map (\val -> "...") row;
+
+        truncatedRows :: [[String]];
+        truncatedRows = 
+            if maxNRows < 1 then rows
+            else List.mapIndexed (\row !index -> if index == maxNRows then continuationRow row else row) $ List.take (maxNRows + 1) rows;
+        
+        // Determine the length of the longest item in each column.
+        colSizes :: [Int];
+        colSizes = 
+            let
+                newLengthsForRow :: [Int] -> [String] -> [Int];
+                newLengthsForRow !curLengths !row = 
+                    let
+                        newLengths :: [Int];
+                        newLengths = List.zipWith max curLengths $ List.map String.length row;
+                    in
+                        List.strictList newLengths;
+            in
+                List.foldLeftStrict newLengthsForRow (replicate nColumns 0) (headings : truncatedRows);
+        
+        tableWidth :: Int;
+        tableWidth = List.sum colSizes + 4 + 3 * (nColumns - 1);
+        
+        textForRow :: [String] -> String;
+        textForRow !row = "| " ++ (List.join " | " $ List.zipWith textForCol row colSizes) ++ " |";
+
+        textForCol :: String -> Int -> String;
+        textForCol !val !rowSize = 
+                let
+                    nPadChars = rowSize - String.length val;    // + columnGap;
+                    padding = String.fromList $ replicate nPadChars ' ';
+                in
+                    val ++ padding;
+        
+        separatorRow :: String;
+        separatorRow = String.fromList $ replicate tableWidth '-';
+        
+        outputRows :: [String];
+        outputRows = 
+            separatorRow : textForRow headings : separatorRow : List.map textForRow truncatedRows ++ [separatorRow];
+    in
+        if isEmpty headings then ""
+        else join "\n" outputRows ++ "\n";
+
+    
 /**
  * Returns a string which can be used to display the specified values in columns.
  * 
