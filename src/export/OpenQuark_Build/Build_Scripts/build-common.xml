@@ -161,7 +161,9 @@ scripts for Quark and its dependents.
     <target name="defMyJavac" depends="defMyJavacBase,defMyJavacOpen"/>
     <target name="defMyJavacBase">
         <presetdef name="my.javac.base">
-            <javac source="${source.level}" memoryMaximumSize="1024m"
+            <javac source="${source.level}" 
+            	   target="${target.level}"
+            	   memoryMaximumSize="1024m"
                    debug="on"
                    deprecation="off"
                    fork="true"
