@@ -168,9 +168,6 @@ public formatTableWithLines !maxNRows !headings !rows =
             in
                 List.foldLeftStrict newLengthsForRow (replicate nColumns 0) (headings : truncatedRows);
         
-        tableWidth :: Int;
-        tableWidth = List.sum colSizes + 4 + 3 * (nColumns - 1);
-        
         textForRow :: [String] -> String;
         textForRow !row = "| " ++ (List.join " | " $ List.zipWith textForCol row colSizes) ++ " |";
 
@@ -183,7 +180,8 @@ public formatTableWithLines !maxNRows !headings !rows =
                     val ++ padding;
         
         separatorRow :: String;
-        separatorRow = String.fromList $ replicate tableWidth '-';
+        separatorRow = 
+            String.fromList (List.concatMap (\!colSize -> '+' : replicate (colSize + 2) '-') colSizes ++ ['+']);
         
         outputRows :: [String];
         outputRows = 
