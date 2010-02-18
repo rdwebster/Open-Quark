@@ -382,7 +382,7 @@ public class JDBC {
                 try {
                     boolean moveResult = sqlResults.next();
 
-                    logger.debug("moveNext " + moveResult);
+//                    logger.debug("moveNext " + moveResult);
 
                     return moveResult;
                 }
@@ -421,7 +421,7 @@ public class JDBC {
                         strVal = Connection.NULL_STRING;
                     }
 
-                    logger.debug("getCurrentRowString (col = " + colIndex + ") = " + strVal);
+//                    logger.debug("getCurrentRowString (col = " + colIndex + ") = " + strVal);
 
                     // Return value
                     return strVal;
@@ -447,7 +447,7 @@ public class JDBC {
                         strVal = Connection.NULL_STRING;
                     }
 
-                    logger.debug("getCurrentRowString (col = " + colName + ") = " + strVal);
+//                    logger.debug("getCurrentRowString (col = " + colName + ") = " + strVal);
 
                     // Return value
                     return strVal;
@@ -473,7 +473,7 @@ public class JDBC {
                         intVal = Connection.NULL_INT;
                     }
 
-                    logger.debug("getCurrentRowInt (col = " + colIndex + ") = " + intVal);
+//                    logger.debug("getCurrentRowInt (col = " + colIndex + ") = " + intVal);
 
                     // Return value
                     return intVal;
@@ -499,7 +499,7 @@ public class JDBC {
                         intVal = Connection.NULL_INT;
                     }
 
-                    logger.debug("getCurrentRowInt (col = " + colName + ") = " + intVal);
+//                    logger.debug("getCurrentRowInt (col = " + colName + ") = " + intVal);
 
                     // Return value
                     return intVal;
@@ -525,7 +525,7 @@ public class JDBC {
                     	longVal = Connection.NULL_LONG;
                     }
 
-                    logger.debug("getCurrentRowLong (col = " + colIndex + ") = " + longVal);
+//                    logger.debug("getCurrentRowLong (col = " + colIndex + ") = " + longVal);
 
                     // Return value
                     return longVal;
@@ -551,7 +551,7 @@ public class JDBC {
                     	longVal = Connection.NULL_LONG;
                     }
 
-                    logger.debug("getCurrentRowLong (col = " + colName + ") = " + longVal);
+//                    logger.debug("getCurrentRowLong (col = " + colName + ") = " + longVal);
 
                     // Return value
                     return longVal;
@@ -577,7 +577,7 @@ public class JDBC {
                         doubleVal = Connection.NULL_DOUBLE;
                     }
 
-                    logger.debug("getCurrentRowDouble (col = " + colIndex + ") = " + doubleVal);
+//                    logger.debug("getCurrentRowDouble (col = " + colIndex + ") = " + doubleVal);
 
                     // Return value
                     return doubleVal;
@@ -603,7 +603,7 @@ public class JDBC {
                         doubleVal = Connection.NULL_DOUBLE;
                     }
 
-                    logger.debug("getCurrentRowDouble (col = " + colName + ") = " + doubleVal);
+//                    logger.debug("getCurrentRowDouble (col = " + colName + ") = " + doubleVal);
 
                     // Return value
                     return doubleVal;
@@ -629,7 +629,7 @@ public class JDBC {
                     	decimalVal = Connection.NULL_DECIMAL;
                     }
 
-                    logger.debug("getCurrentRowDecimal (col = " + colIndex + ") = " + decimalVal);
+//                    logger.debug("getCurrentRowDecimal (col = " + colIndex + ") = " + decimalVal);
 
                     // Return value
                     return decimalVal;
@@ -655,7 +655,7 @@ public class JDBC {
                     	decimalVal = Connection.NULL_DECIMAL;
                     }
 
-                    logger.debug("getCurrentRowDecimal (col = " + colName + ") = " + decimalVal);
+//                    logger.debug("getCurrentRowDecimal (col = " + colName + ") = " + decimalVal);
 
                     // Return value
                     return decimalVal;
@@ -681,7 +681,7 @@ public class JDBC {
                         dateVal = Connection.NULL_DATE;
                     }
 
-                    logger.debug("getCurrentRowDate (col = " + colIndex + ") = " + dateVal);
+//                    logger.debug("getCurrentRowDate (col = " + colIndex + ") = " + dateVal);
 
                     // Return value
                     return dateVal;
@@ -707,7 +707,7 @@ public class JDBC {
                         dateVal = Connection.NULL_DATE;
                     }
 
-                    logger.debug("getCurrentRowDate (col = " + colName + ") = " + dateVal);
+//                    logger.debug("getCurrentRowDate (col = " + colName + ") = " + dateVal);
 
                     // Return value
                     return dateVal;
@@ -734,7 +734,7 @@ public class JDBC {
                         timeVal = Connection.NULL_TIME;
                     }
 
-                    logger.debug("getCurrentRowTime (col = " + colIndex + ") = " + timeVal);
+//                    logger.debug("getCurrentRowTime (col = " + colIndex + ") = " + timeVal);
 
                     // Return value
                     return timeVal;
@@ -761,7 +761,7 @@ public class JDBC {
                         timeVal = Connection.NULL_TIME;
                     }
 
-                    logger.debug("getCurrentRowTime (col = " + colName + ") = " + timeVal);
+//                    logger.debug("getCurrentRowTime (col = " + colName + ") = " + timeVal);
                         
                     // Return value
                     return timeVal;
@@ -787,7 +787,7 @@ public class JDBC {
                         boolVal = Connection.NULL_BOOLEAN;
                     }
 
-                    logger.debug("getCurrentRowBoolean (col = " + colIndex + ") = " + boolVal);
+//                    logger.debug("getCurrentRowBoolean (col = " + colIndex + ") = " + boolVal);
 
                     // Return value
                     return boolVal;
@@ -813,7 +813,7 @@ public class JDBC {
                         boolVal = Connection.NULL_BOOLEAN;
                     }
 
-                    logger.debug("getCurrentRowBoolean (col = " + colName + ") = " + boolVal);
+//                    logger.debug("getCurrentRowBoolean (col = " + colName + ") = " + boolVal);
 
                     // Return value
                     return boolVal;
@@ -839,7 +839,7 @@ public class JDBC {
                         bytesVal = Connection.NULL_BYTES;
                     }
 
-                    logger.debug("getCurrentRowBytes (col = " + colIndex + ") = " + ByteArrays.byteArrayToHexString(bytesVal));
+//                    logger.debug("getCurrentRowBytes (col = " + colIndex + ") = " + ByteArrays.byteArrayToHexString(bytesVal));
 
                     // Return value
                     return bytesVal;
@@ -865,7 +865,7 @@ public class JDBC {
                         bytesVal = Connection.NULL_BYTES;
                     }
 
-                    logger.debug("getCurrentRowBytes (col = " + colName + ") = " + ByteArrays.byteArrayToHexString(bytesVal));
+//                    logger.debug("getCurrentRowBytes (col = " + colName + ") = " + ByteArrays.byteArrayToHexString(bytesVal));
 
                     // Return value
                     return bytesVal;
@@ -891,7 +891,7 @@ public class JDBC {
                         objVal = Connection.NULL_OBJECT;
                     }
 
-                    logger.debug("getCurrentRowObject (col = " + colIndex + ") = " + objVal);
+//                    logger.debug("getCurrentRowObject (col = " + colIndex + ") = " + objVal);
 
                     // Return value
                     return objVal;
@@ -917,7 +917,7 @@ public class JDBC {
                         objVal = Connection.NULL_OBJECT;
                     }
 
-                    logger.debug("getCurrentRowObject (col = " + colName + ") = " + objVal);
+//                    logger.debug("getCurrentRowObject (col = " + colName + ") = " + objVal);
 
                     // Return value
                     return objVal;
