@@ -359,6 +359,12 @@ isTextNode :: XmlNode -> Boolean;
 public isTextNode !node = case node of XmlText {} -> True; _ -> False;;
 
 /**
+ * Returns whether the XML node is a CData Section.
+ */
+isCDataSection :: XmlNode -> Boolean;
+public isCDataSection !node = case node of XmlCDataSection {} -> True; _ -> False;;
+
+/**
  * Returns whether the XML node is an element.
  */
 isElementNode :: XmlNode -> Boolean;
@@ -366,8 +372,8 @@ private isElementNode !node = case node of XmlElement {} -> True; _ -> False;;
 
 
 /**
- * Returns the text of an XML text node.
- * An error is thrown if the node is not an XML text node.
+ * Returns the text of an XML text node or CData section.
+ * An error is thrown if the node is not an XML text node or CData section.
  */
 textNodeText :: XmlNode -> String;
 public textNodeText !textNode = 
@@ -514,11 +520,27 @@ public elementChildElementByName !xmlElement elemName = listToMaybe (elementChil
  * If there are no child text nodes, then an empty string will be returned.
  * If there are multiple child text nodes, then their text will be concatenated.
  * An error is thrown if the node is not an XML element.
+ * Note that this does not include text from CData sections.
  */
 elementChildText :: XmlNode -> String;
 public elementChildText !xmlElement = 
     case xmlElement of
     XmlElement {children} -> concatMap textNodeText (filter isTextNode children);
+    _ -> error "The XML node is not an element.";
+    ;
+
+/**
+ * Returns the text from any child CData sections of an XML element.
+ * Any child nodes that are not CData sections will be ignored.
+ * If there are no child CData sections, then an empty string will be returned.
+ * If there are multiple child CData sections, then their text will be concatenated.
+ * An error is thrown if the node is not an XML element.
+ * Note that this does not include text from child Text nodes.
+ */
+elementChildCDataText :: XmlNode -> String;
+public elementChildCDataText !xmlElement = 
+    case xmlElement of
+    XmlElement {children} -> concatMap textNodeText (filter isCDataSection children);
     _ -> error "The XML node is not an element.";
     ;
 
