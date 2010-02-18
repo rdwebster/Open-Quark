@@ -919,21 +919,23 @@ dataFromResultSet2 :: Boolean -> ResultSet -> (ResultRow -> a) -> [a];
 public dataFromResultSet2 !closeAfterReading !resultSet extractFn =
     let
         // Pass in the resultset to prevent this function from being a CAF (which would be bad here).
-        fetchResultsHelper startAtBeginning = 
+        fetchResultsHelper !startAtBeginning = 
             let
                 // Move to the first/next row.
                 // TODO: this should really reset the position to BOF before processing the rows, but be careful not to cause the resultset to
                 //       re-execute unnecessarily...
 //                moveResult = if (startAtBeginning) then (jMoveFirst resultSet) else (jMoveNext resultSet);
                 moveResult :: Boolean;
-                moveResult = jMoveNext resultSet;
-
-                thisRow = extractFn $ currentResultSetRow resultSet;
-                nextRows = fetchResultsHelper False;
+                moveResult = eager $ jMoveNext resultSet;
             in
                 // Force the current row to be processed before the next one is fetched.
-                if (moveResult) then seq thisRow (thisRow : nextRows) 
-                else if (closeAfterReading) then seq (jdbcCloseResultSet resultSet) []
+                if moveResult then 
+                    let
+                        thisRow = eager $ extractFn $ currentResultSetRow resultSet;
+                        nextRows = fetchResultsHelper False;
+                    in
+                        thisRow `seq` (thisRow : nextRows) 
+                else if closeAfterReading then jdbcCloseResultSet resultSet `seq` []
                 else [];
     in
         fetchResultsHelper True;
@@ -950,13 +952,16 @@ public foldStrictOverResultSet foldFn !initValue !resultSet =
     let
         // TODO: this should really reset the position to BOF before processing the rows, but be careful not to cause the resultset to
         //       re-execute unnecessarily...
-        foldHelper startAtBeginning !curValue = 
+        foldHelper !startAtBeginning !curValue = 
             let
                 moveResult :: Boolean;
-                moveResult = jMoveNext resultSet;
-                newValue = foldFn (currentResultSetRow resultSet) curValue;
+                moveResult = eager $ jMoveNext resultSet;
             in
-                if (moveResult) then seq newValue (foldHelper False newValue)
+                if moveResult then 
+                    let
+                        newValue = eager $ foldFn (currentResultSetRow resultSet) curValue;
+                    in
+                        newValue `seq` foldHelper False newValue
                 else curValue;
     in
         foldHelper True initValue;
