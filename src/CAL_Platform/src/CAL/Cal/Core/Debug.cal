@@ -105,6 +105,12 @@ traceShowable :: (Show a) => String -> a -> a;
 public traceShowable !message val = trace (message ++ (show val) ++ "\n") val;
 
 /**
+ * This works the same as {@link traceShowable@} except that {@link showInternal@} is used to show the value.
+ */
+traceShowInternal :: String -> a -> a;
+public traceShowInternal !message val = trace (message ++ (showInternal val) ++ "\n") val;
+
+/**
  * Augments a list of values such that a trace message will be displayed when members at a specified interval are accessed.
  * This could be useful for tracking progress of a lengthy operation over a long list.
  * @arg message   a message to be included with each trace output, followed by the list index value
