@@ -39,7 +39,7 @@
 module Cal.Data.SqlBuilder.MySqlBuilder;
 
 import Cal.Core.Prelude using
-    function = error, intToString, isEmpty;
+    function = error, intToString, isEmpty, not;
     typeConstructor = Boolean, String;
     ;
 
@@ -85,6 +85,10 @@ import Cal.Core.Debug using
 
 import Cal.Collections.List using
     function = head;
+    ;
+
+import Cal.Collections.Set using
+    typeConstructor = Set;
     ;
 
 
@@ -179,6 +183,9 @@ mySql_buildFieldType !dataType =
 mySql_functionToSql :: SqlBuilder -> SqlBuilderState -> Sql.DbFunction -> [Expr] -> Document;
 mySql_functionToSql builder builderState func arguments = 
     let
+        typeNameKeywords :: Set String;
+        typeNameKeywords = Set.fromList ["CHAR", "SIGNED INTEGER", "DECIMAL", "DATETIME"];
+
         convertFunctionSql :: String -> Document;
         convertFunctionSql !typeName = 
             mySql_functionToSql builder builderState (Sql.FunctionOther "CONVERT") [head arguments, 
@@ -196,9 +203,12 @@ mySql_functionToSql builder builderState func arguments =
 
         _ -> 
             // MySQL doesn't seem to allow the parens to be omitted for zero-argument functions, so ensure that the parens are included in this case.
-            if isEmpty arguments then text (Sql.functionName builder func) ++ text "()"
+            // However, special keywords (such as data type constants) need to be included without parens.
+            // TODO: find a nicer way to handle this (perhaps not treating these type keywords as functions).
+            if isEmpty arguments && not (Set.member (Sql.functionName builder func) typeNameKeywords) then text (Sql.functionName builder func) ++ text "()"
             else defaultSqlBuilderFunctions.functionToSql builder builderState func arguments;
         ;
+
 
 mySql_functionNameText :: Sql.DbFunction -> String;
 mySql_functionNameText func =
