@@ -93,7 +93,7 @@ import Cal.Collections.List using
  * A SqlBuilder implementation for PostgreSQL databases.
  *
  * The SQL builder for PostgreSQL differs from the default SQL builder in that:
- * 1. Identifiers are quoted using back-quotes.
+ * 1. Identifiers are quoted using double-quotes.
  * 2. Generates timestamps in the following form:  '2005-05-20 13:23:45.0'.
  * 3. TRUE and FALSE are used for Boolean literals.
  * 4. Some functions unsupported, including SoundEx, Difference, etc.
