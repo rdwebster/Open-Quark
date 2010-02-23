@@ -45,12 +45,20 @@ module Cal.Utilities.Format;
 
 import Cal.Core.Prelude using
     typeConstructor = Int, String;
-    function = concat, isEmpty, max;
+    function = concat, error, isEmpty, max;
     ;
 import Cal.Collections.List using
     function = chop, head, join, length, replicate, transpose;
     ; 
 import Cal.Core.String;
+
+import Cal.Core.Debug using
+    typeClass = Show;
+    ;
+
+import Cal.Core.Record using
+    function = fieldNames, unsafeBuildList;
+    ;
 
 
 /**
@@ -190,7 +198,35 @@ public formatTableWithLines !maxNRows !headings !rows =
         if isEmpty headings then ""
         else join "\n" outputRows ++ "\n";
 
-    
+/**
+ * Displays the contents of a list of records in a table.
+ * The record field names are used to build headings.
+ * Otherwise, this works like {@link formatTableWithLines@}.
+ * 
+ * @arg maxNRows   the maximum number of rows to be displayed in the table;  0 for unlimited
+ * @arg rows       a list records for the cells of the table;  each record forms one table row.
+ * @return         a string representing the specified cells formatted in a table.
+ */
+formatRecordsAsTable :: Show r => Int -> [{r}] -> String;
+public formatRecordsAsTable !maxNRows !rows = 
+    let
+        headings :: [String];
+        headings = recordFieldNames $ head rows;
+        
+        strListRows :: [[String]];
+        strListRows = List.map showRecordValues rows;
+    in
+        formatTableWithLines maxNRows headings strListRows;
+
+
+recordFieldNames :: Show r => {r} -> [String];
+recordFieldNames r = 
+    // Use the dictionary to get the field names so that we don't need a real record value to work with.
+    Record.dictionaryFieldNames (Record.dictionary r "show");
+
+showRecordValues :: Show r => {r} -> [String];
+showRecordValues !r = Record.unsafeBuildListFromRecord (Record.dictionary r "show") r;
+
 /**
  * Returns a string which can be used to display the specified values in columns.
  * 
