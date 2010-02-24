@@ -4743,6 +4743,14 @@ public statementText !builder !forDisplay statement =
             displayWidth = 1 :: Int;
             width = if forDisplay then displayWidth :: Int else Prelude.maxBound;
 
+            // For certain statements (UPDATE and DELETE ROWS), allow the table being updated to be referenced from subqueries
+            // contained in the statement's expressions.
+            // This is accomplished by indicating that the table name (with no alias) is an 'outer' table reference.
+            // This is similar to how correlated sub-queries work.
+            builderStateWithTable :: TableReference -> SqlBuilderState;
+            builderStateWithTable !tableRef = SqlBuilderState [makeQueryTable $ getTableNameFromReference tableRef];
+            
+            docForStatement :: Statement -> Document;
             docForStatement statement = 
                 case statement of
                 CreateDatabaseStatement {databaseRef, skipIfDatabaseExists} ->
@@ -4762,9 +4770,9 @@ public statementText !builder !forDisplay statement =
                 InsertQueryValuesStatement {tableRef, maybeDestColumns, insertQuery} -> 
                     buildInsertQueryValuesStatementFn tableRef maybeDestColumns insertQuery;
                 UpdateValuesStatement {tableRef, destColumns, newValues, condition} -> 
-                    buildUpdateValuesStatementFn newSqlBuilderState tableRef destColumns newValues condition;
+                    buildUpdateValuesStatementFn (builderStateWithTable tableRef) tableRef destColumns newValues condition;
                 DeleteRowsStatement {tableRef, condition} -> 
-                    buildDeleteRowsStatementFn newSqlBuilderState tableRef condition;
+                    buildDeleteRowsStatementFn (builderStateWithTable tableRef) tableRef condition;
                 CommitStatement ->
                     buildCommitStatementFn;
                 CompoundStatement {statements} -> 

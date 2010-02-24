@@ -572,6 +572,38 @@ public countAllTest =
         qry2;
 
 
+/**
+ * Test building an update statement with a subquery expression referencing the table being updated.
+ * The outer table should not appear in the FROM clause of the value expression subquery.
+ */
+updateSubqueryTest :: String;
+updateSubqueryTest = 
+    let
+        updateStatement :: Sql.Statement;
+        updateStatement = 
+            let
+                contactFactAgentSidExpr :: Sql.TypedExpr String;
+                contactFactAgentSidExpr = stringField (makeQueryTable "contactFact") "Agent_sid";
+                
+                subQuery :: Query;
+                subQuery = 
+                    let
+                        dim1AgentSidExpr :: Sql.TypedExpr String;
+                        dim1AgentSidExpr = stringField (makeQueryTableWithAlias "Agent_sid" "dim1") "Agent_sid";
+                        
+                        filter :: Sql.TypedExpr Boolean;
+                        filter = dim1AgentSidExpr `Sql.eqExpr` contactFactAgentSidExpr;
+                    in
+                        newQuery `Sql.projectColumn` dim1AgentSidExpr `Sql.restrict` filter;
+                
+                newValueExpr :: Sql.Expr;
+                newValueExpr = Sql.subQueryExpr subQuery;
+            in
+                Sql.makeUpdateValuesStatement (makeTableReference "contactFact") ["Agent_sid"] [newValueExpr] Sql.trueConstant;
+    in
+        Sql.statementText SqlBuilder.defaultSqlBuilder True updateStatement;
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // SQL Statement Tests
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
