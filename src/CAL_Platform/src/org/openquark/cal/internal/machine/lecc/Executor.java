@@ -988,17 +988,17 @@ public class Executor implements CALExecutor {
                 return null;
             }
 
-            Map<QualifiedName, CallCount> allCounts = mStats.counts;
-
-            for (final Map.Entry<QualifiedName, CallCount> entry : allCounts.entrySet()) {
-                QualifiedName key = entry.getKey();
-                CallCount pc = counts.get(key);
-                CallCount tc = entry.getValue();
-                if (tc == null) {
-                    tc = new CallCount(pc.getName(), 0);
-                    allCounts.put(key, tc);
+            // Update the entries in the CallCountStats map with the CallCountInfo map values. 
+            for (final Map.Entry<QualifiedName, CallCount> entry : counts.entrySet()) {
+                QualifiedName name = entry.getKey();
+                CallCount count = entry.getValue();
+                
+                CallCount statsCount = mStats.counts.get(name);
+                if (statsCount == null) {
+                    statsCount = new CallCount(name, 0);
+                    mStats.counts.put(name, statsCount);
                 }
-                tc.incrementBy(pc.getCount());
+                statsCount.incrementBy(count.getCount());
             }
             return mStats;
         }
@@ -1013,7 +1013,7 @@ public class Executor implements CALExecutor {
         protected static class CallCountStats implements StatsGenerator.StatsObject {
 
             /** Associates a named entity to a CallCount instance. */
-            Map<QualifiedName, CallCount> counts = new HashMap<QualifiedName, CallCount>();
+            private Map<QualifiedName, CallCount> counts = new HashMap<QualifiedName, CallCount>();
 
             /** A description of the type of counts being recorded.  e.g. supercombinator, dataconstructor, etc. */
             String type;
@@ -1100,6 +1100,11 @@ public class Executor implements CALExecutor {
             this.count = initialCount;
         }
 
+        @Override
+        public String toString() {
+            return "CallCount [" + name + " = " + count + "]";
+        }
+
         public void increment () {
             count++;
         }
@@ -1118,23 +1123,17 @@ public class Executor implements CALExecutor {
 
         /**
          * Compare two CallCount object based on
-         * the count value.
+         * the count values (in descending order).
          * @param cc - the object to compare to.
          * @return int
          */
         public int compareTo (CallCount cc) {
-            int nameCompare = name.compareTo(cc.name);
-            if (nameCompare != 0) {
-                return nameCompare;
+            // First, sort by count in descending order.
+            if (count != cc.count) {
+                return count < cc.count ? 1 : -1;
             }
-
-            if (cc.count > count) {
-                return 1;
-            } else if (cc.count == count) {
-                return 0;
-            } else {
-                return -1;
-            }
+            // Then, compare by name.
+            return name.compareTo(cc.name);
         }
 
         @Override
