@@ -7498,21 +7498,27 @@ instance Outputable CalValue where
 outputCalValueStrict :: CalValue -> JObject;
 public outputCalValueStrict !calValue = calValueToObject calValue;
 
-      
-data foreign unsafe import jvm protected "java.util.Comparator" 
-    protected JComparator;     
+/**
+ * {@link JComparator@} is a foreign type corresponding to the Comparator Java interface which is used for ordering values.
+ */
+data foreign unsafe import jvm public "java.util.Comparator" 
+    public JComparator;
 
 /**
  * Makes a comparator that uses the ordering function argument to implement the Java comparator's compare method.
  */
-primitive protected makeComparator :: (a -> a -> Ordering) -> JComparator;
+primitive public makeComparator :: (a -> a -> Ordering) -> JComparator;
 
-                       
-data foreign unsafe import jvm protected "org.openquark.cal.util.EquivalenceRelation"
-    protected JEquivalenceRelation; 
-  
-primitive protected makeEquivalenceRelation :: (a -> a -> Boolean) -> JEquivalenceRelation;
+/**
+ * {@link JEquivalenceRelation@} is a foreign type corresponding to the EquivalenceRelation Java interface which defines an equivalence relation.
+ */
+data foreign unsafe import jvm public "org.openquark.cal.util.EquivalenceRelation"
+    public JEquivalenceRelation; 
 
+/**
+ * Makes a Java EquivalenceRelation implementation which uses the specified CAL function to compare values.
+ */
+primitive public makeEquivalenceRelation :: (a -> a -> Boolean) -> JEquivalenceRelation;
 
 //////////////////////////////////////////////////////////////////////
 
