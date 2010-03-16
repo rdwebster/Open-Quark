@@ -75,6 +75,7 @@ import Cal.Data.SqlBuilder.Db2SqlBuilder;
 import Cal.Data.SqlBuilder.OracleSqlBuilder;
 import Cal.Data.SqlBuilder.TeradataSqlBuilder;
 import Cal.Data.SqlBuilder.PostgreSqlBuilder;
+import Cal.Data.SqlBuilder.SQLiteBuilder;
 
 
 
@@ -91,6 +92,7 @@ public db2SqlBuilder = SqlBuilder.Db2SqlBuilder.db2SqlBuilder;
 public derbySqlBuilder = SqlBuilder.DerbySqlBuilder.derbySqlBuilder;
 mySqlBuilder = SqlBuilder.MySqlBuilder.mySqlBuilder;
 postgreSqlBuilder = SqlBuilder.PostgreSqlBuilder.postgreSqlBuilder;
+sqliteBuilder = SqlBuilder.SQLiteBuilder.sqliteBuilder;
 
 
 /**
@@ -116,8 +118,8 @@ public bestSqlBuilderForDatabase !databaseTypeName =
                                  ("DB2", db2SqlBuilder),
                                  ("Apache Derby", derbySqlBuilder),
                                  ("MySQL", mySqlBuilder),
-                                 ("PostreSQL", postgreSqlBuilder)
-//                                 ("SQLite", sqliteBuilder),
+                                 ("PostreSQL", postgreSqlBuilder),
+                                 ("SQLite", sqliteBuilder)
 //                                 ("Informix", informixSqlBuilder),
 //                                 ("Sybase", sybaseSqlBuilder),
                                  ];
