@@ -63,17 +63,15 @@ import Cal.Core.String;
 accumulate :: (a -> b -> a) -> (a -> c) -> a -> (d -> b) -> [d] -> c;
 public accumulate !accumulator !finalizer !runningValue !converter !values =
     let
-        helper accumulator runningValue converter values = 
+        helper !runningValue !values = 
             case values of
             [] -> runningValue;
             x : xs ->         
-                let
-                   eval = accumulator runningValue (converter x);
-                in
-                   Prelude.seq eval (helper accumulator eval converter xs);
+                helper (accumulator runningValue (converter x)) xs;
             ;        
     in
-        finalizer (helper accumulator runningValue converter values);
+        finalizer (helper runningValue values);
+
 
 /**
  * {@code accumulate1@} takes a record describing the accumulator and a set of values to operate on.
