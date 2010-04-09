@@ -45,7 +45,7 @@ module Cal.Utilities.Format;
 
 import Cal.Core.Prelude using
     typeConstructor = Int, String;
-    function = concat, error, isEmpty, max;
+    function = concat, error, isEmpty, max, min;
     ;
 import Cal.Collections.List using
     function = chop, head, join, length, replicate, transpose;
@@ -122,7 +122,7 @@ public formatTruncatedTable maxNRows columnGap !rows =
     let
         continuationRow :: [String] -> [String];
         continuationRow row = 
-            List.map (\val -> "...") row;
+            List.map (\val -> truncationValue) row;
 
         truncatedRows :: [[String]];
         truncatedRows = 
@@ -149,13 +149,17 @@ public formatTruncatedTable maxNRows columnGap !rows =
 formatTableWithLines :: Int -> [String] -> [[String]] -> String;
 public formatTableWithLines !maxNRows !headings !rows = 
     let
+        // TODO: perhaps this should be an argument.
+        maxColumnWidth :: Int;
+        maxColumnWidth = 200;
+        
         // Assume that each row has the name number of values.
         nColumns :: Int;
         nColumns = length headings;
         
         continuationRow :: [String] -> [String];
         continuationRow row = 
-            List.map (\val -> "...") row;
+            List.map (\val -> truncationValue) row;
 
         truncatedRows :: [[String]];
         truncatedRows = 
@@ -166,11 +170,15 @@ public formatTableWithLines !maxNRows !headings !rows =
         colSizes :: [Int];
         colSizes = 
             let
+                newColumnWidth :: Int -> String -> Int;
+                newColumnWidth !oldWidth !colValue = 
+                    min maxColumnWidth $ max oldWidth (String.length colValue);
+                
                 newLengthsForRow :: [Int] -> [String] -> [Int];
                 newLengthsForRow !curLengths !row = 
                     let
                         newLengths :: [Int];
-                        newLengths = List.zipWith max curLengths $ List.map String.length row;
+                        newLengths = List.zipWith newColumnWidth curLengths row;
                     in
                         List.strictList newLengths;
             in
@@ -181,11 +189,20 @@ public formatTableWithLines !maxNRows !headings !rows =
 
         textForCol :: String -> Int -> String;
         textForCol !val !rowSize = 
-                let
-                    nPadChars = rowSize - String.length val;    // + columnGap;
-                    padding = String.fromList $ replicate nPadChars ' ';
-                in
-                    val ++ padding;
+            let
+                originalLength :: Int;
+                originalLength = String.length val;
+                
+                truncatedVal :: String;
+                truncatedLength :: Int;
+                (truncatedVal, truncatedLength) = 
+                    if originalLength > maxColumnWidth then (String.substring val 0 (maxColumnWidth - String.length truncationValue) ++ truncationValue, maxColumnWidth)
+                    else (val, originalLength);
+                
+                nPadChars = rowSize - truncatedLength;
+                padding = String.fromList $ replicate nPadChars ' ';
+            in
+                truncatedVal ++ padding;
         
         separatorRow :: String;
         separatorRow = 
@@ -197,6 +214,10 @@ public formatTableWithLines !maxNRows !headings !rows =
     in
         if isEmpty headings then ""
         else join "\n" outputRows ++ "\n";
+
+/** A string to be used to indicated truncated rows or truncated column values in a formatted table. */
+truncationValue :: String;
+truncationValue = "...";
 
 /**
  * Displays the contents of a list of records in a table.
