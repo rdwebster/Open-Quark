@@ -41,55 +41,41 @@
 module Cal.Data.SqlBuilder.DefaultSqlBuilder;
 
 import Cal.Core.Prelude using
-    function =
-        doubleToString, empty, error, field1, field2, field3, fromJust,
-        intToString, isEmpty, not, toDouble;
+    function = doubleToString, empty, error, field1, field2, field3, fromJust, intToString, isEmpty, isNotANumber, not, toDouble;
     typeConstructor = Boolean, Char, Double, Int, Maybe, String;
-    dataConstructor = False, Just, Nothing, True;
+    dataConstructor = False, True, Nothing, Just;
     ;
 
 import Cal.Data.Sql using
     typeConstructor =
-        DbFunction, Expr, JoinNode, JoinType, Parameter,
-        Query, QueryOption, QueryTable, SqlBuilder, SqlBuilderState,
-        TimeInterval, TypedExpr;
-    function =
-        exprOperatorPrecedence, expressionText2, functionName,
-        operatorPrecedence, toUntypedExpr;
+        DbFunction, Expr, JoinNode, JoinType, Parameter, Query, QueryOption, QueryTable, SqlBuilder, SqlBuilderState, TypedExpr;
+    function = exprOperatorPrecedence, expressionText2, operatorPrecedence, toUntypedExpr;
     ;
 
 import Cal.Utilities.PrettyPrinter using
-    function =
-        fillSeparatedList, group, line, nest, singleSpace, spread, stack, text;
+    function = fillSeparatedList, group, line, nest, singleSpace, spread, stack, text;
     typeConstructor = Document;
     ;
 
 import Cal.Data.DatabaseMetadata using
-    typeConstructor =
-        DatabaseReference, FieldDescription, TableDescription, TableReference;
+    typeConstructor = DatabaseReference, FieldDescription, TableDescription, TableReference;
     function =
-        getDatabaseNameFromReference, getFieldDataType, getFieldName,
-        getTableConstraints, getTableFields, getTableNameFromReference,
-        getTableReference, isFieldNullable;
-    dataConstructor =
-        ForeignKeyConstraint, PrimaryKeyConstraint, UniqueConstraint;
+        getDatabaseNameFromReference, getFieldDataType, getFieldName, getTableConstraints, getTableFields,
+        getTableNameFromReference, getTableReference, isFieldNullable;
+    dataConstructor = PrimaryKeyConstraint, UniqueConstraint, ForeignKeyConstraint;
     ;
 
 import Cal.Data.SqlType using
     typeConstructor = SqlType;
     dataConstructor =
-        SqlType_BigInt, SqlType_Binary, SqlType_Bit, SqlType_Blob,
-        SqlType_Boolean, SqlType_Char, SqlType_Clob, SqlType_Date,
-        SqlType_Decimal, SqlType_Double, SqlType_Float, SqlType_Integer,
-        SqlType_LongVarBinary, SqlType_LongVarChar, SqlType_Numeric,
-        SqlType_Real, SqlType_SmallInt, SqlType_Time, SqlType_TimeStamp,
-        SqlType_TinyInt, SqlType_VarBinary, SqlType_VarChar;
+        SqlType_TinyInt, SqlType_SmallInt, SqlType_Integer, SqlType_BigInt, SqlType_Decimal, SqlType_Numeric, SqlType_Real,
+        SqlType_Float, SqlType_Double, SqlType_Bit, SqlType_Boolean, SqlType_Char, SqlType_VarChar, SqlType_LongVarChar,
+        SqlType_Clob, SqlType_Binary, SqlType_VarBinary, SqlType_LongVarBinary, SqlType_Blob, SqlType_Date, SqlType_Time,
+        SqlType_TimeStamp;
     ;
 
 import Cal.Collections.List using
-    function =
-        chop, concatMap, find, head, isElem, isElemBy, isSingletonList, join,
-        length, map, mapIndexed, subscript, tail;
+    function = chop, concatMap, find, head, isElem, isElemBy, isSingletonList, join, length, map, mapIndexed, subscript, tail;
     ;
 
 import Cal.Core.String using
@@ -854,6 +840,8 @@ formatNumber !numVal =
         && numVal <= toDouble (Prelude.maxBound :: Int)
         && numVal >= toDouble (Prelude.minBound :: Int)) then 
             Prelude.longToString (Math.roundDoubleToLong numVal)
+    // Treat NaN as a Null value.
+    else if isNotANumber numVal then "NULL"
     else doubleToString numVal;
 
 default_stringToSql :: String -> Document;
