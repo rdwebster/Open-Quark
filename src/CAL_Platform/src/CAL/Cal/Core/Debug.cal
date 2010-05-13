@@ -102,13 +102,31 @@ foreign unsafe import jvm "static method org.openquark.cal.internal.foreignsuppo
  * @see trace
  */
 traceShowable :: (Show a) => String -> a -> a;
-public traceShowable !message val = trace (message ++ (show val) ++ "\n") val;
+public traceShowable = traceShowableWith show;
+
+/** 
+ * Traces the specified value (using the show function provided) and returns its original value.
+ * @arg showValFn  a function to produce the string output for the value
+ * @arg message    a message to be included with each trace output, followed by the Show form of the value
+ * @arg val        the value to be traced and returned
+ * @return         the original value after tracing it
+ * @see trace
+ */
+traceShowableWith :: (a -> String) -> String -> a -> a;
+public traceShowableWith !showValFn !message !val = trace (message ++ showValFn val ++ "\n") val;
 
 /**
  * This works the same as {@link traceShowable@} except that {@link showInternal@} is used to show the value.
  */
 traceShowInternal :: String -> a -> a;
-public traceShowInternal !message val = trace (message ++ (showInternal val) ++ "\n") val;
+public traceShowInternal !message val = trace (message ++ showInternal val ++ "\n") val;
+
+/**
+ * As {@link traceShowInternal@} except that the value is evaluated before showing it.
+ * This can be useful in debugging for tracing values which are not Showable.
+ */
+traceShowInternalStrict :: String -> a -> a;
+public traceShowInternalStrict !msg !val = Debug.traceShowInternal msg val;
 
 /**
  * Augments a list of values such that a trace message will be displayed when members at a specified interval are accessed.
