@@ -59,6 +59,7 @@ import org.openquark.cal.compiler.TypeChecker;
 import org.openquark.cal.compiler.TypeExpr;
 import org.openquark.cal.compiler.TypeChecker.TypeCheckInfo;
 import org.openquark.cal.compiler.io.EntryPointSpec;
+import org.openquark.cal.compiler.io.OutputPolicy;
 import org.openquark.cal.machine.StatusListener;
 import org.openquark.cal.module.Cal.Core.CAL_Prelude;
 import org.openquark.cal.runtime.CALExecutorException;
@@ -185,6 +186,13 @@ public final class BasicCALServices {
         this.entryPointCache = new EntryPointCache(workspaceManager, config.entryPointCacheSize, config.moduleCacheSize);
     }
 
+    /**
+     * Create a BasicCALServices which uses the provided WorkspaceManager which is assumed to be initialized already.
+     */
+    public static BasicCALServices attach (WorkspaceManager workspaceManager, String defaultWorkspaceFileName) {
+        return new BasicCALServices (workspaceManager, null, defaultWorkspaceFileName, DEFAULT_CONFIG);
+    }
+    
     /**  
      * The simplest factory method to create a BasicCALServices instance. 
      * @param workspaceFileName name of the workspace from the StandardVault e.g. "cal.platform.test.cws"
@@ -618,7 +626,7 @@ public final class BasicCALServices {
      */
     public EntryPointSpec addNewModuleWithFunction(ModuleName newModuleName, SourceModel.FunctionDefn functionDefintion) throws GemCompilationException {
         
-        return addNewModuleWithFunction(newModuleName, null, functionDefintion, null);
+        return addNewModuleWithFunction(newModuleName, null, functionDefintion, null, OutputPolicy.DEFAULT_OUTPUT_POLICY);
     }
     
     /**
@@ -631,7 +639,7 @@ public final class BasicCALServices {
      * @return an EntryPointSpec, with default input/output policies, for the new function.
      * @throws GemCompilationException
      */
-    public EntryPointSpec addNewModuleWithFunction(ModuleName newModuleName, SourceModel.Import[] imports, SourceModel.FunctionDefn functionDefinition, SourceModel.FunctionTypeDeclaration functionTypeDeclaration) throws GemCompilationException {
+    public EntryPointSpec addNewModuleWithFunction(ModuleName newModuleName, SourceModel.Import[] imports, SourceModel.FunctionDefn functionDefinition, SourceModel.FunctionTypeDeclaration functionTypeDeclaration, OutputPolicy outputPolicy) throws GemCompilationException {
         if (newModuleName == null) {
             throw new NullPointerException("Argument newModuleName must not be null.");
         }
@@ -660,8 +668,8 @@ public final class BasicCALServices {
         if (errorLevel.compareTo(CompilerMessage.Severity.ERROR) >= 0) {
             throw new GemCompilationException("Error adding new module", logger);
         }
-                
-        return EntryPointSpec.make(QualifiedName.make(newModuleName, functionDefinition.getName()));
+        
+        return EntryPointSpec.make(QualifiedName.make(newModuleName, functionDefinition.getName()), outputPolicy);
     }
 
     /**
