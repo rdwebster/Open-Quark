@@ -53,6 +53,9 @@ public final class ClassInfo {
 
     /** Singleton finder instance. */
     private static final CallingClassFinder FINDER = new CallingClassFinder();
+    
+    /** The file protocol type for the JBoss VFS. */
+    private static final String VFSFILE_PROTOCOL = "vfsfile"; 
 
     /**
      * A class to determine the class of a method in the current execution stack.
@@ -155,6 +158,13 @@ public final class ClassInfo {
             if (contextClassLoader != null) {
                 URL resource = contextClassLoader.getResource(name);
                 if (resource != null) {
+                    // Checks to see if the returned protocol is a VFS protocol.
+                    // If it is converts it to a regular file protocol.
+                    if (VFSFILE_PROTOCOL.equals(resource.getProtocol())) {
+                        String path = resource.getPath();
+                        return new URL("file:" + path);
+                    }
+
                     return resource;
                 }
             }
@@ -192,6 +202,19 @@ public final class ClassInfo {
         }
 
         resourceSet.addAll(Collections.list(getCallingClass(1).getClassLoader().getResources(name)));
-        return Collections.enumeration(resourceSet);
+ 
+        // Checks to see if the returned protocol is a VFS protocol.
+        // If it is converts it to a regular file protocol.
+        Set<URL> resourceSetNoVFS = new LinkedHashSet<URL>();
+        for (URL resource : resourceSet) {
+            if (VFSFILE_PROTOCOL.equals(resource.getProtocol())) {
+                String path = resource.getPath();
+                resourceSetNoVFS.add(new URL("file:" + path));
+            } else {
+                resourceSetNoVFS.add(resource);
+            }
+        }
+        
+        return Collections.enumeration(resourceSetNoVFS);
     }
 }
