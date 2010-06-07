@@ -50,7 +50,6 @@ import java.sql.Types;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
-import org.openquark.util.ByteArrays;
 import org.openquark.util.database.SqlType;
 import org.openquark.util.datadictionary.ValueType;
 import org.openquark.util.time.Time;
@@ -1151,16 +1150,30 @@ public class JDBC {
         }
 
         /**
+         * Indicates whether the connection is for a PostgreSQL JDBC driver.
+         */
+        private boolean isPostgresConnection() {
+            java.sql.Connection conn = getJdbcConnection();
+            String connClassName = conn.getClass().getName();
+            return connClassName.startsWith("org.postgresql.jdbc");
+        }
+        
+        /**
          * Perform a SQL query on a given connection, from a textual SQL
          * statement
-         * @param sqluery the query
+         * @param sqlQuery the query
          * @return the result set
          * @throws DatabaseException
          */
-        public QueryResult queryFromSQLString(final String sqluery) throws DatabaseException {
+        public QueryResult queryFromSQLString(final String sqlQuery) throws DatabaseException {
             try {
                 final Statement stmt = getJdbcConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
+                // For PostgreSQL, set a reasonable fetch size to avoid reading all records into memory when fetching large resultsets.
+                if (isPostgresConnection ()) {
+                    stmt.setFetchSize(1000);
+                }
+                
                 // For MySQL, enable streaming results to avoid running out of memory when processing large result sets.
                 // For some reason, this doesn't seem to be the default behaviour -- even for forward-only read-only resultsets.
                 // Try to reflectively invoke the MySQL 'enableStreamingResults' method.
@@ -1173,16 +1186,38 @@ public class JDBC {
                 }
                 catch (Exception e)
                 {
-                    // Ignore exceptions (likely meaning that the MySQL classes aren't available.
+                    // Ignore exceptions (likely meaning that the MySQL classes aren't available).
                 }
                 
-                return new RestartableQueryResults() {
+                RestartableQueryResults rs = new RestartableQueryResults() {
                     @Override
                     protected QueryResult createResultSet() throws DatabaseException {
                         long startTime = System.currentTimeMillis();
                         try {
-                            logger.info("Executing SQL:\n" + sqluery);
-                            return new JDBCQueryResult(stmt.executeQuery(sqluery));
+                            logger.info("Executing SQL:\n" + sqlQuery);
+                            
+                            // Execute the SQL.
+                            boolean isResultSet = stmt.execute(sqlQuery);
+                            
+                            // The SQL may contain multiple statements.
+                            // Use the ResultSet corresponding to the first SELECT statement.
+                            ResultSet rs = null;
+                            while (true) {
+                                if (isResultSet) {
+                                    rs = stmt.getResultSet();
+                                    break;
+                                }
+                                else if (stmt.getUpdateCount() == -1) {
+                                    // If there is no resultset and no update count, then there are no more results in the statement.
+                                    break;
+                                }
+                                isResultSet = stmt.getMoreResults();
+                            }
+
+                            if (rs == null) {
+                                throw new DatabaseException ("No results to return for the SQL: " + sqlQuery);
+                            }
+                            return new JDBCQueryResult(rs);
                         }
                         catch (SQLException e) {
                             throw new DatabaseException(e);
@@ -1192,6 +1227,12 @@ public class JDBC {
                             logger.info("Time to execute query: " + (endTime - startTime) + " ms");
                         }
                     }};
+                    
+                // Force the query to be executed.
+                // TODO: in some cases, it might be better to let this happen lazily.
+                rs.runQuery();
+                
+                return rs;
             }
             catch (SQLException e) {
                 throw new DatabaseException(e);
@@ -1496,7 +1537,30 @@ public class JDBC {
     public static Connection connect(String url, String login, String password) throws DatabaseException {
         try {
             logger.info("Connecting: url=" + url + ", userID=" + login);
-            return new Connection(DriverManager.getConnection(url, login, password));
+            
+            java.util.Properties properties = new java.util.Properties();
+            if (login != null) {
+                properties.put("user", login);
+            }
+            if (password != null) {
+                properties.put("password", password);
+            }
+            
+//            // For SQLite.
+//            if (url.toLowerCase().startsWith("jdbc:sqlite:")) {
+//                properties.put("shared_cache", "true");
+//            }
+
+            Connection conn = new Connection(DriverManager.getConnection(url, properties));
+            
+            // For PostgreSQL, turn off the auto-commit flag by default since this enables fetching of data in batches 
+            // (instead of reading the entire resultset into memory).
+            // TODO: this could be dangerous if the connection is to be used for processing updates to the database instead of querying it.
+            if (conn.isPostgresConnection()) {
+                conn.setAutoCommit(false);
+            }
+            
+            return conn;
         }
         catch (SQLException e) {
             throw new DatabaseException("Failed to connect: url=" + url + ", userID=" + login, e);

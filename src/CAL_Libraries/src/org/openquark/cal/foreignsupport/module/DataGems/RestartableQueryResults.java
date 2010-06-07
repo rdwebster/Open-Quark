@@ -90,6 +90,14 @@ public abstract class RestartableQueryResults implements QueryResult {
      }
 
      /**
+      * Forces the query to be executed, if not already.
+      * @throws DatabaseException
+      */
+     void runQuery() throws DatabaseException {
+         getQueryResults();
+     }
+
+     /**
       * @see org.openquark.cal.foreignsupport.module.DataGems.QueryResult#close()
       */
     public void close() throws DatabaseException {
