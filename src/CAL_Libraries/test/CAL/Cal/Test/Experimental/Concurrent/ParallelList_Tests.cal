@@ -44,7 +44,7 @@ module Cal.Test.Experimental.Concurrent.ParallelList_Tests;
 
 import Cal.Core.Prelude using
     typeConstructor = Int;
-    function = assert, error, seq;
+    function = assert, error, intToString, max, seq, toLong;
     ;
 import Cal.Collections.List;
 import Cal.Experimental.Concurrent.BlockingQueue;
@@ -54,12 +54,14 @@ import Cal.Experimental.Concurrent.Parallel using
     ;
 import Cal.Utilities.Random;
 import Cal.Core.System;
-import Cal.Core.Debug;
+import Cal.Core.Debug using
+    function = trace;
+    ;
 
 
 /**
  * This function will start the processing of all the list items on separate threads.
- * The same list of items will be returned, but access to an item block until it is finished executing.
+ * The same list of items will be returned, but access to an item will block until it is finished executing.
  */
 parallelList :: Executor -> [a] -> [a];
 public parallelList !executor !list = 
@@ -104,6 +106,41 @@ public parallelListUnordered !executor !list =
         `seq`
         List.seqList $ resultList list;
 
+/**
+ * Applies the specified reduction function to values in pairs until a single value remains.
+ * An error occurs if the input list is empty.
+ */
+parallelPairwiseReduce :: Executor -> (a -> a -> a) -> [a] -> a;
+public parallelPairwiseReduce !executor !reduceFn !vals = 
+    let
+        // Take a list of one or two items and reduce this to one item.
+        // If there is a pair of values, then the reduceFn will be used to produce the reduced value.
+        // If there is a single value, then it is simply returned.
+        //reduceHelper :: [a] -> a;
+        reduceHelper !pairOrSingle = 
+            case pairOrSingle of
+            val1 : tailVals -> 
+                case tailVals of
+                [] -> val1;
+                val2 : _ -> reduceFn val1 val2;
+                ;
+            ;
+    in
+        case vals of
+        [] -> error "An empty list cannot be reduced";
+        val1 : tailVals1 -> 
+            case tailVals1 of
+            [] -> 
+                // If the list has been reduced to a single value, then return it.
+                val1;
+            val2 : tailVals2 -> 
+                // If there are 2 or more values in the list, then chop it into pairs (perhaps with a single remaining item if the list 
+                // length is odd) and apply the reduce function to each pair.
+                // Then re-run the reduction code on the resulting list.
+                // This will continue until only a single value remains.
+                parallelPairwiseReduce executor reduceFn $ List.seqList $ parallelList executor $ List.map reduceHelper $ List.chop 2 vals;
+            ;
+        ;
 
 // Random execution times (in seconds).
 execTimes :: [Int];
@@ -131,6 +168,14 @@ processSlowItemsUnordered executor nItems =
     parallelListUnordered executor $ List.map slowItem (List.take nItems execTimes);
 
 
+slowMax :: Int -> Int -> Int;
+slowMax !val1 !val2 = 
+    Debug.trace ("starting comparison of " ++ intToString val1 ++ " to " ++ intToString val2 ++ "\n") $
+    Debug.sleep (toLong (10 * (val1 + val2))) $
+    Debug.trace ("finished comparison of " ++ intToString val1 ++ " to " ++ intToString val2 ++ " = " ++ intToString (max val1 val2) ++ "\n") $
+    max val1 val2;
+
+
 testModule =
     if System.concurrentRuntime then    
         // parallelList should always return items in the original order, so processSlowItems
@@ -153,6 +198,8 @@ testModule =
         // All that can really be tested is that the same items are returned in some order.
         && assert (List.sort (processSlowItemsUnordered (Parallel.fixedThreadPoolExecutor 5) 20) == 
             List.sort (List.take 20 execTimes))
+        && assert (parallelPairwiseReduce Parallel.threadPerTaskExecutor slowMax (List.take 100 $ Random.randomBoundedInts 37 100)
+            == 99)
     else
         error "Parallel tests need to be run with the org.openquark.cal.machine.lecc.concurrent_runtime system property set."
     ;
