@@ -49,9 +49,7 @@ import Cal.Core.Prelude using
     typeClass = Eq, Ord;
     typeConstructor = Boolean, Int, Maybe, String;
     dataConstructor = False, Just, Nothing, True;
-    function =
-        equals, error, fromJust, fromMaybe, fst, induceComparator, isEmpty,
-        isJust, not, snd;
+    function = assert, equals, error, fromJust, fromMaybe, fst, induceComparator, isEmpty, isEven, isJust, not, snd;
     ;
 
 import Cal.Core.String using
@@ -254,6 +252,16 @@ public findInCorrespondingList !matchFn !lst1 !lst2 =
             else findInCorrespondingList matchFn lst1Tail lst2Tail;
         ;
     ;
+
+/* @example */
+findInCorrespondingListExamples :: Boolean;
+findInCorrespondingListExamples =
+    assert (findInCorrespondingList isEven [] [] == (Nothing :: Maybe String))
+    && assert (findInCorrespondingList isEven [1 :: Int, 3, 4, 6] [] == (Nothing :: Maybe String))
+    && assert (findInCorrespondingList isEven [] ["a", "b", "c", "d"] == Nothing)
+    && assert (findInCorrespondingList isEven [1 :: Int, 3, 4, 6] ["a", "b", "c", "d"] == Just "c")
+    && assert (findInCorrespondingList isEven [1 :: Int, 3] ["a", "b", "c", "d"] == Nothing)
+    ; 
 
 /**
  * Filters the elements of the first list using a predicate function and returns
