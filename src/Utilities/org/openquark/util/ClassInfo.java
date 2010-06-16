@@ -38,6 +38,7 @@
 package org.openquark.util;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -56,6 +57,8 @@ public final class ClassInfo {
     
     /** The file protocol type for the JBoss VFS. */
     private static final String VFSFILE_PROTOCOL = "vfsfile"; 
+    private static final String VFSZIP_PROTOCOL = "vfszip";
+    private static final String VFSMEMORY_PROTOCOL = "vfsmemory";
 
     /**
      * A class to determine the class of a method in the current execution stack.
@@ -160,12 +163,7 @@ public final class ClassInfo {
                 if (resource != null) {
                     // Checks to see if the returned protocol is a VFS protocol.
                     // If it is converts it to a regular file protocol.
-                    if (VFSFILE_PROTOCOL.equals(resource.getProtocol())) {
-                        String path = resource.getPath();
-                        return new URL("file:" + path);
-                    }
-
-                    return resource;
+                    return translateVfsProtocol(resource);
                 }
             }
             // fall through
@@ -202,19 +200,36 @@ public final class ClassInfo {
         }
 
         resourceSet.addAll(Collections.list(getCallingClass(1).getClassLoader().getResources(name)));
- 
+
         // Checks to see if the returned protocol is a VFS protocol.
         // If it is converts it to a regular file protocol.
         Set<URL> resourceSetNoVFS = new LinkedHashSet<URL>();
         for (URL resource : resourceSet) {
-            if (VFSFILE_PROTOCOL.equals(resource.getProtocol())) {
-                String path = resource.getPath();
-                resourceSetNoVFS.add(new URL("file:" + path));
-            } else {
-                resourceSetNoVFS.add(resource);
-            }
+            resourceSetNoVFS.add(translateVfsProtocol(resource));
         }
         
         return Collections.enumeration(resourceSetNoVFS);
+    }
+    
+    /**
+     * Returns whether a resource URL uses a JBoss virtual file system protocol.
+     */
+    private static boolean isVfsProtocol(URL resource) {
+        String protocol = (resource == null) ? null : resource.getProtocol();
+        return VFSFILE_PROTOCOL.equals(protocol) || VFSZIP_PROTOCOL.equals(protocol) || VFSMEMORY_PROTOCOL.equals(protocol);
+    }
+    
+    /**
+     * If the resource URL uses a JBoss virtual file system protocol, then it will be changed to use a regular file protocol. 
+     * If the protocol is not a VFS one, then the resource URL will be returned unmodified.
+     */
+    private static URL translateVfsProtocol(URL resource) throws MalformedURLException {
+        if (isVfsProtocol(resource)) {
+            String path = resource.getPath();
+            return new URL("file:" + path);
+        }
+        else {
+            return resource;
+        }
     }
 }
