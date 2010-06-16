@@ -53,13 +53,10 @@ module Cal.Core.Debug;
 import Cal.Core.Prelude using
     typeClass = Eq, Inputable, Outputable;
     typeConstructor =
-        Boolean, Byte, CalValue, Char, Decimal, Double, Either,
-        ExecutionContext, Float, Int, Integer, JCollection, JList, JMap,
+        Boolean, Byte, CalValue, Char, Decimal, Double, Either, ExecutionContext, Float, Int, Integer, JCollection, JList, JMap,
         JObject, Long, Maybe, Ordering, Short, String, TypeRep;
     dataConstructor = True, Left, Right, Nothing, Just, LT, EQ, GT;
-    function =
-        concat, equals, error, executionContext, input, intToString, output,
-        seq, toCalValue, toDouble;
+    function = concat, equals, error, executionContext, input, intToString, isEmpty, output, seq, toCalValue, toDouble;
     ;
 import Cal.Collections.List using
     function = join, map;
@@ -101,8 +98,20 @@ foreign unsafe import jvm "static method org.openquark.cal.internal.foreignsuppo
  * @return       the original value after tracing it
  * @see trace
  */
-traceShowable :: (Show a) => String -> a -> a;
+traceShowable :: Show a => String -> a -> a;
 public traceShowable = traceShowableWith show;
+
+/**
+ * Traces the specified showable list of values -- each item on its own line -- and returns the original list.
+ * @arg message  a message to be included with each trace output, followed by the Show form of the list values
+ * @arg lst      the list of values to be traced and returned
+ * @return       the original list of values after tracing it
+ * @see trace
+ */
+traceShowableList :: Show a => String -> [a] -> [a];
+public traceShowableList !message !lst = 
+    if isEmpty lst then trace (message ++ "<nil>\n") lst
+    else traceShowableWith (\!lst -> List.join "\n    " $ List.map show lst) (message ++ "\n    ") lst;
 
 /** 
  * Traces the specified value (using the show function provided) and returns its original value.
