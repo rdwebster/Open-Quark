@@ -158,7 +158,23 @@ data public DayOfWeek =
     public Friday |
     public Saturday |
     public Sunday
-    deriving Eq, Show;
+    deriving Eq;
+
+instance Show DayOfWeek where
+    show = showDayOfWeek;
+    ;
+
+showDayOfWeek :: DayOfWeek -> String;
+showDayOfWeek !dayOfWeek = 
+    case dayOfWeek of
+    Monday    -> "Monday";
+    Tuesday   -> "Tuesday";
+    Wednesday -> "Wednesday";
+    Thursday  -> "Thursday";
+    Friday    -> "Friday";
+    Saturday  -> "Saturday";
+    Sunday    -> "Sunday";
+    ;
 
 foreign unsafe import jvm "method getDayOfWeek"
     private jTime_getDayOfWeek :: Time -> TimeZone -> Int;
