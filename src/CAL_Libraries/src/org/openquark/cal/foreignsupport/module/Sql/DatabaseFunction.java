@@ -67,6 +67,7 @@ public abstract class DatabaseFunction {
         public static final Operator OR_OPERATOR                    = new Operator("Or",                    "OR",       2);
         public static final Operator LIKE_OPERATOR                  = new Operator("Like",                  "LIKE",     2);
         public static final Operator IN_OPERATOR                    = new Operator("In",                    "IN",       2);
+        public static final Operator NOT_IN_OPERATOR                = new Operator("Not In",                "NOT IN",   2);
         public static final Operator CONCAT_OPERATOR                = new Operator("Concat",                "+",        2);
         public static final Operator PLUS_OPERATOR                  = new Operator("Plus",                  "+",        2);
         public static final Operator MINUS_OPERATOR                 = new Operator("Minus",                 "-",        2);

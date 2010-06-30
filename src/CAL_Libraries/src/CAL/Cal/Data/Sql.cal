@@ -1180,7 +1180,7 @@ data public DbFunction =
     // Binary operators
     | public OpEq | public OpLt | public OpLtEq | public OpGt | public OpGtEq | public OpNotEq 
     | public OpAnd | public OpOr
-    | public OpLike | public OpIn
+    | public OpLike | public OpIn | public OpNotIn
     | public OpCat
     | public OpPlus | public OpMinus | public OpMul | public OpDiv | public OpMod
     | public OpBitAnd | public OpBitOr | public OpBitXor
@@ -4269,6 +4269,7 @@ public operatorPrecedence func =
 
     OpLike   -> 4;
     OpIn     -> 4;
+    OpNotIn  -> 4;
 
     OpCat    -> 5;
 
@@ -4838,6 +4839,7 @@ public isBinaryFunction dbFun =
     | OpOr 
     | OpLike 
     | OpIn 
+    | OpNotIn
     | OpCat 
     | OpPlus 
     | OpMinus 
@@ -5334,6 +5336,7 @@ foreign unsafe import jvm "static field org.openquark.cal.foreignsupport.module.
 foreign unsafe import jvm "static field org.openquark.cal.foreignsupport.module.Sql.DatabaseFunction$Operator.OR_OPERATOR"                    jOrOperator                 :: JDatabaseFunction;
 foreign unsafe import jvm "static field org.openquark.cal.foreignsupport.module.Sql.DatabaseFunction$Operator.LIKE_OPERATOR"                  jLikeOperator               :: JDatabaseFunction;
 foreign unsafe import jvm "static field org.openquark.cal.foreignsupport.module.Sql.DatabaseFunction$Operator.IN_OPERATOR"                    jInOperator                 :: JDatabaseFunction;
+foreign unsafe import jvm "static field org.openquark.cal.foreignsupport.module.Sql.DatabaseFunction$Operator.NOT_IN_OPERATOR"                jNotInOperator              :: JDatabaseFunction;
 foreign unsafe import jvm "static field org.openquark.cal.foreignsupport.module.Sql.DatabaseFunction$Operator.CONCAT_OPERATOR"                jConcatOperator             :: JDatabaseFunction;
 foreign unsafe import jvm "static field org.openquark.cal.foreignsupport.module.Sql.DatabaseFunction$Operator.PLUS_OPERATOR"                  jPlusOperator               :: JDatabaseFunction;
 foreign unsafe import jvm "static field org.openquark.cal.foreignsupport.module.Sql.DatabaseFunction$Operator.MINUS_OPERATOR"                 jMinusOperator              :: JDatabaseFunction;
@@ -5376,6 +5379,7 @@ outputDbFunction !func =
     OpOr            -> jOrOperator;
     OpLike          -> jLikeOperator;
     OpIn            -> jInOperator;
+    OpNotIn         -> jNotInOperator;
     OpCat           -> jConcatOperator;
     OpPlus          -> jPlusOperator;
     OpMinus         -> jMinusOperator;

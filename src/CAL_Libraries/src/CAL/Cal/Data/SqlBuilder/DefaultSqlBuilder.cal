@@ -636,6 +636,7 @@ default_functionToSql builder builderState func arguments =
             | Sql.OpNotEq
             | Sql.OpLike
             | Sql.OpIn
+            | Sql.OpNotIn
             | Sql.OpCat
             | Sql.OpPlus
             | Sql.OpMinus
@@ -699,6 +700,7 @@ default_operatorText !operator =
     Sql.OpOr            -> "OR";
     Sql.OpLike          -> "LIKE";
     Sql.OpIn            -> "IN";
+    Sql.OpNotIn         -> "NOT IN";
     Sql.OpCat           -> "+";
     Sql.OpPlus          -> "+";
     Sql.OpMinus         -> "-";

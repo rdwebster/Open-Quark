@@ -54,16 +54,14 @@ module Cal.Data.SqlParser;
 import Cal.Core.Prelude using
     typeConstructor = Boolean, Char, Either, Int, Maybe, String;
     dataConstructor = False, True, Left, Right, Nothing, Just;
-    function = 
-        compare, concat, error, field1, field2, field3, fromJust, fst, 
-        intToString, isEmpty, maybeToList, not, pair, snd, stringToInt, 
+    function =
+        compare, error, field1, field2, field3, fromJust, fst, intToString, isEmpty, maybeToList, not, pair, snd, stringToInt,
         truncate, uncurry;
     ;    
 import Cal.Collections.List using
-    function = 
-        all, concatMap, find, foldLeft, head, init, join, isElem, 
-        isSingletonList, last, length, map, removeDuplicates, reverse, sort, 
-        tail;
+    function =
+        all, concatMap, find, foldLeft, head, init, isElem, isSingletonList, join, last, length, map, removeDuplicates, reverse,
+        sort, tail;
     ;      
 import Cal.Core.String using
     function = equalsIgnoreCase, fromList, toList;
@@ -73,13 +71,11 @@ import Cal.Utilities.TimeZone;
 
 import Cal.Utilities.ExpressionLexer using
     typeConstructor = Token;
-    function = 
-        ampersandToken, asteriskToken, caretToken, closeBraceToken, 
-        closeParenToken, commaToken, dotToken, eqToken, exclmnToken, 
-        functionToken, gtToken, keywordToken, ltToken, minusToken, nameToken, 
-        numberToken, openBraceToken, openParenToken, percentToken, plusToken, 
-        slashToken, specialCharSequenceToken, specificNameToken, stringToken, 
-        tildeToken, tokenStream, vertBarToken;
+    function =
+        ampersandToken, asteriskToken, caretToken, closeBraceToken, closeParenToken, commaToken, dotToken, eqToken, exclmnToken,
+        functionToken, gtToken, keywordToken, ltToken, minusToken, nameToken, numberToken, openBraceToken, openParenToken,
+        percentToken, plusToken, slashToken, specialCharSequenceToken, specificNameToken, stringToken, tildeToken, tokenStream,
+        vertBarToken;
     ;
    
 import Cal.Data.Sql using
@@ -93,10 +89,9 @@ import Cal.Utilities.Time using
 
 import Cal.Utilities.Parser using
     typeConstructor = GenParser;
-    function = 
-        between, char, choice, count, digit, eof, label, many, many1, option, 
-        optional, pBind, pFail, pOr, pReturn, pSeq, parse, runParser, sepBy1, 
-        sepEndBy1, showParseError, spaces, try;
+    function =
+        between, char, choice, count, digit, eof, label, many, many1, option, optional, pBind, pFail, pOr, pReturn, pSeq, parse,
+        runParser, sepBy1, sepEndBy1, showParseError, spaces, try;
     ;
 
 import Cal.Core.Debug;
@@ -502,7 +497,7 @@ comparison_expression =
             openParenToken `pSeq` 
             scalar_expression_list `pBind` (\exprList ->
             closeParenToken  `pSeq`
-            pReturn (notExpr (toTypedExpr (Sql.untypedBinaryExpr Sql.OpIn leftExpr (Sql.untypedListExpr exprList))))));
+            pReturn (toTypedExpr (Sql.untypedBinaryExpr Sql.OpNotIn leftExpr (Sql.untypedListExpr exprList)))));
         
         in_list_comparison = 
             scalar_expression `pBind` (\leftExpr -> 
@@ -517,7 +512,7 @@ comparison_expression =
             k_NOT `pSeq`
             k_IN `pSeq`
             subquery `pBind` (\subquery ->
-            pReturn (notExpr (toTypedExpr (Sql.untypedBinaryExpr Sql.OpIn leftExpr (Sql.subQueryExpr subquery))))));
+            pReturn (toTypedExpr (Sql.untypedBinaryExpr Sql.OpNotIn leftExpr (Sql.subQueryExpr subquery)))));
         
         in_subquery_comparison = 
             scalar_expression `pBind` (\leftExpr -> 
