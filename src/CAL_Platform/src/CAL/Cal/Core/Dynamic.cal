@@ -156,6 +156,24 @@ public fromDynamic !dynamicValue =
     ;            
 
 /**
+ * Returns the underlying value as a {@link CalValue@} if it matches the specified type.
+ * If type types do not match, then {@link Nothing@} is returned.
+ * 
+ * @arg dynamicValue   the {@code Dynamic@} value whose underlying value is to be extracted.
+ * @arg requestedType  the {@code TypeRep@} for which the underlying value is to be returned.
+ * @return             {@code {@link Just@} v@}, where {@code v@} is the underlying value as a {@code CalValue@} if its type matches what is required of the context,
+ *                     or {@link Nothing@} otherwise.
+ */
+calValueFromDynamic :: Dynamic -> TypeRep -> Maybe CalValue;
+public calValueFromDynamic !dynamicValue !requestedType = 
+    case dynamicValue of
+    Dynamic {type, untypedValue} -> 
+        if type == requestedType then Just untypedValue
+        else Nothing;
+    ;
+
+
+/**
  * Returns the {@link typeConstructor = TypeRep@} value representing the type of the underlying value of a
  * {@link typeConstructor = Dynamic@} value.
  * 
