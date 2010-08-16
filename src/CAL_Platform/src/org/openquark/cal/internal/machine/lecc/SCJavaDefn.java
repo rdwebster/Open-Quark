@@ -6578,7 +6578,10 @@ final class SCJavaDefn {
         // Optimize Prelude.not to use the '!' java operator.
         if (var.getName().equals(CAL_Prelude.Functions.not)) {
             JavaExpression not = new JavaExpression.OperatorExpression.Unary(JavaOperator.LOGICAL_NEGATE, ecp[1].getJavaExpression());
-            return new ExpressionContextPair (not, newContext);
+            // The 'not' expression will produce a Java boolean value.  We now need to box this as the code is expecting
+            // a strict application node, not a boolean.  
+            JavaExpression boxedBoolean = createMakeKernelBooleanInvocation (not);
+            return new ExpressionContextPair (boxedBoolean, newContext);
         }
 
         // This is a fully saturated supercombinator application that can be represented
