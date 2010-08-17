@@ -42,6 +42,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.openquark.cal.compiler.QualifiedName;
+import org.openquark.util.ObjectUtils;
 
 
 /**
@@ -237,15 +238,14 @@ public final class EntryPointSpec {
         
         EntryPointSpec otherSpec = (EntryPointSpec) other;
         
-        if (otherSpec.functionalAgentName != functionalAgentName) {
+        if (!ObjectUtils.equals(functionalAgentName, otherSpec.functionalAgentName)) {
             return false;
         }
-        
+
+        if ((inputPolicies == null) != (otherSpec.inputPolicies == null)) {
+            return false;
+        }
         if (inputPolicies != null) {
-            if (otherSpec.inputPolicies == null) {
-                return false;
-            }
-            
             if (otherSpec.inputPolicies.length != inputPolicies.length) {
                 return false;
             }
@@ -262,11 +262,11 @@ public final class EntryPointSpec {
             }
             
         }
+        
+        if ((outputPolicy == null) != (otherSpec.outputPolicy == null)) {
+            return false;
+        }
         if (outputPolicy != null) {
-            if (otherSpec.outputPolicy == null) {
-                return false;
-            }
-
             if (!outputPolicy.getMarshaler().toString().equals(
                 otherSpec.outputPolicy.getMarshaler().toString())) {
                 return false;
