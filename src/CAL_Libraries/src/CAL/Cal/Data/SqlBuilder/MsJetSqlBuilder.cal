@@ -112,22 +112,22 @@ public msJetSqlBuilderFunctions =
 
 
 msAccess_buildCreateDatabaseStatement :: SqlBuilder -> DatabaseReference -> Boolean -> Document;
-msAccess_buildCreateDatabaseStatement builder databaseRef skipIfDatabaseExists =
+msAccess_buildCreateDatabaseStatement !builder !databaseRef !skipIfDatabaseExists =
     error "Unsupported operation";
 
 msAccess_buildDropDatabaseStatement :: SqlBuilder -> DatabaseReference -> Boolean -> Document;
-msAccess_buildDropDatabaseStatement builder databaseRef skipIfDatabaseExists =
+msAccess_buildDropDatabaseStatement !builder !databaseRef !skipIfDatabaseExists =
     error "Unsupported operation";
 
 msAccess_prepareQuery :: SqlBuilderState -> Query -> Query;
-msAccess_prepareQuery builderState query = 
+msAccess_prepareQuery !builderState !query = 
     let
         msAccess_maxColumnAliasLen = 64 :: Int;
     in
         limitColumnAliasLength msAccess_maxColumnAliasLen query;
 
 msAccess_functionToSql :: SqlBuilder -> SqlBuilderState -> DbFunction -> [Expr] -> Document;
-msAccess_functionToSql builder builderState func arguments = 
+msAccess_functionToSql !builder !builderState !func !arguments = 
     case func of
     Sql.QuarterFunction -> 
         defaultSqlBuilderFunctions.functionToSql builder builderState (Sql.FunctionOther "DATEPART") (toUntypedExpr (Sql.stringConstant "q") : arguments);

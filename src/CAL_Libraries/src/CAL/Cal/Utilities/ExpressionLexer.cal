@@ -428,8 +428,7 @@ public tokenStream2 indentifier_rule keywords functionNames specialCharSequences
 
                 keyword_sequence_rule = 
                     Parser.getPosition `pBind` (\pos ->
-                    choice (map single_keyword_sequence_rule keywordSequencesChars) `pBind` (\keywordSequence ->
-                    makeKeywordToken pos keywordSequence));
+                    choice (map single_keyword_sequence_rule keywordSequencesChars) `pBind` (makeKeywordToken pos));
                 
                 single_unquoted_text_rule = 
                     Parser.getPosition `pBind` (\pos ->

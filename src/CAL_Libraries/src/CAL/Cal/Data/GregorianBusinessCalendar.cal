@@ -152,7 +152,7 @@ private getWeeksInYear !year =
  * date format (year-week-day_of_week). 
  */
 gregorianDateToISO8601WeekDate :: (Int, Int, Int) -> (Int, Int, Int);
-private gregorianDateToISO8601WeekDate gregorianDate =
+private gregorianDateToISO8601WeekDate !gregorianDate =
     let
         // Convert input to Y M D
         (y, m, d) = gregorianDate;
@@ -231,13 +231,10 @@ private getDaysInMonth !month = Array.subscript maxDaysInMonth (month - 1);
  * (e.g. (1, 31) for DayOfMonthPeriod).
  */
 gregorian_periodValueRange :: Period -> PeriodType -> (Int, Int);
-private gregorian_periodValueRange parentPeriod !periodType = 
+private gregorian_periodValueRange !parentPeriod !periodType = 
     let
         hasParentPeriod :: Boolean;
         hasParentPeriod = not $ isEmpty $ getPeriodValues parentPeriod;
-
-        parentPeriodVals :: [(PeriodType, Int)];
-        parentPeriodVals = getPeriodValues parentPeriod;
 
         (parentPeriodType, parentPeriodValue) = getBasePeriod parentPeriod;
 
@@ -633,7 +630,7 @@ private gregorian_periodDisplayName_localizable_examples =
  * Throws an error if the day is not valid for the specified year.
  */
 dayOfYearToDayOfMonth :: Int -> Int -> (Int, Int);
-private dayOfYearToDayOfMonth year dayOfYear =
+private dayOfYearToDayOfMonth !year !dayOfYear =
     let
         monthDayCountPairs = map (\month -> (month, getDaysInYearMonth year month)) (upFromTo 1 12);
         
@@ -676,7 +673,7 @@ private dayOfYearToDayOfMonth year dayOfYear =
  * then the range will be unbounded in both directions.
  */
 gregorian_periodTimeRange :: Period -> Range Time;
-private gregorian_periodTimeRange period = 
+private gregorian_periodTimeRange !period = 
     let
         tz = TimeZone.currentTimeZone;
 
@@ -699,10 +696,8 @@ private gregorian_periodTimeRange period =
         year = fromJust maybeYear;
         quarter = fromJust maybeQuarter;
         month = fromJust maybeMonth;
-        weekOfYear = fromJust maybeWeekOfYear;
         dayOfYear = fromJust maybeDayOfYear;
         dayOfMonth = fromJust maybeDayOfMonth;
-        dayOfWeek = fromJust maybeDayOfWeek;
     in
         if not hasYear then makeEntireRange
         else if hasDayOfYear then
@@ -760,7 +755,7 @@ private gregorian_periodTimeRange period =
  * Returns the value of the specified period for the time value.
  */
 gregorian_periodValueFromTime :: Time -> PeriodType -> Int;
-private gregorian_periodValueFromTime time !periodType = 
+private gregorian_periodValueFromTime !time !periodType = 
     let
         tz = TimeZone.currentTimeZone;    // TODO: is this ok?
         timeParts = Time.timeParts tz time;
@@ -786,7 +781,7 @@ private gregorian_periodValueFromTime time !periodType =
  * Returns a database expression to extract a time part from a time value.
  */
 gregorian_timePartExpr :: Expr -> PeriodType -> Expr;
-private gregorian_timePartExpr baseExpr !periodType = 
+private gregorian_timePartExpr !baseExpr !periodType = 
     case periodType of
     BusinessCalendar.NoPeriod         -> baseExpr;
     BusinessCalendar.YearPeriod       -> untypedFunctionExpr Sql.YearFunction [baseExpr];

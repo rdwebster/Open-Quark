@@ -700,8 +700,6 @@ sql_time =
         colon_rule = char ':';
         dot_rule = char '.';
 
-        optional_whitespace = optional spaces;
-
         ranged_limited_rule name lowerBound upperBound value = 
             if (value < lowerBound || value > upperBound) then
                 pFail ("Value of " ++ name ++ " is out of range of " ++ (intToString lowerBound) ++ " to " ++ (intToString upperBound)) 
@@ -996,7 +994,7 @@ select_statement = select_statement_helper True;
 /**
  * Parses an entire SQL SELECT statement.
  */
-select_statement_helper allowUnion = 
+select_statement_helper !allowUnion = 
     let
         // Parse the optional ALL and DISTINCT keywords.
         set_quantifier_rule query = 
@@ -1149,7 +1147,7 @@ join_node =
  * TODO: this code only handles outer join expressions that are ANDed with the other top-level expressions.
  *       Perhaps ORed outer join expressions should be supported as well.
  */
-where_clause_info query = 
+where_clause_info !query = 
     let
         check_single_table_expression expr = 
             let

@@ -110,7 +110,7 @@ public fiscalBusinessCalendar !nMonthsOffset =
  * (e.g. (1, 31) for DayOfMonthPeriod).
  */
 fiscal_periodValueRange :: Int -> Period -> PeriodType -> (Int, Int);
-private fiscal_periodValueRange nMonthsOffset parentPeriod !periodType = 
+private fiscal_periodValueRange !nMonthsOffset parentPeriod !periodType = 
     case periodType of
     (NoPeriod
         | YearPeriod 
@@ -146,7 +146,7 @@ private fiscal_periodValueRange nMonthsOffset parentPeriod !periodType =
  * For example, for the Quarter period type, this might return {@code "Q1 98"@}.
  */
 fiscal_periodDisplayName :: Int -> Period -> PeriodType -> Int -> String;
-private fiscal_periodDisplayName nMonthsOffset parentPeriod !periodType !periodValue = 
+private fiscal_periodDisplayName !nMonthsOffset parentPeriod !periodType !periodValue = 
     case periodType of
     (NoPeriod
         | YearPeriod 
@@ -186,7 +186,7 @@ private fiscal_periodDisplayName nMonthsOffset parentPeriod !periodType !periodV
  * then the range will be unbounded in both directions.
  */
 fiscal_periodTimeRange :: Int -> Period -> Range Time;
-private fiscal_periodTimeRange nMonthsOffset period = 
+private fiscal_periodTimeRange !nMonthsOffset period = 
     let
         // TODO: this will not work if the period doesn't contain months...
         gregorianPeriod :: Period;
@@ -249,7 +249,7 @@ private fiscal_periodTimeRange nMonthsOffset period =
  * Returns the value of the specified period for the time value.
  */
 fiscal_periodValueFromTime :: Int -> Time -> PeriodType -> Int;
-private fiscal_periodValueFromTime nMonthsOffset time !periodType = 
+private fiscal_periodValueFromTime !nMonthsOffset !time !periodType = 
     let
         baseGregorianPeriod :: Period;
         baseGregorianPeriod = getPeriodFromTime defaultBusinessCalendar time [YearPeriod, QuarterPeriod, MonthPeriod];
@@ -297,7 +297,7 @@ private fiscal_periodValueFromTime nMonthsOffset time !periodType =
  * Returns a database expression to extract a time part from a time value.
  */
 fiscal_timePartExpr :: Int -> Expr -> PeriodType -> Expr;
-private fiscal_timePartExpr nMonthsOffset baseExpr !periodType = 
+private fiscal_timePartExpr !nMonthsOffset !baseExpr !periodType = 
     let
         // Construct an expression to shift by N months.
         shiftedTimeExpr :: Expr;

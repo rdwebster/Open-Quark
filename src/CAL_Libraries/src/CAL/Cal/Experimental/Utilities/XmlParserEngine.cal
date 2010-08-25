@@ -137,7 +137,7 @@ private catMaybes = concatMap maybeToList;
  * Apply a function to the second element of a pair.
  */
 mapPair :: (b -> c) -> (a,b) -> (a,c);
-private mapPair f ab =
+private mapPair !f !ab =
     case ab of
     (a, b) -> (a, f b);
     ;
@@ -214,7 +214,7 @@ protected xmlChar =
  * Test a code point to see if it matches the Char production.
  */
 isXmlChar :: Int -> Boolean;
-private isXmlChar cp =
+private isXmlChar !cp =
     // At the time of writing, CAL doesn't support hexadecimal integer literals.
     // When it does, replace the decimal literals with the commented hexadecimal literals.
     32/*0x0020*/ <= cp && cp <= 55295/*0xD7FF*/ ||
@@ -329,8 +329,7 @@ protected attValue elementName attributeName =
                    // Instead of using Reference production, use EntityRef and
                    // CharRef productions directly to do custom expansion of
                    // general entities.
-                   reference)) `pBind` (\rawValue ->
-            normalize rawValue);
+                   reference)) `pBind` normalize;
         
         insideEntity = insideGeneral [];
         

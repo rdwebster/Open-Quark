@@ -160,10 +160,10 @@ defaultSqlBuilder :: SqlBuilder;
 public defaultSqlBuilder = Sql.makeSqlBuilder defaultSqlBuilderFunctions;
 
 default_prepareQuery :: SqlBuilderState -> Query -> Query;
-default_prepareQuery builderState query = query;
+default_prepareQuery !builderState !query = query;
 
 default_constructQuery :: SqlBuilder -> SqlBuilderState -> Document -> Document -> Document -> Document -> Document -> Document -> Document;
-default_constructQuery builder builderState selectBody fromBody whereBody groupByBody havingBody orderByBody = 
+default_constructQuery !builder !builderState !selectBody !fromBody !whereBody !groupByBody !havingBody !orderByBody = 
     let
         selectDoc  = group (text "SELECT" ++ nest 4 (line ++ selectBody));
         fromDoc    = if (isEmpty fromBody)    then empty else group (text "FROM"     ++ nest 4 (line ++ fromBody));
@@ -176,14 +176,14 @@ default_constructQuery builder builderState selectBody fromBody whereBody groupB
 
 
 default_constructUnionQuery :: SqlBuilder -> SqlBuilderState -> Document -> Document -> Boolean -> Document;
-default_constructUnionQuery builder builderState query1Text query2Text !unionAll = 
+default_constructUnionQuery !builder !builderState !query1Text !query2Text !unionAll = 
     let
         unionKeyword = if unionAll then "UNION ALL" else "UNION";
     in
         group (stack [query1Text, text unionKeyword, query2Text]);
 
 default_buildSelectClause :: SqlBuilder -> SqlBuilderState -> [QueryOption] -> [(Expr, String)] -> Document;
-default_buildSelectClause builder builderState options columns = 
+default_buildSelectClause !builder !builderState !options !columns = 
     let
         isDistinct = isElem Sql.Distinct options;
         distinctOptionText = if (isDistinct) then text "DISTINCT" else empty;
@@ -231,7 +231,7 @@ default_buildSelectClause builder builderState options columns =
         stack [prefixText, fillSeparatedList True "," columnTextVals];
 
 default_buildOrderByClause :: SqlBuilder -> SqlBuilderState -> [(Expr, Boolean)] -> Document;
-default_buildOrderByClause builder builderState orderExprs = 
+default_buildOrderByClause !builder !builderState !orderExprs = 
     let
         orderExprText orderExpr = 
             let
@@ -246,11 +246,11 @@ default_buildGroupByClause :: SqlBuilder -> SqlBuilderState -> [Expr] -> Documen
 default_buildGroupByClause = fillExpressionList;
 
 default_buildFromClause :: SqlBuilder -> SqlBuilderState -> [JoinNode] -> Document;
-default_buildFromClause builder builderState joins = 
+default_buildFromClause !builder !builderState !joins = 
     fillSeparatedList True "," (map (default_joinNodeText True builder builderState True) joins);
 
 default_joinNodeText :: Boolean -> SqlBuilder -> SqlBuilderState -> Boolean -> JoinNode -> Document;
-default_joinNodeText addJoinParens builder builderState !rootNode joinNode = 
+default_joinNodeText !addJoinParens !builder !builderState !rootNode !joinNode = 
     case joinNode of
     Sql.JoinTable {table} -> 
         Sql.buildTableAndAliasText builder builderState table;
@@ -286,14 +286,14 @@ default_joinTypeText !joinType =
  * Returns whether the expression compares two simple values using a comparison operator.
  */
 isSimpleBinaryComaprisonExpr :: Expr -> Boolean;
-isSimpleBinaryComaprisonExpr expr = 
+isSimpleBinaryComaprisonExpr !expr = 
     let
         args = Sql.getArgumentsFromFunctionExpr expr;
     in
         Sql.isOperatorExpr expr && length args == 2 && not (List.any Sql.isOperatorExpr args);
 
 default_buildWhereClause :: SqlBuilder -> SqlBuilderState -> (Maybe Expr) -> [JoinNode] -> Document;
-default_buildWhereClause builder builderState restriction joins =
+default_buildWhereClause !builder !builderState !restriction !joins =
     case restriction of
     Nothing -> empty;
     Just restrictionValue ->
@@ -301,7 +301,7 @@ default_buildWhereClause builder builderState restriction joins =
     ;
 
 default_buildHavingClause :: SqlBuilder -> SqlBuilderState -> (Maybe Expr) -> Document;
-default_buildHavingClause builder builderState groupRestriction =
+default_buildHavingClause !builder !builderState !groupRestriction =
     case groupRestriction of
     Nothing -> empty;
     Just groupRestrictionValue -> nest 4 (expressionText2 builder builderState groupRestrictionValue);
@@ -309,7 +309,7 @@ default_buildHavingClause builder builderState groupRestriction =
 
 // TODO: make use of the 'skipIfDatabaseExists' flag
 default_buildCreateDatabaseStatement :: SqlBuilder -> DatabaseReference -> Boolean -> Document;
-default_buildCreateDatabaseStatement builder databaseRef skipIfDatabaseExists =
+default_buildCreateDatabaseStatement !builder !databaseRef !skipIfDatabaseExists =
     let
         databaseNameText = getDatabaseNameFromReference databaseRef;
     in
@@ -317,7 +317,7 @@ default_buildCreateDatabaseStatement builder databaseRef skipIfDatabaseExists =
 
 // TODO: make use of the 'onlyIfDatabaseExists' flag
 default_buildDropDatabaseStatement :: SqlBuilder -> DatabaseReference -> Boolean -> Document;
-default_buildDropDatabaseStatement builder databaseRef onlyIfDatabaseExists =
+default_buildDropDatabaseStatement !builder !databaseRef !onlyIfDatabaseExists =
     let
         databaseNameText = getDatabaseNameFromReference databaseRef;
     in
@@ -325,7 +325,7 @@ default_buildDropDatabaseStatement builder databaseRef onlyIfDatabaseExists =
     
 // TODO: make use of the 'skipIfTableExists' flag...
 default_buildCreateTableStatement :: SqlBuilder -> TableDescription -> Boolean -> Document;
-default_buildCreateTableStatement builder tableDesc skipIfTableExists = 
+default_buildCreateTableStatement !builder !tableDesc !skipIfTableExists = 
     let
         tableRef = getTableReference tableDesc;
         fieldDescriptions = getTableFields tableDesc;
@@ -364,7 +364,7 @@ default_buildCreateTableStatement builder tableDesc skipIfTableExists =
             ++ line ++ text ")";
 
 default_buildCreateViewStatement :: SqlBuilder -> TableReference -> Query -> Boolean -> Document;
-default_buildCreateViewStatement builder viewRef viewDefinition skipIfViewExists = 
+default_buildCreateViewStatement !builder !viewRef !viewDefinition !skipIfViewExists = 
     group $ 
         text "CREATE VIEW " 
             ++ singleSpace ++ Sql.quoteIdentifier builder (getTableNameFromReference viewRef)
@@ -373,17 +373,17 @@ default_buildCreateViewStatement builder viewRef viewDefinition skipIfViewExists
 
 // TODO: make use of the 'onlyIfTableExists' flag...
 default_buildDropTableStatement :: SqlBuilder -> TableReference -> Boolean -> Document;
-default_buildDropTableStatement builder tableRef onlyIfTableExists = 
+default_buildDropTableStatement !builder !tableRef !onlyIfTableExists = 
     text "DROP TABLE" ++ singleSpace ++ Sql.quoteIdentifier builder (getTableNameFromReference tableRef);
 
 default_buildDropViewStatement :: SqlBuilder -> TableReference -> Boolean -> Document;
-default_buildDropViewStatement builder viewRef onlyIfViewExists = 
+default_buildDropViewStatement !builder !viewRef !onlyIfViewExists = 
     text "DROP VIEW" ++ singleSpace ++ Sql.quoteIdentifier builder (getTableNameFromReference viewRef);
 
 // By default, break up a multi-row INSERT statement to create N individual INSERT statements.
 // The buildMultiRowInsertValuesStatement function can be used for cases where INSERT supports multiple rows in one statement.
 default_buildSingleRowInsertValuesStatement :: SqlBuilder -> TableReference -> Maybe [String] -> [[Expr]] -> Document;
-default_buildSingleRowInsertValuesStatement builder tableRef maybeDestColumns rowsOfValues = 
+default_buildSingleRowInsertValuesStatement !builder !tableRef !maybeDestColumns !rowsOfValues = 
     case rowsOfValues of
     [] -> empty;
     firstRowValues : rest -> 
@@ -399,7 +399,7 @@ default_buildSingleRowInsertValuesStatement builder tableRef maybeDestColumns ro
     ;
 
 default_buildMultiRowInsertValuesStatement :: SqlBuilder -> TableReference -> Maybe [String] -> [[Expr]] -> Document;
-public default_buildMultiRowInsertValuesStatement builder tableRef maybeDestColumns rowsOfValues = 
+public default_buildMultiRowInsertValuesStatement !builder !tableRef !maybeDestColumns !rowsOfValues = 
     let
         destColumnText :: Document;
         destColumnText = 
@@ -424,7 +424,7 @@ public default_buildMultiRowInsertValuesStatement builder tableRef maybeDestColu
                ];
 
 default_buildInsertQueryValuesStatement :: SqlBuilder -> TableReference -> Maybe [String] -> Query -> Document;
-default_buildInsertQueryValuesStatement builder tableRef maybeDestColumns insertQuery =
+default_buildInsertQueryValuesStatement !builder !tableRef !maybeDestColumns !insertQuery =
     let
         destColumnText = 
             case maybeDestColumns of
@@ -440,7 +440,7 @@ default_buildInsertQueryValuesStatement builder tableRef maybeDestColumns insert
             ++ nest 4 (line ++ Sql.queryTextDocument builder insertQuery);
 
 default_buildUpdateValuesStatement :: SqlBuilder -> SqlBuilderState -> TableReference -> [String] -> [Expr] -> TypedExpr Boolean -> Document;
-default_buildUpdateValuesStatement builder builderState tableRef destColumns newValues condition = 
+default_buildUpdateValuesStatement !builder !builderState !tableRef !destColumns !newValues !condition = 
     let
         colValueText :: String -> Expr -> Document;
         colValueText colName newValue = 
@@ -464,7 +464,7 @@ default_buildUpdateValuesStatement builder builderState tableRef destColumns new
             );
 
 default_buildDeleteRowsStatement :: SqlBuilder -> SqlBuilderState -> TableReference -> TypedExpr Boolean -> Document;
-default_buildDeleteRowsStatement builder builderState tableRef condition = 
+default_buildDeleteRowsStatement !builder !builderState !tableRef !condition = 
     let
         whereLineText :: Document;
         whereLineText = 
@@ -478,15 +478,15 @@ default_buildDeleteRowsStatement builder builderState tableRef condition =
             ++ whereLineText;
 
 default_buildCommitStatement :: SqlBuilder -> Document;
-default_buildCommitStatement builder = text "COMMIT";
+default_buildCommitStatement !builder = text "COMMIT";
 
 default_buildCompoundStatement :: [Document] -> Document;
-default_buildCompoundStatement componentDocs = 
+default_buildCompoundStatement !componentDocs = 
     // Include a ';' after each statement in a compound statement.
     group $ stack $ List.map (\stmtDoc -> stmtDoc ++ text ";") componentDocs;
 
 default_buildFieldDescription :: SqlBuilder -> FieldDescription -> Document;
-default_buildFieldDescription builder fieldDesc = 
+default_buildFieldDescription !builder fieldDesc = 
     let
         fieldTypeText = Sql.fieldTypeText builder (getFieldDataType fieldDesc);
         nullableText = if (isFieldNullable fieldDesc) then "NULL" else "NOT NULL";
@@ -523,16 +523,16 @@ default_buildFieldType !dataType =
     ;
 
 default_parameterToSql :: SqlBuilder -> Parameter -> Document;
-default_parameterToSql builder parameter =
+default_parameterToSql !builder !parameter =
     if (Sql.isUnnamedParameter parameter) then text "?"
     else error "Named parameters are currently not supported!";
 
 default_listToSql :: SqlBuilder -> SqlBuilderState -> [Expr] -> Document;
-default_listToSql builder builderState listValues = 
+default_listToSql !builder !builderState !listValues = 
     text "(" ++ buildExpressionList builder builderState listValues ++ text ")";
 
 default_functionToSql :: SqlBuilder -> SqlBuilderState -> DbFunction -> [Expr] -> Document;
-default_functionToSql builder builderState func arguments = 
+default_functionToSql !builder !builderState !func !arguments = 
     let
         nArgs = length arguments;
 
@@ -678,7 +678,7 @@ default_functionToSql builder builderState func arguments =
         ;
 
 default_functionNameText :: DbFunction -> String;
-default_functionNameText func = 
+default_functionNameText !func = 
     Sql.defaultFunctionName func;
 
 default_operatorText :: DbFunction -> String;
@@ -716,7 +716,7 @@ default_operatorText !operator =
     ;
         
 default_addParens :: Document -> Document;
-default_addParens txt = 
+default_addParens !txt = 
     text "(" ++ txt ++ text ")";
 
 /**
@@ -731,7 +731,7 @@ default_quoteIdentifier = quoteIdentifierHelper default_quotesNeeded "[" "]";
  * For a qualified table name, this will quote each piece of the name separately.
  */
 quoteIdentifierHelper :: (String -> Boolean) -> String -> String -> String -> Document;
-public quoteIdentifierHelper quotesNeededFn openQuote closeQuote txt =
+public quoteIdentifierHelper !quotesNeededFn !openQuote !closeQuote !txt =
     let
         separator = ".";
         namePieces = String.splitString separator txt;
@@ -744,7 +744,7 @@ public quoteIdentifierHelper quotesNeededFn openQuote closeQuote txt =
  * Returns whether the specified identifier needs to be quoted.
  */
 quotesNeededHelper :: (Char -> Boolean) -> (Char -> Boolean) -> String -> Boolean;
-public quotesNeededHelper isValidFirstSqlChar isValidSqlChar !txt = 
+public quotesNeededHelper !isValidFirstSqlChar !isValidSqlChar !txt = 
     let
         txtChars = String.toList txt;
         firstCharValid = isValidFirstSqlChar (head txtChars);
@@ -784,7 +784,7 @@ default_buildTableAndAliasText :: SqlBuilder -> SqlBuilderState -> QueryTable ->
 default_buildTableAndAliasText = buildTableAndAliasTextHelper True;
 
 buildTableAndAliasTextHelper :: Boolean -> SqlBuilder -> SqlBuilderState -> QueryTable -> Document;
-public buildTableAndAliasTextHelper includeAsKeywordWithAlias builder builderState table = 
+public buildTableAndAliasTextHelper !includeAsKeywordWithAlias !builder !builderState !table = 
     let
         qualName = Sql.tableNameText builder builderState table;
         tableAlias = Sql.getQueryTableAlias table;
@@ -823,7 +823,7 @@ default_makeSafeName !name =
  * @arg name
  */
 makeSafeNameWithLengthCheck :: (String -> String) -> Int -> String -> String;
-public makeSafeNameWithLengthCheck safeNameFn !maxLength !name =
+public makeSafeNameWithLengthCheck !safeNameFn !maxLength !name =
     let
         safeName :: String;
         safeName = safeNameFn name;
@@ -847,7 +847,7 @@ formatNumber !numVal =
     else doubleToString numVal;
 
 default_stringToSql :: String -> Document;
-default_stringToSql strVal = 
+default_stringToSql !strVal = 
     // Escape any single quotes in the string value, and enclose in single quotes.
     text ("'" ++ (replaceAllString strVal "'" "''") ++ "'");
 
@@ -855,7 +855,7 @@ default_timestampPattern :: String;
 default_timestampPattern = "'{ts '''yyyy-MM-dd HH:mm:ss.S'''}'";
 
 default_timeToSql :: Time -> TimeZone -> Document;
-default_timeToSql timeVal timeZone = 
+default_timeToSql !timeVal !timeZone = 
     text (Time.formatTime timeVal timeZone Time.gregorianCalendar default_timestampPattern Locale.defaultLocale);
 
 default_booleanToSql :: Boolean -> Document;
@@ -878,20 +878,20 @@ default_timeIntervalToSql !timeInterval =
 
 
 enclose :: String -> String -> String -> String;
-enclose !l r x = l ++ x ++ r;
+enclose !l !r !x = l ++ x ++ r;
 
 /**
  * Constructs a comma-separated list of expressions.
  */
 buildExpressionList :: SqlBuilder -> SqlBuilderState -> [Expr] -> Document;
-buildExpressionList builder builderState exprs = 
+buildExpressionList !builder !builderState !exprs = 
     let
         exprTextVals = map (expressionText2 builder builderState) exprs;
     in
         join (text ", ") exprTextVals;
 
 fillExpressionList :: SqlBuilder -> SqlBuilderState -> [Expr] -> Document;
-fillExpressionList builder builderState exprs = 
+fillExpressionList !builder !builderState !exprs = 
     let
         exprTextVals = map (expressionText2 builder builderState) exprs;
     in
@@ -902,7 +902,7 @@ fillExpressionList builder builderState exprs =
  * Limits the length of the projected column aliases in the query.
  */
 limitColumnAliasLength :: Int -> Query -> Query;
-public limitColumnAliasLength maxColumnAliasLen query = 
+public limitColumnAliasLength !maxColumnAliasLen !query = 
     let
         oldAliases = Sql.projectedColumnAliases query;
 
@@ -942,7 +942,7 @@ public limitColumnAliasLength maxColumnAliasLen query =
  * Convert TopN queries to restrict the number of rows using the ranking functions.
  */
 restructureTopNToRanking :: Query -> Query;
-public restructureTopNToRanking query = 
+public restructureTopNToRanking !query = 
     case (find Sql.isTopNOption (Sql.queryOptions query)) of
     Nothing -> query;
     Just topNInfo -> 

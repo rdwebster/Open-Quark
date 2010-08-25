@@ -237,7 +237,7 @@ data public Period =
  * TODO: validate period nesting (i.e. order)?
  */
 makePeriod :: [(PeriodType, Int)] -> Period;
-public makePeriod periodValues = 
+public makePeriod !periodValues = 
     Period periodValues;
 
 /**
@@ -249,7 +249,7 @@ public makePeriod periodValues =
  * TODO: validate period nesting (i.e. order)?
  */
 makeChildPeriod :: Period -> PeriodType -> Int -> Period;
-public makeChildPeriod parentPeriod childPeriodType childPeriodValue = 
+public makeChildPeriod !parentPeriod !childPeriodType !childPeriodValue = 
     case parentPeriod of
     Period {periodValues} -> Period (periodValues ++ [(childPeriodType, childPeriodValue)]);
     ;
@@ -270,7 +270,7 @@ public getPeriodValues !period = period.Period.periodValues;
  * values in the {@link typeConstructor=Period @}.
  */
 getBasePeriod :: Period -> (PeriodType, Int);
-public getBasePeriod period = 
+public getBasePeriod !period = 
     case period of
     Period {periodValues} -> 
         case List.reverse periodValues of
@@ -302,7 +302,7 @@ public getBasePeriodValue = snd # getBasePeriod;
  * Throws an error if there are no values in the {@link typeConstructor=Period @}.
  */
 setBasePeriodValue :: Period -> Int -> Period;
-public setBasePeriodValue period newBasePeriodValue = 
+public setBasePeriodValue !period !newBasePeriodValue = 
     case period of
     Period {periodValues} -> 
         case List.reverse periodValues of
@@ -323,7 +323,7 @@ instance Show Period where
  * debugging purposes (format not guaranteed).
  */
 showPeriod :: Period -> String;
-private showPeriod period = 
+private showPeriod !period = 
     case period of
     Period {periodValues} -> 
         "Period [" ++ join ", " (map (\pv -> show (fst pv) ++ " " ++ intToString (snd pv)) periodValues) ++ "]";
@@ -412,7 +412,7 @@ public periodDisplayName !businessCalendar parentPeriod !periodType !periodValue
  * will not be bounded on either end.
  */
 getPeriodTimeRange :: BusinessCalendar -> Period -> Range Time;
-public getPeriodTimeRange businessCalendar period = 
+public getPeriodTimeRange !businessCalendar !period = 
     case businessCalendar of
     BusinessCalendar {periodTimeRangeFn} -> periodTimeRangeFn period;
     ;
@@ -422,7 +422,7 @@ public getPeriodTimeRange businessCalendar period =
  * value of a given {@link typeConstructor=PeriodType @} for the specified time.
  */
 getPeriodValueFromTime :: BusinessCalendar -> Time -> PeriodType -> Int;
-public getPeriodValueFromTime !businessCalendar time !periodType = 
+public getPeriodValueFromTime !businessCalendar !time !periodType = 
     case businessCalendar of
     BusinessCalendar {periodValueFromTimeFn} -> periodValueFromTimeFn time periodType;
     ;
@@ -433,7 +433,7 @@ public getPeriodValueFromTime !businessCalendar time !periodType =
  * from the specified time expression. 
  */
 getTimePartExpr :: BusinessCalendar -> Expr -> PeriodType -> Expr;
-public getTimePartExpr !businessCalendar baseTimeExpr !periodType =
+public getTimePartExpr !businessCalendar !baseTimeExpr !periodType =
     case businessCalendar of
     BusinessCalendar {timePartExprFn} -> timePartExprFn baseTimeExpr periodType;
     ;
@@ -457,7 +457,7 @@ public getPeriodFromTime !businessCalendar !time !periodTypes =
  * of a {@link typeConstructor=Period @}.
  */
 getValidBasePeriodValues :: BusinessCalendar -> Period -> (Int, Int);
-public getValidBasePeriodValues businessCalendar !period = 
+public getValidBasePeriodValues !businessCalendar !period = 
     case period of
     Period {periodValues} -> 
         if isEmpty periodValues then error "The period contains no period values"
@@ -491,7 +491,7 @@ public getPeriodValue !period !periodType =
  * this might return {@code [(1, "Q1 98"), (2, "Q2 98"), (3, "Q3 98"), (4, "Q4 98")]@}.
  */
 getChildPeriodValues :: BusinessCalendar -> Period -> PeriodType -> Maybe Int -> Maybe Int -> [(Int, String)];
-public getChildPeriodValues !businessCalendar parentPeriod !periodType maybeMinValue maybeMaxValue = 
+public getChildPeriodValues !businessCalendar parentPeriod !periodType !maybeMinValue !maybeMaxValue = 
     let
         periodRange :: (Int, Int);
         periodRange = getPeriodValueRange businessCalendar parentPeriod periodType;
@@ -514,7 +514,7 @@ public getChildPeriodValues !businessCalendar parentPeriod !periodType maybeMinV
  * {@link function=makeEndOfPreviousPeriod @}. 
  */
 periodBoundaryHelper :: Int -> Boolean -> BusinessCalendar -> Period -> PeriodType -> Period;
-private periodBoundaryHelper !shiftAmount !wantStart businessCalendar !period periodType =
+private periodBoundaryHelper !shiftAmount !wantStart !businessCalendar !period !periodType =
     case period of
     Period {periodValues} -> 
         let
@@ -577,7 +577,7 @@ private makeEndOfPreviousPeriod = periodBoundaryHelper (-1) False;
  * shifting the month value should update the DayOfYear value as well.
  */
 shiftByNPeriods :: BusinessCalendar -> Period -> PeriodType -> Int -> Period;
-public shiftByNPeriods businessCalendar !origPeriod periodType shiftAmount = 
+public shiftByNPeriods !businessCalendar !origPeriod !periodType !shiftAmount = 
     case origPeriod of
     Period {periodValues} -> 
         let
@@ -650,7 +650,7 @@ protected wrapPeriodValue !valueRange !periodValue =
  * of the valid range, it will be changed to the closest valid value.
  */
 truncatePeriodValues :: BusinessCalendar -> [(PeriodType, Int)] -> [(PeriodType, Int)];
-private truncatePeriodValues businessCalendar periodValues = 
+private truncatePeriodValues !businessCalendar !periodValues = 
     let
         truncateHelper :: Period -> [(PeriodType, Int)] -> [(PeriodType, Int)];
         truncateHelper parentPeriod !childPeriodValues = 

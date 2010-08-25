@@ -163,7 +163,7 @@ teradata_quoteIdentifier = quoteIdentifierHelper quotesNeeded_allowUppercaseOnly
 
 
 teradata_prepareQuery :: SqlBuilderState -> Query -> Query;
-teradata_prepareQuery builderState query = 
+teradata_prepareQuery !builderState !query = 
     let
         ncrTearadata_maxColumnAliasLen = 30;
 
@@ -184,13 +184,13 @@ teradata_prepareQuery builderState query =
 //v2r5 does not like operations on different subtypes of a datetime field, so in order to use timestamps
 //we need to make sure all fields are casted to timestamps as well
 teradata_castDateFieldsToTimeStamps :: Query -> Query;
-teradata_castDateFieldsToTimeStamps query =
+teradata_castDateFieldsToTimeStamps !query =
     Sql.transformQueryRestrictionExpr Sql.convertDateQueryFieldsToTimeExprs query;
 
 
 // Customize the SQL generated for certain Teradata functions.
 teradata_functionToSql :: SqlBuilder -> SqlBuilderState -> DbFunction -> [Expr] -> Document;
-teradata_functionToSql builder builderState func arguments = 
+teradata_functionToSql !builder !builderState !func !arguments = 
     let
         isRankFunction = 
             case func of 
@@ -260,7 +260,6 @@ teradata_functionToSql builder builderState func arguments =
         quarterFunctionText =                 
             let
                 dateArg = head arguments;
-                dateArgText = expressionText2 builder builderState dateArg;
                 monthFromDateText = text " WHEN " ++ teradataDatePartText "MONTH"; 
                 lineText = text "";//line;
                 lessThan4Text = text " < 4 THEN 1";

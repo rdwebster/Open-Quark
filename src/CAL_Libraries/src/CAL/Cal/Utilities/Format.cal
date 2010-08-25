@@ -118,7 +118,7 @@ public formatTable !columnGap !rows =
  * @return         a string representing the specified cells formatted in a table.
  */
 formatTruncatedTable :: Int -> Int -> [[String]] -> String;
-public formatTruncatedTable maxNRows columnGap !rows = 
+public formatTruncatedTable !maxNRows !columnGap !rows = 
     let
         continuationRow :: [String] -> [String];
         continuationRow row = 
@@ -257,7 +257,7 @@ showRecordValues !r = Record.unsafeBuildListFromRecord (Record.dictionary r "sho
  * @return a string representing the specified values formatted in columns.
  */
 formatInColumns :: Int -> Int -> [String] -> String;
-public formatInColumns nColumns columnGap values = 
+public formatInColumns !nColumns !columnGap !values = 
     let
         nValues = length values;
         nRows = (nValues + (nColumns - 1)) / nColumns;

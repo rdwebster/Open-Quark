@@ -1994,7 +1994,7 @@ public tokenPrim show nextpos test
 satisfyInternal :: (Char -> Boolean) -> GenParser Char st Char;
 private satisfyInternal f =
     tokenPrimSeq
-        (\c -> String.fromChar c)
+        String.fromChar
         (\pos c cs -> updatePosChar pos c)
         (\c -> if (f c) then Just c else Nothing);
 
