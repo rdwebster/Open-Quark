@@ -57,14 +57,11 @@ module Cal.Data.BusinessCalendar;
 import Cal.Core.Prelude using
     typeClass = Eq, Ord;
     typeConstructor = Boolean, Int, Maybe, String;
-    dataConstructor = False, Nothing, True;
-    function =
-        error, fromMaybe, fst, intToString, isEmpty, max, min, not, snd, 
-        upFromTo;
+    dataConstructor = False, True, Nothing;
+    function = error, fromMaybe, fst, intToString, isEmpty, max, min, snd, upFromTo;
     ;
 import Cal.Collections.List using
-    function =
-        drop, foldLeftStrict, head, init, isElem, join, last, lookup, map, tail;
+    function = foldLeftStrict, init, isElem, join, last, lookup, map;
     ;      
 import Cal.Core.Debug using
     typeClass = Show;
@@ -95,7 +92,10 @@ data public PeriodType =
     public WeekOfYearPeriod |
     public DayOfYearPeriod |
     public DayOfMonthPeriod |
-    public DayOfWeekPeriod
+    public DayOfWeekPeriod |
+    public HourPeriod | 
+    public MinutePeriod | 
+    public SecondPeriod
     deriving Eq, Ord;
 
 /**
@@ -111,7 +111,10 @@ private intToPeriodTypeMap = [(0, NoPeriod),
                               (4, WeekOfYearPeriod), 
                               (5, DayOfYearPeriod), 
                               (6, DayOfMonthPeriod), 
-                              (7, DayOfWeekPeriod)];
+                              (7, DayOfWeekPeriod),
+                              (8, HourPeriod), 
+                              (9, MinutePeriod), 
+                              (10, SecondPeriod)];
 
 /**
  * A map associating each  {@link typeConstructor=PeriodType @} with its ordinal.
@@ -174,6 +177,9 @@ public getValidParentTimePeriods !childPeriod =
     DayOfYearPeriod  -> [YearPeriod, QuarterPeriod, MonthPeriod, WeekOfYearPeriod];
     DayOfMonthPeriod -> [MonthPeriod, WeekOfYearPeriod];
     DayOfWeekPeriod  -> [WeekOfYearPeriod];
+    HourPeriod       -> [DayOfYearPeriod, DayOfMonthPeriod, DayOfWeekPeriod];
+    MinutePeriod     -> [HourPeriod];
+    SecondPeriod     -> [MinutePeriod];
     _ -> error "Unexpected period type";
     ;
 
@@ -191,9 +197,12 @@ public getValidChildTimePeriods !parentPeriod =
     QuarterPeriod    -> [MonthPeriod, WeekOfYearPeriod, DayOfYearPeriod];
     MonthPeriod      -> [WeekOfYearPeriod, DayOfYearPeriod, DayOfMonthPeriod];
     WeekOfYearPeriod -> [DayOfYearPeriod, DayOfMonthPeriod, DayOfWeekPeriod];
-    DayOfYearPeriod  -> [];
-    DayOfMonthPeriod -> [];
-    DayOfWeekPeriod  -> [];
+    DayOfYearPeriod  -> [HourPeriod];
+    DayOfMonthPeriod -> [HourPeriod];
+    DayOfWeekPeriod  -> [HourPeriod];
+    HourPeriod       -> [MinutePeriod];
+    MinutePeriod     -> [SecondPeriod];
+    SecondPeriod     -> [];
     _ -> error "Unexpected period type";
     ;
 
@@ -211,6 +220,9 @@ public getPeriodTypeName !periodType =
     DayOfYearPeriod  -> "DayOfYear";
     DayOfMonthPeriod -> "DayOfMonth";
     DayOfWeekPeriod  -> "DayOfWeek";
+    HourPeriod       -> "HourPeriod";
+    MinutePeriod     -> "MinutePeriod";
+    SecondPeriod     -> "SecondPeriod";
     _ -> "Unknown";
     ;
 

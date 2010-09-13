@@ -50,9 +50,7 @@ module Cal.Data.GregorianBusinessCalendar;
 import Cal.Core.Prelude using
     typeConstructor = Boolean, Int, Maybe, String;
     dataConstructor = True, Nothing, Just;
-    function =
-        add, error, field2, fromJust, fromMaybe, intToString, isEmpty, isJust, 
-        max, not, truncate, upFromTo;
+    function = error, field2, fromJust, fromMaybe, intToString, isEmpty, isJust, max, not, truncate, upFromTo;
     ;
 import Cal.Collections.List using
     function = map, subscript;
@@ -72,10 +70,9 @@ import Cal.Collections.Array using
 import Cal.Data.BusinessCalendar using
     typeConstructor = BusinessCalendar, Period, PeriodType;
     dataConstructor =
-        NoPeriod, YearPeriod, QuarterPeriod, MonthPeriod, WeekOfYearPeriod, 
-        DayOfYearPeriod, DayOfMonthPeriod, DayOfWeekPeriod;
-    function =
-        getBasePeriod, getPeriodValue, getPeriodValues, makeBusinessCalendar;
+        NoPeriod, YearPeriod, QuarterPeriod, MonthPeriod, WeekOfYearPeriod, DayOfYearPeriod, DayOfMonthPeriod, DayOfWeekPeriod,
+        HourPeriod, MinutePeriod, SecondPeriod;
+    function = getBasePeriod, getPeriodValue, getPeriodValues, makeBusinessCalendar;
     ;
 import Cal.Data.DictionaryQuery using
     typeConstructor = Expr;
@@ -255,6 +252,9 @@ private gregorian_periodValueRange !parentPeriod !periodType =
         defaultDayOfYear     = (1, 366);
         defaultDayOfMonth    = (1, 31);
         defaultDayOfWeek     = (1, 7);
+        defaultHour          = (0, 23);
+        defaultMinute        = (0, 59);
+        defaultSecond        = (0, 59);
     in
         case periodType of
         NoPeriod -> error "Invalid period type";
@@ -323,6 +323,10 @@ private gregorian_periodValueRange !parentPeriod !periodType =
                 // TODO: implement this...
                 error "Case not implemented"
             else defaultDayOfWeek;
+        
+        HourPeriod   -> defaultHour;
+        MinutePeriod -> defaultMinute;
+        SecondPeriod -> defaultSecond;
         ;
 
 /**
@@ -333,8 +337,10 @@ private gregorian_periodValueRange !parentPeriod !periodType =
 gregorian_periodDisplayName :: Period -> PeriodType -> Int -> String;
 private gregorian_periodDisplayName parentPeriod !periodType !periodValue = 
     let
-        maybeParentYear  = getPeriodValue parentPeriod YearPeriod;
-        maybeParentMonth = getPeriodValue parentPeriod MonthPeriod;
+        maybeParentYear   = getPeriodValue parentPeriod YearPeriod;
+        maybeParentMonth  = getPeriodValue parentPeriod MonthPeriod;
+        maybeParentHour   = getPeriodValue parentPeriod HourPeriod;
+        maybeParentMinute = getPeriodValue parentPeriod MinutePeriod;
         
         /**
          * Returns a display name for the specified year.
@@ -434,6 +440,23 @@ private gregorian_periodDisplayName parentPeriod !periodType !periodValue =
         formatDayOfWeek :: Int -> String;
         formatDayOfWeek dayValue = 
             Array.subscript weekdayNames (dayValue - 1);
+        
+        formatHour :: Int -> String;
+        formatHour !hourValue = padWithZero hourValue;
+        
+        formatMinute :: Maybe Int -> Int -> String;
+        formatMinute !maybeHourValue !minuteValue = 
+            case maybeHourValue of
+            Just hourValue -> formatHour hourValue ++ ":" ++ formatMinute Nothing minuteValue;
+            Nothing -> padWithZero minuteValue;
+            ;
+        
+        formatSecond :: Maybe Int -> Maybe Int -> Int -> String;
+        formatSecond !maybeHourValue !maybeMinuteValue !secondValue = 
+            case maybeMinuteValue of
+            Just minuteValue -> formatMinute maybeHourValue minuteValue ++ ":" ++ formatSecond Nothing Nothing secondValue;
+            Nothing -> padWithZero secondValue;
+            ;
     in
         case periodType of
         NoPeriod         -> "";
@@ -444,6 +467,9 @@ private gregorian_periodDisplayName parentPeriod !periodType !periodValue =
         DayOfYearPeriod  -> formatDayOfYear maybeParentYear periodValue;
         DayOfMonthPeriod -> formatDayOfMonth maybeParentYear maybeParentMonth periodValue;
         DayOfWeekPeriod  -> formatDayOfWeek periodValue;
+        HourPeriod       -> formatHour periodValue;
+        MinutePeriod     -> formatMinute maybeParentHour periodValue;
+        SecondPeriod     -> formatSecond maybeParentHour maybeParentMinute periodValue;
         ;
 
 /**
@@ -456,8 +482,10 @@ private gregorian_periodDisplayName parentPeriod !periodType !periodValue =
 gregorian_periodDisplayName_localizable :: Period -> PeriodType -> Int -> String;
 private gregorian_periodDisplayName_localizable parentPeriod !periodType !periodValue = 
     let
-        maybeParentYear  = getPeriodValue parentPeriod YearPeriod;
-        maybeParentMonth = getPeriodValue parentPeriod MonthPeriod;
+        maybeParentYear   = getPeriodValue parentPeriod YearPeriod;
+        maybeParentMonth  = getPeriodValue parentPeriod MonthPeriod;
+        maybeParentHour   = getPeriodValue parentPeriod HourPeriod;
+        maybeParentMinute = getPeriodValue parentPeriod MinutePeriod;
         
         /**
          * Returns a display name for the specified year.
@@ -566,16 +594,22 @@ private gregorian_periodDisplayName_localizable parentPeriod !periodType !period
             in
                 Array.subscript weekdayNames (dayValue - 1);
         
-        /**
-         * Converts an int to a string, padding it with a zero if it is less than 10.
-         * Intended to pad day and month numbers out to two places.
-         */
-        padWithZero :: Int -> String;
-        padWithZero val =
-            if val < 10 then
-                "0" ++ intToString val
-            else
-                intToString val;
+        formatHour :: Int -> String;
+        formatHour !hourValue = padWithZero hourValue;
+        
+        formatMinute :: Maybe Int -> Int -> String;
+        formatMinute !maybeHourValue !minuteValue = 
+            case maybeHourValue of
+            Just hourValue -> formatHour hourValue ++ ":" ++ formatMinute Nothing minuteValue;
+            Nothing -> padWithZero minuteValue;
+            ;
+        
+        formatSecond :: Maybe Int -> Maybe Int -> Int -> String;
+        formatSecond !maybeHourValue !maybeMinuteValue !secondValue = 
+            case maybeMinuteValue of
+            Just minuteValue -> formatMinute maybeHourValue minuteValue ++ ":" ++ formatSecond Nothing Nothing secondValue;
+            Nothing -> padWithZero secondValue;
+            ;
     in
         case periodType of
         NoPeriod         -> "";
@@ -586,7 +620,22 @@ private gregorian_periodDisplayName_localizable parentPeriod !periodType !period
         DayOfYearPeriod  -> formatDayOfYear maybeParentYear periodValue;
         DayOfMonthPeriod -> formatDayOfMonth maybeParentYear maybeParentMonth periodValue;
         DayOfWeekPeriod  -> formatDayOfWeek periodValue;
+        HourPeriod       -> formatHour periodValue;
+        MinutePeriod     -> formatMinute maybeParentHour periodValue;
+        SecondPeriod     -> formatSecond maybeParentHour maybeParentMinute periodValue;
         ;
+
+/**
+ * Converts an int to a string, padding it with a zero if it is less than 10.
+ * Intended to pad day and month numbers out to two places.
+ */
+padWithZero :: Int -> String;
+padWithZero val =
+    if val >= 0 && val < 10 then
+        "0" ++ intToString val
+    else
+        intToString val;
+
 
 /**
  * Provides examples of the expected output of gregorian_periodDisplayName_localizable
@@ -684,7 +733,10 @@ private gregorian_periodTimeRange !period =
         maybeDayOfYear = getPeriodValue period DayOfYearPeriod;
         maybeDayOfMonth = getPeriodValue period DayOfMonthPeriod;
         maybeDayOfWeek = getPeriodValue period DayOfWeekPeriod;
-
+        maybeHour = getPeriodValue period HourPeriod;
+        maybeMinute = getPeriodValue period MinutePeriod;
+        maybeSecond = getPeriodValue period SecondPeriod;
+            
         hasYear = isJust maybeYear;
         hasQuarter = isJust maybeQuarter;
         hasMonth = isJust maybeMonth;
@@ -698,19 +750,22 @@ private gregorian_periodTimeRange !period =
         month = fromJust maybeMonth;
         dayOfYear = fromJust maybeDayOfYear;
         dayOfMonth = fromJust maybeDayOfMonth;
+        hour = fromMaybe 0 maybeHour;
+        minute = fromMaybe 0 maybeMinute;
+        second = fromMaybe 0 maybeSecond;
     in
         if not hasYear then makeEntireRange
         else if hasDayOfYear then
             let
                 (computedMonth, computedDayOfMonth) = dayOfYearToDayOfMonth year dayOfYear;
-                startTime = makeTimeValue year computedMonth computedDayOfMonth 0 0 0 0 tz;
+                startTime = makeTimeValue year computedMonth computedDayOfMonth hour minute second 0 tz;
                 endTime = Time.addDurationToTime startTime (Time.nDaysDuration 1);
             in
                 makeBetweenIncludingLeftEndpointRange startTime endTime
         else if hasDayOfMonth then
             if hasMonth then
                 let
-                    startTime = makeTimeValue year month dayOfMonth 0 0 0 0 tz;
+                    startTime = makeTimeValue year month dayOfMonth hour minute second 0 tz;
                     endTime = Time.addDurationToTime startTime (Time.nDaysDuration 1);
                 in
                     makeBetweenIncludingLeftEndpointRange startTime endTime
@@ -774,6 +829,9 @@ private gregorian_periodValueFromTime !time !periodType =
                 truncate (Time.durationToDays timeDiff) + 1;
         DayOfMonthPeriod -> timeParts.day;
         DayOfWeekPeriod  -> error "Case not implemented";   // TODO: implement this...
+        HourPeriod -> timeParts.hours;
+        MinutePeriod -> timeParts.minutes;
+        SecondPeriod -> timeParts.seconds;
         _ -> error "Unexpected period type";
         ;
 
@@ -791,7 +849,7 @@ private gregorian_timePartExpr !baseExpr !periodType =
     BusinessCalendar.DayOfYearPeriod  -> untypedFunctionExpr Sql.DayOfYearFunction [baseExpr];
     BusinessCalendar.DayOfMonthPeriod -> untypedFunctionExpr Sql.DayOfMonthFunction [baseExpr];
     BusinessCalendar.DayOfWeekPeriod  -> untypedFunctionExpr Sql.DayOfWeekFunction [baseExpr];
-    //BusinessCalendar.HourLevelType    -> untypedFunctionExpr Sql.HourFunction [baseExpr];
-    //BusinessCalendar.MinuteLevelType  -> untypedFunctionExpr Sql.MinuteFunction [baseExpr];
-    //BusinessCalendar.SecondLevelType  -> untypedFunctionExpr Sql.SecondFunction [baseExpr];
+    BusinessCalendar.HourPeriod       -> untypedFunctionExpr Sql.HourFunction [baseExpr];
+    BusinessCalendar.MinutePeriod     -> untypedFunctionExpr Sql.MinuteFunction [baseExpr];
+    BusinessCalendar.SecondPeriod     -> untypedFunctionExpr Sql.SecondFunction [baseExpr];
     ;

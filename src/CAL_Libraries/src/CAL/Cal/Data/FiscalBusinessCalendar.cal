@@ -54,8 +54,7 @@ import Cal.Core.Prelude using
     ;
 import Cal.Utilities.Range using
     typeConstructor = Range;
-    function =
-        leftEndpoint, makeBetweenIncludingLeftEndpointRange, makeEntireRange;
+    function = leftEndpoint, makeBetweenIncludingLeftEndpointRange, makeEntireRange;
     ;
 import Cal.Utilities.Time using
     typeConstructor = Duration, Time;
@@ -63,13 +62,11 @@ import Cal.Utilities.Time using
 import Cal.Data.BusinessCalendar using
     typeConstructor = BusinessCalendar, Period, PeriodType;
     dataConstructor =
-        NoPeriod, YearPeriod, QuarterPeriod, MonthPeriod, WeekOfYearPeriod, 
-        DayOfYearPeriod, DayOfMonthPeriod, DayOfWeekPeriod;
+        NoPeriod, YearPeriod, QuarterPeriod, MonthPeriod, WeekOfYearPeriod, DayOfYearPeriod, DayOfMonthPeriod, DayOfWeekPeriod,
+        HourPeriod, MinutePeriod, SecondPeriod;
     function =
-        getBasePeriodType, getPeriodFromTime, getPeriodTimeRange, 
-        getPeriodValue, getPeriodValueFromTime, getPeriodValueRange, 
-        getTimePartExpr, makeBusinessCalendar, makeChildPeriod, makePeriod, 
-        periodDisplayName, shiftByNPeriods, wrapPeriodValue;
+        getBasePeriodType, getPeriodFromTime, getPeriodTimeRange, getPeriodValue, getPeriodValueFromTime, getPeriodValueRange,
+        getTimePartExpr, makeBusinessCalendar, makeChildPeriod, makePeriod, periodDisplayName, shiftByNPeriods, wrapPeriodValue;
     ;
 import Cal.Data.GregorianBusinessCalendar using
     function = defaultBusinessCalendar;
@@ -116,7 +113,10 @@ private fiscal_periodValueRange !nMonthsOffset parentPeriod !periodType =
         | YearPeriod 
         | QuarterPeriod 
         | MonthPeriod 
-        | DayOfWeekPeriod) ->
+        | DayOfWeekPeriod
+        | HourPeriod
+        | MinutePeriod
+        | SecondPeriod) ->
             getPeriodValueRange defaultBusinessCalendar parentPeriod periodType;
 
     WeekOfYearPeriod -> 
@@ -153,7 +153,10 @@ private fiscal_periodDisplayName !nMonthsOffset parentPeriod !periodType !period
         | QuarterPeriod 
         | WeekOfYearPeriod
         | DayOfYearPeriod
-        | DayOfWeekPeriod) -> 
+        | DayOfWeekPeriod
+        | HourPeriod
+        | MinutePeriod
+        | SecondPeriod) -> 
         periodDisplayName defaultBusinessCalendar parentPeriod periodType periodValue;
 
     MonthPeriod -> 
@@ -234,7 +237,10 @@ private fiscal_periodTimeRange !nMonthsOffset period =
                 error "Case not implemented";   // TODO: ...
             DayOfYearPeriod -> 
                 error "Case not implemented";   // TODO: ...
-            DayOfMonthPeriod -> 
+            (DayOfMonthPeriod 
+             | HourPeriod
+             | MinutePeriod
+             | SecondPeriod) -> 
                 if hasMonth then 
                     // Convert the period to the gregorian equivalent, then defer to the gregorian calendar to get the time range.
                     getPeriodTimeRange defaultBusinessCalendar gregorianPeriod
@@ -283,8 +289,11 @@ private fiscal_periodValueFromTime !nMonthsOffset !time !periodType =
             in
                 truncate (Time.durationToDays timeDiff) + 1;
 
-        DayOfMonthPeriod -> 
-            // The day of the month will be the same as in the gregorian calendar.
+        (DayOfMonthPeriod 
+         | HourPeriod
+         | MinutePeriod
+         | SecondPeriod) -> 
+            // The day of the month and time components will be the same as in the gregorian calendar.
             getPeriodValueFromTime defaultBusinessCalendar time periodType;
 
         DayOfWeekPeriod -> 
