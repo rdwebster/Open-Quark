@@ -3554,47 +3554,67 @@ public getBestJoinSetForQueryFields !joinSets !sqlQuery !anchorFieldExpressions 
 fixQueryForGroupBy :: Query -> Query;
 private fixQueryForGroupBy query = 
     case query of
-    Query options columns restriction orderings joins groups groupRestriction ->
+    Query {options, columns, restriction, orderings, joins, groups, groupRestriction} ->
         let
+            getExprAggregationExprs :: Expr -> [Expr];
             getExprAggregationExprs expr = 
                 case expr of
                 ListExpr {listValues} -> 
                     concatMap getExprAggregationExprs listValues;
                 FunctionExpr {func, arguments} -> 
-                    if (isAggregationFunction func) then [expr]
-                    else concatMap getExprAggregationExprs arguments;
+                    if isAggregationFunction func then [expr]
+                    else List.concatMap getExprAggregationExprs arguments;
                 _ -> [];
                 ;
 
-            allExprs = map fst columns ++ map fst orderings ++ map toUntypedExpr (maybeToList groupRestriction);
-            aggregateExprs = concatMap getExprAggregationExprs allExprs;
+            allExprs = List.map field1 columns ++ List.map field1 orderings ++ List.map toUntypedExpr (maybeToList groupRestriction);
+            aggregateExprs = List.concatMap getExprAggregationExprs allExprs;
 
             groupByNeeded = not (isEmpty groups) || not (isEmpty aggregateExprs);
+        in
+            if groupByNeeded then makeGroupingQuery query
+            else query;
 
+    Union {query1, query2, unionAll} -> 
+        Union (fixQueryForGroupBy query1) (fixQueryForGroupBy query2) unionAll;
+    ;
+
+/**
+ * Add grouping needed to make the query a valid Group By query.
+ * Additional groupings will be added for fields which are used outside of aggregation functions and not already grouped on.
+ */
+makeGroupingQuery :: Query -> Query;
+public makeGroupingQuery !query = 
+    case query of
+    Query {options, columns, restriction, orderings, joins, groups, groupRestriction} ->
+        let
+            allExprs :: [Expr];
+            allExprs = List.map field1 columns ++ List.map field1 orderings ++ List.map toUntypedExpr (maybeToList groupRestriction);
+            
+            addGroupExprs :: [Expr] -> Expr -> [Expr];
             addGroupExprs !curGrouping !expr = 
-                // If the expression is already grouped then nothing else is
-                // necessary.
-                if (isElem expr curGrouping) then 
+                // If the expression is already grouped then nothing else is necessary.
+                if List.isElem expr curGrouping then 
                     curGrouping
                 else
                     case expr of
                     QueryField {} -> curGrouping ++ [expr];
                     ConstExpr {} -> curGrouping;
-                    ListExpr {listValues} -> foldLeftStrict addGroupExprs curGrouping listValues;
+                    ListExpr {listValues} -> List.foldLeftStrict addGroupExprs curGrouping listValues;
                     FunctionExpr {func, arguments} -> 
-                        if (isAggregationFunction func) then curGrouping
-                        else foldLeftStrict addGroupExprs curGrouping arguments;
+                        if isAggregationFunction func then curGrouping
+                        else List.foldLeftStrict addGroupExprs curGrouping arguments;
                     SubQueryExpr {} -> curGrouping;
                     _ -> curGrouping;
                     ;
-
-            newGrouping = foldLeftStrict addGroupExprs groups allExprs;
+            
+            newGrouping :: [Expr];
+            newGrouping = List.foldLeftStrict addGroupExprs groups allExprs;
         in
-            if (groupByNeeded) then Query options columns restriction orderings joins newGrouping groupRestriction
-            else query;
-
-    Union query1 query2 unionAll -> 
-        Union (fixQueryForGroupBy query1) (fixQueryForGroupBy query2) unionAll;
+            Query options columns restriction orderings joins newGrouping groupRestriction;
+    
+    Union {query1, query2, unionAll} -> 
+        Union (makeGroupingQuery query1) (makeGroupingQuery query2) unionAll;
     ;
 
 /**
