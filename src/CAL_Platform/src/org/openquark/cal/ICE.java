@@ -155,6 +155,7 @@ import org.openquark.cal.module.Cal.Core.CAL_Prelude;
 import org.openquark.cal.runtime.CALExecutorException;
 import org.openquark.cal.runtime.CalValue;
 import org.openquark.cal.runtime.DebugSupport;
+import org.openquark.cal.runtime.ExecutionContextProperties;
 import org.openquark.cal.runtime.MachineConfiguration;
 import org.openquark.cal.runtime.MachineType;
 import org.openquark.cal.services.CALFeatureName;
@@ -6913,7 +6914,7 @@ public class ICE implements Runnable {
         return busy;
     }
 
-    private abstract static class FunctionRunThreadBase implements Runnable {
+    private abstract class FunctionRunThreadBase implements Runnable {
         private boolean showOutput;
         private boolean showRuntimes;
         private boolean showIncrementalMachineStats;
@@ -7084,7 +7085,12 @@ public class ICE implements Runnable {
             if (runtime != null) {
                 return; 
             }
-            runtime = wkspcMgr.makeExecutorWithNewContextAndDefaultProperties();
+            
+            ExecutionContextProperties.Builder propertiesBuilder = new ExecutionContextProperties.Builder();
+            updateExecutionContextProperties(propertiesBuilder);
+            ExecutionContextProperties executionProperties = propertiesBuilder.toProperties();
+            
+            runtime = wkspcMgr.makeExecutorWithNewContext(executionProperties);
             
             if (runtime instanceof org.openquark.cal.internal.machine.g.Executor) {
                 org.openquark.cal.internal.machine.g.Executor.setExecDiag (doExecDiag);
@@ -7177,7 +7183,7 @@ public class ICE implements Runnable {
      * A helper class to run a function.
      * @author Edward Lam
      */
-    private static class FunctionRunThread extends FunctionRunThreadBase {
+    private class FunctionRunThread extends FunctionRunThreadBase {
         private EntryPoint entryPoint;
         private ModuleName targetModule;
         private StatsGenerator executionTimeGenerator = new StatsGenerator();
@@ -8022,4 +8028,13 @@ public class ICE implements Runnable {
         return iceLogger;
     }
 
+    /**
+     * This method will be called before an evaluation context is constructed to allow execution context properties to be
+     * specified for the execution.
+     * @param propertiesBuilder  a builder object into which execution context properties may be set 
+     */
+    protected void updateExecutionContextProperties(ExecutionContextProperties.Builder propertiesBuilder) {
+        // By default, don't add any properties to the execution context.
+        // Subclasses can override this method to add properties of interest to them.
+    }
  }
