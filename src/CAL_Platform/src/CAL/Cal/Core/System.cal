@@ -46,8 +46,8 @@ module Cal.Core.System;
 
 import Cal.Core.Prelude using
     typeClass = Eq, Inputable, Outputable;
-    typeConstructor = Boolean, CalFunction, ExecutionContext, JList, JObject, String;
-    dataConstructor = False, True;
+    typeConstructor = Boolean, CalFunction, ExecutionContext, JList, JObject, Maybe, String;
+    dataConstructor = False, Just, Nothing, True;
     function = executionContext, input, makeCalFunction, output, seq;
     ;
 import Cal.Core.Debug using
@@ -116,6 +116,23 @@ foreign unsafe import jvm "method getProperty"
  */
 getProperty :: String -> JObject;
 public getProperty !key = jGetProperty executionContextProperties key;
+
+/**
+ * Looks up the specified system property and inputs the value to the specified type.
+ * {@link Nothing@} will be returned if the property does not exist or has a Null value.
+ */
+inputProperty :: Inputable a => String -> Maybe a;
+public inputProperty !key = 
+    let
+        jProp :: JObject;
+        jProp = jGetProperty executionContextProperties key;
+    in
+        if isNullObject jProp then Nothing
+        else Just $ input jProp;
+
+/** Test whether a JObject value is null. */
+foreign unsafe import jvm "isNull" isNullObject :: JObject -> Boolean;
+
 
 /**
  * Returns whether the specified property is in the given {@link ExecutionContextProperties@} instance.
