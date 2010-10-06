@@ -496,7 +496,7 @@ public final class XMLPersistenceHelper {
      */
     public static void checkTag(Element element, String expectedTag) throws BadXMLDocumentException {
         
-        if (element == null || !element.getLocalName().equals(expectedTag)) {
+        if (element == null || !getElementName(element).equals(expectedTag)) {
             String string = "Null"; //$NON-NLS-1$
             handleBadDocument(element,
                     messages.getString("XMLStructureError", expectedTag,  //$NON-NLS-1$
