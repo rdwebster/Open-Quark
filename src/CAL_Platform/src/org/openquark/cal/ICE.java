@@ -7229,7 +7229,10 @@ public class ICE implements Runnable {
                 try {
                     logger.log(Level.INFO, "\nrunning: " + runningCode);
 
+                    beforeRunFunction();
+                    
                     result = runtime.exec (entryPoint, new Object[]{});
+                    
                 } catch (CALExecutorException e) {
                     logger.log(Level.INFO, "Error while executing: " + e.getMessage());
                     error = e;
@@ -7240,6 +7243,9 @@ public class ICE implements Runnable {
                 } catch (Error e){
                     logger.log(Level.INFO, "Unable to execute due to an internal error.  Please contact Business Objects.  " + e.toString ());
                     return;
+                }
+                finally {
+                    afterRunFunction();
                 }
 
                 if (isShowRuntimes()) {
@@ -8036,5 +8042,19 @@ public class ICE implements Runnable {
     protected void updateExecutionContextProperties(ExecutionContextProperties.Builder propertiesBuilder) {
         // By default, don't add any properties to the execution context.
         // Subclasses can override this method to add properties of interest to them.
+    }
+    
+    /**
+     * This method will be called just before a CAL function is run (on the run thread).
+     * Subclasses can override this method to do any preparation for running the CAL function.
+     */
+    protected void beforeRunFunction() {
+    }
+    
+    /**
+     * This method will be called just after a CAL function is run (on the run thread).
+     * Subclasses can override this method to do any cleanup needed from running the CAL function.
+     */
+    protected void afterRunFunction() {
     }
  }
