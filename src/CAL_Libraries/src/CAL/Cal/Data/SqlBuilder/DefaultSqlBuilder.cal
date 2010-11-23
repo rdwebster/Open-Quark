@@ -324,9 +324,12 @@ default_buildDropDatabaseStatement !builder !databaseRef !onlyIfDatabaseExists =
         text "DROP DATABASE" ++ singleSpace ++ Sql.quoteIdentifier builder databaseNameText;
     
 // TODO: make use of the 'skipIfTableExists' flag...
-default_buildCreateTableStatement :: SqlBuilder -> TableDescription -> Boolean -> Document;
-default_buildCreateTableStatement !builder !tableDesc !skipIfTableExists = 
+default_buildCreateTableStatement :: SqlBuilder -> TableDescription -> Boolean -> Boolean -> Document;
+default_buildCreateTableStatement !builder !tableDesc !isTemporary !skipIfTableExists = 
     let
+        statementName :: String;
+        statementName = if isTemporary then "CREATE TEMPORARY TABLE" else "CREATE TABLE";
+        
         tableRef = getTableReference tableDesc;
         fieldDescriptions = getTableFields tableDesc;
         constraints = getTableConstraints tableDesc;
@@ -358,18 +361,21 @@ default_buildCreateTableStatement !builder !tableDesc !skipIfTableExists =
                     ++ text "(" ++ join(text ", ") (map (\pr -> Sql.quoteIdentifier builder (field2 pr)) referencedFields) ++ text ")";
             ;
     in
-        text "CREATE TABLE" ++ singleSpace ++ Sql.quoteIdentifier builder tableNameText
+        group (
+        text statementName ++ singleSpace ++ Sql.quoteIdentifier builder tableNameText
             ++ line ++ text "("
             ++ nest 4 (line ++ fillSeparatedList True "," (fieldDefinitions ++ constraintDefinitions))
-            ++ line ++ text ")";
+            ++ line ++ text ")"
+            );
 
 default_buildCreateViewStatement :: SqlBuilder -> TableReference -> Query -> Boolean -> Document;
 default_buildCreateViewStatement !builder !viewRef !viewDefinition !skipIfViewExists = 
-    group $ 
-        text "CREATE VIEW " 
-            ++ singleSpace ++ Sql.quoteIdentifier builder (getTableNameFromReference viewRef)
-            ++ singleSpace ++ text "AS"
-            ++ nest 4 (line ++ Sql.queryTextDocument builder viewDefinition);
+    group (
+    text "CREATE VIEW " 
+        ++ singleSpace ++ Sql.quoteIdentifier builder (getTableNameFromReference viewRef)
+        ++ singleSpace ++ text "AS"
+        ++ nest 4 (line ++ Sql.queryTextDocument builder viewDefinition)
+    );
 
 // TODO: make use of the 'onlyIfTableExists' flag...
 default_buildDropTableStatement :: SqlBuilder -> TableReference -> Boolean -> Document;
@@ -416,12 +422,14 @@ public default_buildMultiRowInsertValuesStatement !builder !tableRef !maybeDestC
         allRowsText :: Document;
         allRowsText = join (text ", ") $ List.map rowValuesText rowsOfValues;
     in
+        group (
         spread [text "INSERT INTO",
                 Sql.quoteIdentifier builder (getTableNameFromReference tableRef),
                 destColumnText,
                 text "VALUES",
                 allRowsText
-               ];
+               ]
+        );
 
 default_buildInsertQueryValuesStatement :: SqlBuilder -> TableReference -> Maybe [String] -> Query -> Document;
 default_buildInsertQueryValuesStatement !builder !tableRef !maybeDestColumns !insertQuery =
@@ -433,11 +441,12 @@ default_buildInsertQueryValuesStatement !builder !tableRef !maybeDestColumns !in
                 text "(" ++ join (text ", ") (map (Sql.quoteIdentifier builder) destColumns) ++ text ")";
             ;
     in
-        group $ 
-            spread [text "INSERT INTO",
-                    Sql.quoteIdentifier builder (getTableNameFromReference tableRef),
-                    destColumnText]
-            ++ nest 4 (line ++ Sql.queryTextDocument builder insertQuery);
+        group (
+        spread [text "INSERT INTO",
+                Sql.quoteIdentifier builder (getTableNameFromReference tableRef),
+                destColumnText]
+        ++ nest 4 (line ++ Sql.queryTextDocument builder insertQuery)
+        );
 
 default_buildUpdateValuesStatement :: SqlBuilder -> SqlBuilderState -> TableReference -> [String] -> [Expr] -> TypedExpr Boolean -> Document;
 default_buildUpdateValuesStatement !builder !builderState !tableRef !destColumns !newValues !condition = 
@@ -456,12 +465,11 @@ default_buildUpdateValuesStatement !builder !builderState !tableRef !destColumns
             if (condition == Sql.trueConstant) then empty
             else line ++ text "WHERE" ++ singleSpace ++ Sql.expressionText2 builder builderState (toUntypedExpr condition);
     in
-        group $ 
-            text "UPDATE" ++ singleSpace ++ Sql.quoteIdentifier builder (getTableNameFromReference tableRef)
-            ++ nest 4 (
-                line ++ text "SET" ++ singleSpace ++ colValuesText
-                ++ whereLineText
-            );
+        group (
+        text "UPDATE" ++ singleSpace ++ Sql.quoteIdentifier builder (getTableNameFromReference tableRef)
+            ++ nest 4 (line ++ text "SET" ++ singleSpace ++ colValuesText
+            ++ whereLineText
+        ));
 
 default_buildDeleteRowsStatement :: SqlBuilder -> SqlBuilderState -> TableReference -> TypedExpr Boolean -> Document;
 default_buildDeleteRowsStatement !builder !builderState !tableRef !condition = 
@@ -472,10 +480,10 @@ default_buildDeleteRowsStatement !builder !builderState !tableRef !condition =
             if (condition == Sql.trueConstant) then empty
             else nest 4 (line ++ text "WHERE" ++ singleSpace ++ Sql.expressionText2 builder builderState (toUntypedExpr condition));
     in
-        group $ 
-            spread [text "DELETE FROM",
-                    Sql.quoteIdentifier builder (getTableNameFromReference tableRef)]
-            ++ whereLineText;
+        group (
+        spread [text "DELETE FROM", Sql.quoteIdentifier builder (getTableNameFromReference tableRef)]
+        ++ whereLineText
+        );
 
 default_buildCommitStatement :: SqlBuilder -> Document;
 default_buildCommitStatement !builder = text "COMMIT";

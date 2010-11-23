@@ -55,7 +55,7 @@ import Cal.Data.SqlBuilder.DefaultSqlBuilder using
 
 import Cal.Utilities.PrettyPrinter using
     typeConstructor = Document;
-    function = text;
+    function = singleSpace, text;
     ;
 
 import Cal.Utilities.Time using
@@ -91,6 +91,11 @@ import Cal.Collections.Set using
     typeConstructor = Set;
     ;
 
+import Cal.Data.DatabaseMetadata using
+    typeConstructor = TableReference;
+    function = getTableNameFromReference;
+    ;
+
 
 
 /**
@@ -124,7 +129,8 @@ public mySqlBuilderFunctions =
                   functionToSql     := mySql_functionToSql,
                   functionName      := mySql_functionNameText,
                   timeIntervalToSql := mySql_timeIntervalToSql,
-                  buildInsertValuesStatement := DefaultSqlBuilder.default_buildMultiRowInsertValuesStatement
+                  buildInsertValuesStatement := DefaultSqlBuilder.default_buildMultiRowInsertValuesStatement,
+                  buildDropTableStatement    := mySql_buildDropTableStatement
             };
 
 // MySQL uses back-quotes to quote identifiers.
@@ -236,4 +242,12 @@ mySql_timeIntervalToSql !timeInterval =
     Sql.MinuteInterval  -> text "MINUTE";
     Sql.SecondInterval  -> text "SECOND";
     ;
+
+mySql_buildDropTableStatement :: SqlBuilder -> TableReference -> Boolean -> Document;
+mySql_buildDropTableStatement !builder !tableRef !onlyIfTableExists = 
+    let
+        ifExistsText :: String;
+        ifExistsText = if onlyIfTableExists then " IF EXISTS" else "";
+    in
+        text "DROP TABLE" ++ text ifExistsText ++ singleSpace ++ Sql.quoteIdentifier builder (getTableNameFromReference tableRef);
 

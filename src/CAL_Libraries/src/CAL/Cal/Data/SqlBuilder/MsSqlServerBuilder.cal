@@ -166,10 +166,10 @@ msSqlServer_buildDropDatabaseStatement builder databaseRef !onlyIfDatabaseExists
                                 ++ dropText)
         else dropText;
 
-msSqlServer_buildCreateTableStatement :: SqlBuilder -> TableDescription -> Boolean -> Document;
-msSqlServer_buildCreateTableStatement builder tableDesc !skipIfTableExists = 
+msSqlServer_buildCreateTableStatement :: SqlBuilder -> TableDescription -> Boolean -> Boolean -> Document;
+msSqlServer_buildCreateTableStatement builder !tableDesc !isTemporary !skipIfTableExists = 
     let
-        createText = defaultSqlBuilderFunctions.buildCreateTableStatement builder tableDesc False;
+        createText = defaultSqlBuilderFunctions.buildCreateTableStatement builder tableDesc isTemporary False;
         tableNameText = getTableNameFromReference (getTableReference tableDesc);
     in
         if (skipIfTableExists) then
