@@ -56,7 +56,8 @@ import Cal.Core.Prelude using
         Boolean, Byte, CalValue, Char, Decimal, Double, Either, ExecutionContext, Float, Int, Integer, JCollection, JList, JMap,
         JObject, Long, Maybe, Ordering, Short, String, TypeRep;
     dataConstructor = True, Left, Right, Nothing, Just, LT, EQ, GT;
-    function = concat, equals, error, executionContext, input, intToString, isEmpty, output, seq, toCalValue, toDouble;
+    function =
+        concat, equals, error, executionContext, input, intToString, isEmpty, longToString, output, seq, toCalValue, toDouble;
     ;
 import Cal.Collections.List using
     function = join, map;
@@ -191,6 +192,13 @@ public traceTransformationDifferences message transformFn =
                 else trace (message ++ "\n    input:  " ++ show inVal ++ "\n    output: " ++ show resultVal ++ "\n") resultVal;
     in
         newTransformFn;
+
+/**
+ * Traces a message containing the time required to evaluate an expression to WHNF.
+ */
+traceEvalTime :: String -> a -> a;
+public traceEvalTime !message val = 
+    trace (message ++ " -- " ++ longToString (evalTime val) ++ " ms\n") val;
 
 
 /**
