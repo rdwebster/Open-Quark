@@ -40,7 +40,8 @@ module Cal.Data.SqlBuilder.MySqlBuilder;
 
 import Cal.Core.Prelude using
     function = error, intToString, isEmpty, not;
-    typeConstructor = Boolean, String;
+    typeConstructor = Boolean, Maybe, String;
+    dataConstructor = False, Nothing, Just;
     ;
 
 import Cal.Data.Sql using
@@ -48,9 +49,7 @@ import Cal.Data.Sql using
     ;
 
 import Cal.Data.SqlBuilder.DefaultSqlBuilder using
-    function =
-        defaultSqlBuilderFunctions, default_quotesNeeded,
-        quoteIdentifierHelper;
+    function = defaultSqlBuilderFunctions, default_quotesNeeded, quoteIdentifierHelper;
     ;
 
 import Cal.Utilities.PrettyPrinter using
@@ -69,12 +68,10 @@ import Cal.Utilities.TimeZone using
 import Cal.Data.SqlType using
     typeConstructor = SqlType;
     dataConstructor =
-        SqlType_TinyInt, SqlType_SmallInt, SqlType_Integer, SqlType_BigInt,
-        SqlType_Decimal, SqlType_Numeric, SqlType_Real, SqlType_Float,
-        SqlType_Double, SqlType_Bit, SqlType_Boolean, SqlType_Char,
-        SqlType_VarChar, SqlType_LongVarChar, SqlType_Clob, SqlType_Binary,
-        SqlType_VarBinary, SqlType_LongVarBinary, SqlType_Blob, SqlType_Date,
-        SqlType_Time, SqlType_TimeStamp;
+        SqlType_TinyInt, SqlType_SmallInt, SqlType_Integer, SqlType_BigInt, SqlType_Decimal, SqlType_Numeric, SqlType_Real,
+        SqlType_Float, SqlType_Double, SqlType_Bit, SqlType_Boolean, SqlType_Char, SqlType_VarChar, SqlType_LongVarChar,
+        SqlType_Clob, SqlType_Binary, SqlType_VarBinary, SqlType_LongVarBinary, SqlType_Blob, SqlType_Date, SqlType_Time,
+        SqlType_TimeStamp;
     ;
 
 import Cal.Utilities.Locale;
@@ -92,7 +89,7 @@ import Cal.Collections.Set using
     ;
 
 import Cal.Data.DatabaseMetadata using
-    typeConstructor = TableReference;
+    typeConstructor = TableDescription, TableReference;
     function = getTableNameFromReference;
     ;
 
@@ -130,7 +127,8 @@ public mySqlBuilderFunctions =
                   functionName      := mySql_functionNameText,
                   timeIntervalToSql := mySql_timeIntervalToSql,
                   buildInsertValuesStatement := DefaultSqlBuilder.default_buildMultiRowInsertValuesStatement,
-                  buildDropTableStatement    := mySql_buildDropTableStatement
+                  buildDropTableStatement    := mySql_buildDropTableStatement,
+                  buildCreateTableStatement  := mySql_buildCreateTableStatement
             };
 
 // MySQL uses back-quotes to quote identifiers.
@@ -250,4 +248,12 @@ mySql_buildDropTableStatement !builder !tableRef !onlyIfTableExists =
         ifExistsText = if onlyIfTableExists then " IF EXISTS" else "";
     in
         text "DROP TABLE" ++ text ifExistsText ++ singleSpace ++ Sql.quoteIdentifier builder (getTableNameFromReference tableRef);
+
+mySql_buildCreateTableStatement :: SqlBuilder -> TableDescription -> Boolean -> Boolean -> Document;
+mySql_buildCreateTableStatement !builder !tableDesc !isTemporary !skipIfTableExists = 
+    let
+        skipIfExistsText :: Maybe Document;
+        skipIfExistsText = if skipIfTableExists then Just (text "IF NOT EXISTS") else Nothing;
+    in
+        DefaultSqlBuilder.buildCreateTableStatement Nothing skipIfExistsText Nothing builder tableDesc isTemporary False;
 

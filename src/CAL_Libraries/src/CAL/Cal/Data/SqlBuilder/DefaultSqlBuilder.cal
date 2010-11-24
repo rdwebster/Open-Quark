@@ -41,7 +41,9 @@
 module Cal.Data.SqlBuilder.DefaultSqlBuilder;
 
 import Cal.Core.Prelude using
-    function = doubleToString, empty, error, field1, field2, field3, fromJust, intToString, isEmpty, isNotANumber, not, toDouble;
+    function =
+        doubleToString, empty, error, field1, field2, field3, fromJust, intToString, isEmpty, isNotANumber, maybeToList, not,
+        toDouble;
     typeConstructor = Boolean, Char, Double, Int, Maybe, String;
     dataConstructor = False, True, Nothing, Just;
     ;
@@ -325,7 +327,13 @@ default_buildDropDatabaseStatement !builder !databaseRef !onlyIfDatabaseExists =
     
 // TODO: make use of the 'skipIfTableExists' flag...
 default_buildCreateTableStatement :: SqlBuilder -> TableDescription -> Boolean -> Boolean -> Document;
-default_buildCreateTableStatement !builder !tableDesc !isTemporary !skipIfTableExists = 
+default_buildCreateTableStatement = buildCreateTableStatement Nothing Nothing Nothing;
+
+/**
+ * Builds the SQL statement for a CREATE TABLE statement with optional text fragments inserted at various locations.
+ */
+buildCreateTableStatement :: Maybe Document -> Maybe Document -> Maybe Document -> SqlBuilder -> TableDescription -> Boolean -> Boolean -> Document;
+public buildCreateTableStatement !preStatementNameText !preTableNameText !postTableNameText !builder !tableDesc !isTemporary !skipIfTableExists = 
     let
         statementName :: String;
         statementName = if isTemporary then "CREATE TEMPORARY TABLE" else "CREATE TABLE";
@@ -362,7 +370,7 @@ default_buildCreateTableStatement !builder !tableDesc !isTemporary !skipIfTableE
             ;
     in
         group (
-        text statementName ++ singleSpace ++ Sql.quoteIdentifier builder tableNameText
+        spread (maybeToList preStatementNameText ++ [text statementName] ++ maybeToList preTableNameText ++ [Sql.quoteIdentifier builder tableNameText] ++ maybeToList postTableNameText)
             ++ line ++ text "("
             ++ nest 4 (line ++ fillSeparatedList True "," (fieldDefinitions ++ constraintDefinitions))
             ++ line ++ text ")"
