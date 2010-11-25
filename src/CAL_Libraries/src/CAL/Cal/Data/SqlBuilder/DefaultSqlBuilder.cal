@@ -377,11 +377,15 @@ public buildCreateTableStatement !preStatementNameText !preTableNameText !postTa
             );
 
 default_buildCreateViewStatement :: SqlBuilder -> TableReference -> Query -> Boolean -> Document;
-default_buildCreateViewStatement !builder !viewRef !viewDefinition !skipIfViewExists = 
+default_buildCreateViewStatement = buildCreateViewStatement Nothing Nothing Nothing;
+
+/**
+ * Builds the SQL statement for a CREATE VIEW statement with optional text fragments inserted at various locations.
+ */
+buildCreateViewStatement :: Maybe Document -> Maybe Document -> Maybe Document -> SqlBuilder -> TableReference -> Query -> Boolean -> Document;
+public buildCreateViewStatement !preStatementNameText !preViewNameText !postViewNameText !builder !viewRef !viewDefinition !skipIfViewExists = 
     group (
-    text "CREATE VIEW " 
-        ++ singleSpace ++ Sql.quoteIdentifier builder (getTableNameFromReference viewRef)
-        ++ singleSpace ++ text "AS"
+    spread (maybeToList preStatementNameText ++ [text "CREATE VIEW"] ++ maybeToList preViewNameText ++ [Sql.quoteIdentifier builder (getTableNameFromReference viewRef)] ++ maybeToList postViewNameText ++ [text "AS"])
         ++ nest 4 (line ++ Sql.queryTextDocument builder viewDefinition)
     );
 

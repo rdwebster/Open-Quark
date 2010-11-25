@@ -45,7 +45,7 @@ import Cal.Core.Prelude using
     ;
 
 import Cal.Data.Sql using
-    typeConstructor = Expr, SqlBuilder, SqlBuilderState;
+    typeConstructor = Expr, Query, SqlBuilder, SqlBuilderState;
     ;
 
 import Cal.Data.SqlBuilder.DefaultSqlBuilder using
@@ -89,8 +89,8 @@ import Cal.Collections.Set using
     ;
 
 import Cal.Data.DatabaseMetadata using
-    typeConstructor = TableDescription, TableReference;
-    function = getTableNameFromReference;
+    typeConstructor = DatabaseReference, TableDescription, TableReference;
+    function = getDatabaseNameFromReference, getTableNameFromReference;
     ;
 
 
@@ -126,9 +126,13 @@ public mySqlBuilderFunctions =
                   functionToSql     := mySql_functionToSql,
                   functionName      := mySql_functionNameText,
                   timeIntervalToSql := mySql_timeIntervalToSql,
-                  buildInsertValuesStatement := DefaultSqlBuilder.default_buildMultiRowInsertValuesStatement,
-                  buildDropTableStatement    := mySql_buildDropTableStatement,
-                  buildCreateTableStatement  := mySql_buildCreateTableStatement
+                  buildInsertValuesStatement   := DefaultSqlBuilder.default_buildMultiRowInsertValuesStatement,
+                  buildCreateDatabaseStatement := mySql_buildCreateDatabaseStatement,
+                  buildDropDatabaseStatement   := mySql_buildDropDatabaseStatement,
+                  buildCreateTableStatement    := mySql_buildCreateTableStatement,
+                  buildDropTableStatement      := mySql_buildDropTableStatement,
+                  buildCreateViewStatement     := mySql_buildCreateViewStatement,
+                  buildDropViewStatement       := mySql_buildDropViewStatement
             };
 
 // MySQL uses back-quotes to quote identifiers.
@@ -241,13 +245,25 @@ mySql_timeIntervalToSql !timeInterval =
     Sql.SecondInterval  -> text "SECOND";
     ;
 
-mySql_buildDropTableStatement :: SqlBuilder -> TableReference -> Boolean -> Document;
-mySql_buildDropTableStatement !builder !tableRef !onlyIfTableExists = 
+mySql_buildCreateDatabaseStatement :: SqlBuilder -> DatabaseReference -> Boolean -> Document;
+mySql_buildCreateDatabaseStatement !builder !databaseRef !skipIfDatabaseExists =
+    let
+        ifNotExistsText :: String;
+        ifNotExistsText = if skipIfDatabaseExists then " IF NOT EXISTS" else "";
+        
+        databaseNameText = getDatabaseNameFromReference databaseRef;
+    in
+        text "CREATE DATABASE" ++ text ifNotExistsText ++ singleSpace ++ Sql.quoteIdentifier builder databaseNameText;
+
+mySql_buildDropDatabaseStatement :: SqlBuilder -> DatabaseReference -> Boolean -> Document;
+mySql_buildDropDatabaseStatement !builder !databaseRef !onlyIfDatabaseExists =
     let
         ifExistsText :: String;
-        ifExistsText = if onlyIfTableExists then " IF EXISTS" else "";
+        ifExistsText = if onlyIfDatabaseExists then " IF EXISTS" else "";
+
+        databaseNameText = getDatabaseNameFromReference databaseRef;
     in
-        text "DROP TABLE" ++ text ifExistsText ++ singleSpace ++ Sql.quoteIdentifier builder (getTableNameFromReference tableRef);
+        text "DROP DATABASE" ++ text ifExistsText ++ singleSpace ++ Sql.quoteIdentifier builder databaseNameText;
 
 mySql_buildCreateTableStatement :: SqlBuilder -> TableDescription -> Boolean -> Boolean -> Document;
 mySql_buildCreateTableStatement !builder !tableDesc !isTemporary !skipIfTableExists = 
@@ -256,4 +272,28 @@ mySql_buildCreateTableStatement !builder !tableDesc !isTemporary !skipIfTableExi
         skipIfExistsText = if skipIfTableExists then Just (text "IF NOT EXISTS") else Nothing;
     in
         DefaultSqlBuilder.buildCreateTableStatement Nothing skipIfExistsText Nothing builder tableDesc isTemporary False;
+
+mySql_buildDropTableStatement :: SqlBuilder -> TableReference -> Boolean -> Document;
+mySql_buildDropTableStatement !builder !tableRef !onlyIfTableExists = 
+    let
+        ifExistsText :: String;
+        ifExistsText = if onlyIfTableExists then " IF EXISTS" else "";
+    in
+        text "DROP TABLE" ++ text ifExistsText ++ singleSpace ++ Sql.quoteIdentifier builder (getTableNameFromReference tableRef);
+
+mySql_buildCreateViewStatement :: SqlBuilder -> TableReference -> Query -> Boolean -> Document;
+mySql_buildCreateViewStatement !builder !viewRef !viewDefinition !skipIfViewExists = 
+    let
+        skipIfExistsText :: Maybe Document;
+        skipIfExistsText = if skipIfViewExists then Just (text "IF NOT EXISTS") else Nothing;
+    in
+        DefaultSqlBuilder.buildCreateViewStatement Nothing skipIfExistsText Nothing builder viewRef viewDefinition False;
+
+mySql_buildDropViewStatement :: SqlBuilder -> TableReference -> Boolean -> Document;
+mySql_buildDropViewStatement !builder !viewRef !onlyIfViewExists = 
+    let
+        ifExistsText :: String;
+        ifExistsText = if onlyIfViewExists then " IF EXISTS" else "";
+    in
+        text "DROP VIEW" ++ text ifExistsText ++ singleSpace ++ Sql.quoteIdentifier builder (getTableNameFromReference viewRef);
 
