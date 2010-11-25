@@ -372,12 +372,22 @@ public final class Time implements Comparable<Time>, Serializable {
      * Method add
      * 
      * @param d
-     * @return Returns the Duration that represents the sum of this Time and the given Time
+     * @return Returns the Time that represents this Time plus a given duration
      */
     public Time add (Duration d) {
         return new Time (ticks + d.getTicks());
     }
 
+    /**
+     * Method subtract
+     * 
+     * @param d
+     * @return Returns the Time that represents this Time minus a given duration
+     */
+    public Time subtract (Duration d) {
+        return new Time (ticks - d.getTicks());
+    }
+    
     /**
      * Returns a string representing the serialized form of the Time value.
      */

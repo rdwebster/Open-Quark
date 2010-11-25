@@ -123,6 +123,14 @@ foreign unsafe import jvm "method add"
     public addDurationToTime :: Time -> Duration -> Time;
 
 /**
+ * @arg time
+ * @arg duration
+ * @return the {@link typeConstructor=Time@} that results from subtracting a {@link Duration@} from a {@link typeConstructor=Time@}.
+ */
+foreign unsafe import jvm "method subtract"
+    public subtractDurationFromTime :: Time -> Duration -> Time;
+
+/**
  * Construct a {@link typeConstructor=Time@} value from year, month, day, hour, minute, second and tick in the UTC time zone.
  */
 makeUTCTimeFromTuple :: (Int, Int, Int, Int, Int, Int, Int) -> Time;
@@ -271,6 +279,18 @@ foreign unsafe import jvm "static method org.openquark.util.time.Duration.fromSe
  */
 foreign unsafe import jvm "static method org.openquark.util.time.Duration.fromSeconds"
     public nSecondsDuration :: Double -> Duration;
+
+/**
+ * A {@link Duration@} representing the specified number of minutes.
+ */
+nMinutesDuration :: Double -> Duration;
+public nMinutesDuration !nMinutes = nSecondsDuration (nMinutes * 60);
+
+/**
+ * A {@link Duration@} representing the specified number of hours.
+ */
+nHoursDuration :: Double -> Duration;
+public nHoursDuration !nHours = nSecondsDuration (nHours * 3600);
 
 /**
  * Converts a {@link Duration@} to a number of minutes, as a {@link Double@}.
