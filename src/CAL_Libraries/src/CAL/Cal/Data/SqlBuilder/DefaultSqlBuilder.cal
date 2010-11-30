@@ -127,6 +127,7 @@ public defaultSqlBuilderFunctions =
         buildCreateViewStatement        = default_buildCreateViewStatement,
         buildDropTableStatement         = default_buildDropTableStatement,
         buildDropViewStatement          = default_buildDropViewStatement,
+        buildAlterTableAddIndexStatement = default_buildAlterTableAddIndexStatement,
         buildInsertValuesStatement      = default_buildSingleRowInsertValuesStatement,
         buildInsertQueryValuesStatement = default_buildInsertQueryValuesStatement,
         buildUpdateValuesStatement      = default_buildUpdateValuesStatement,
@@ -397,6 +398,27 @@ default_buildDropTableStatement !builder !tableRef !onlyIfTableExists =
 default_buildDropViewStatement :: SqlBuilder -> TableReference -> Boolean -> Document;
 default_buildDropViewStatement !builder !viewRef !onlyIfViewExists = 
     text "DROP VIEW" ++ singleSpace ++ Sql.quoteIdentifier builder (getTableNameFromReference viewRef);
+
+default_buildAlterTableAddIndexStatement :: SqlBuilder -> TableReference -> Boolean -> Maybe String -> [String] -> Document;
+default_buildAlterTableAddIndexStatement !builder !tableRef !unique !maybeIndexName !indexColumnNames = 
+    let
+        addIndexText :: String;
+        addIndexText = if unique then "ADD UNIQUE INDEX" else "ADD INDEX";
+        
+        indexNameText :: String;
+        indexNameText = 
+            case maybeIndexName of
+            Nothing -> "";
+            Just indexName -> " " ++ indexName;
+            ;
+    in
+        group (
+        spread [text "ALTER TABLE", 
+                Sql.quoteIdentifier builder (getTableNameFromReference tableRef),
+                text (addIndexText ++ indexNameText),
+                text "(" ++ join (text ", ") (map (Sql.quoteIdentifier builder) indexColumnNames) ++ text ")"
+               ]
+        );
 
 // By default, break up a multi-row INSERT statement to create N individual INSERT statements.
 // The buildMultiRowInsertValuesStatement function can be used for cases where INSERT supports multiple rows in one statement.

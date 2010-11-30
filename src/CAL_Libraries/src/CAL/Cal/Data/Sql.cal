@@ -3794,7 +3794,11 @@ data public SqlBuilder =
         buildDropViewStatementFn ::
             // (viewRef onlyIfViewExists)
             (TableReference -> Boolean -> Document)
-            
+        
+        buildAlterTableAddIndexStatementFn :: 
+            // tableRef unique indexName indexColumnNames
+            (TableReference -> Boolean -> Maybe String -> [String] -> Document)
+        
         buildInsertValuesStatementFn ::
             // (tableRef maybeDestColumns rowsOfValues)
             (TableReference -> Maybe [String] -> [[Expr]] -> Document)
@@ -3886,7 +3890,9 @@ makeSqlBuilder :: { prepareQuery                    :: SqlBuilderState -> Query 
                     buildCreateTableStatement       :: SqlBuilder -> TableDescription -> Boolean -> Boolean -> Document,
                     buildCreateViewStatement        :: SqlBuilder -> TableReference -> Query -> Boolean -> Document,
                     buildDropTableStatement         :: SqlBuilder -> TableReference -> Boolean -> Document,
-                    buildDropViewStatement          :: SqlBuilder -> TableReference -> Boolean -> Document,
+                    buildDropViewStatement          :: SqlBuilder -> TableReference -> Boolean -> Document,                    
+                    buildAlterTableAddIndexStatement :: SqlBuilder -> TableReference -> Boolean -> Maybe String -> [String] -> Document,
+                    
                     buildInsertValuesStatement      :: SqlBuilder -> TableReference -> Maybe [String] -> [[Expr]] -> Document,
                     buildInsertQueryValuesStatement :: SqlBuilder -> TableReference -> Maybe [String] -> Query -> Document,
                     buildUpdateValuesStatement      :: SqlBuilder -> SqlBuilderState -> TableReference -> [String] -> [Expr] -> TypedExpr Boolean -> Document,
@@ -3941,6 +3947,7 @@ public makeSqlBuilder sqlBuilderFns =
                                 (sqlBuilderFns.buildCreateViewStatement sqlBuilder)
                                 (sqlBuilderFns.buildDropTableStatement sqlBuilder)
                                 (sqlBuilderFns.buildDropViewStatement sqlBuilder)
+                                (sqlBuilderFns.buildAlterTableAddIndexStatement sqlBuilder)
                                 (sqlBuilderFns.buildInsertValuesStatement sqlBuilder)
                                 (sqlBuilderFns.buildInsertQueryValuesStatement sqlBuilder)
                                 (sqlBuilderFns.buildUpdateValuesStatement sqlBuilder)
@@ -4595,6 +4602,12 @@ data public Statement =
         viewRef           :: TableReference 
         onlyIfViewExists  :: Boolean
     |
+    private AlterTableAddIndexStatement 
+        tableRef          :: TableReference
+        unique            :: Boolean
+        indexName         :: (Maybe String)
+        indexColumnNames  :: [String]
+    |
     private InsertValuesStatement 
         tableRef          :: TableReference 
         maybeDestColumns  :: (Maybe [String])
@@ -4644,6 +4657,11 @@ public makeDropTableStatement = DropTableStatement;
 
 makeDropViewStatement :: TableReference -> Boolean -> Statement;
 public makeDropViewStatement = DropViewStatement;
+
+/** A statement to add an index to an existing table. */
+makeAlterTableAddIndexStatement :: TableReference -> Boolean -> Maybe String -> [String] -> Statement;
+public makeAlterTableAddIndexStatement !tableRef !unique !indexName !indexColumnNames = 
+    AlterTableAddIndexStatement tableRef unique indexName indexColumnNames;
 
 /**
  * Construct an Insert statement to insert one row of values.
@@ -4758,6 +4776,7 @@ public statementText !builder !forDisplay statement =
                 buildCreateViewStatementFn,
                 buildDropTableStatementFn,
                 buildDropViewStatementFn,
+                buildAlterTableAddIndexStatementFn, 
                 buildInsertValuesStatementFn,
                 buildInsertQueryValuesStatementFn,
                 buildUpdateValuesStatementFn,
@@ -4790,6 +4809,8 @@ public statementText !builder !forDisplay statement =
                     buildDropTableStatementFn tableRef onlyIfTableExists;
                 DropViewStatement {viewRef, onlyIfViewExists} -> 
                     buildDropViewStatementFn viewRef onlyIfViewExists;
+                AlterTableAddIndexStatement {tableRef, unique, indexName, indexColumnNames} -> 
+                    buildAlterTableAddIndexStatementFn tableRef unique indexName indexColumnNames;
                 InsertValuesStatement {tableRef, maybeDestColumns, rowsOfValues} -> 
                     buildInsertValuesStatementFn tableRef maybeDestColumns rowsOfValues;
                 InsertQueryValuesStatement {tableRef, maybeDestColumns, insertQuery} -> 
