@@ -2460,7 +2460,20 @@ instance Ord a => Ord (Array a) where
     ;
 
 compareArray :: Ord a => Array a -> Array a -> Ordering;    
-compareArray !array1 !array2 =
+compareArray = compareBy compare;
+
+/**
+ * Compares two arrays lexicographically using a comparator function. 
+ * The empty array is considered less that any non-empty array.
+ * 
+ * Note that {@code {@link compareBy@} {@link compare@} == (compare :: Ord a => Array a -> Array a -> Ordering)@}.
+ * Thus {@link compareBy@} can be considered as a generalization of the class method {@link compare@}
+ * when comparing 2 arrays.
+ * 
+ * @see compare
+ */
+compareBy :: (a -> a -> Ordering) -> Array a -> Array a -> Ordering;
+public compareBy !comparator !array1 !array2 =
     if isEmpty array2 then
         if isEmpty array1 then
             EQ // [] == []
@@ -2495,7 +2508,7 @@ compareArray !array1 !array2 =
                             compareFuncHelper :: Array a -> (a -> a -> Ordering);
                             compareFuncHelper = undefined;
                         in                  
-                            asTypeOf compare (compareFuncHelper array1);
+                            asTypeOf comparator (compareFuncHelper array1);
                     
                     compareArrayHelper :: Int -> Ordering;
                     compareArrayHelper !index =
@@ -2540,7 +2553,7 @@ compareArray !array1 !array2 =
                             compareFuncHelper :: Array a -> (a -> a -> Ordering);
                             compareFuncHelper = undefined;
                         in                  
-                            asTypeOf compare (compareFuncHelper array1);
+                            asTypeOf comparator (compareFuncHelper array1);
                     
                     compareArrayHelper :: Int -> Ordering;
                     compareArrayHelper !index =
@@ -2585,7 +2598,7 @@ compareArray !array1 !array2 =
                             compareFuncHelper :: Array a -> (a -> a -> Ordering);
                             compareFuncHelper = undefined;
                         in                  
-                            asTypeOf compare (compareFuncHelper array1);
+                            asTypeOf comparator (compareFuncHelper array1);
                     
                     compareArrayHelper :: Int -> Ordering;
                     compareArrayHelper !index =
@@ -2630,7 +2643,7 @@ compareArray !array1 !array2 =
                             compareFuncHelper :: Array a -> (a -> a -> Ordering);
                             compareFuncHelper = undefined;
                         in                  
-                            asTypeOf compare (compareFuncHelper array1);
+                            asTypeOf comparator (compareFuncHelper array1);
                     
                     compareArrayHelper :: Int -> Ordering;
                     compareArrayHelper !index =
@@ -2675,7 +2688,7 @@ compareArray !array1 !array2 =
                             compareFuncHelper :: Array a -> (a -> a -> Ordering);
                             compareFuncHelper = undefined;
                         in                  
-                            asTypeOf compare (compareFuncHelper array1);
+                            asTypeOf comparator (compareFuncHelper array1);
                     
                     compareArrayHelper :: Int -> Ordering;
                     compareArrayHelper !index =
@@ -2720,7 +2733,7 @@ compareArray !array1 !array2 =
                             compareFuncHelper :: Array a -> (a -> a -> Ordering);
                             compareFuncHelper = undefined;
                         in                  
-                            asTypeOf compare (compareFuncHelper array1);
+                            asTypeOf comparator (compareFuncHelper array1);
                     
                     compareArrayHelper :: Int -> Ordering;
                     compareArrayHelper !index =
@@ -2765,7 +2778,7 @@ compareArray !array1 !array2 =
                             compareFuncHelper :: Array a -> (a -> a -> Ordering);
                             compareFuncHelper = undefined;
                         in                  
-                            asTypeOf compare (compareFuncHelper array1);
+                            asTypeOf comparator (compareFuncHelper array1);
                     
                     compareArrayHelper :: Int -> Ordering;
                     compareArrayHelper !index =
@@ -2810,7 +2823,7 @@ compareArray !array1 !array2 =
                             compareFuncHelper :: Array a -> (a -> a -> Ordering);
                             compareFuncHelper = undefined;
                         in                  
-                            asTypeOf compare (compareFuncHelper array1);
+                            asTypeOf comparator (compareFuncHelper array1);
                     
                     compareArrayHelper :: Int -> Ordering;
                     compareArrayHelper !index =
@@ -2855,7 +2868,7 @@ compareArray !array1 !array2 =
                             compareFuncHelper :: Array a -> (a -> a -> Ordering);
                             compareFuncHelper = undefined;
                         in                  
-                            asTypeOf compare (compareFuncHelper array1);
+                            asTypeOf comparator (compareFuncHelper array1);
                     
                     compareArrayHelper :: Int -> Ordering;
                     compareArrayHelper !index =
@@ -2900,7 +2913,7 @@ compareArray !array1 !array2 =
                             compareFuncHelper :: Array a -> (a -> a -> Ordering);
                             compareFuncHelper = undefined;
                         in                  
-                            asTypeOf compare (compareFuncHelper array1);
+                            asTypeOf comparator (compareFuncHelper array1);
                     
                     compareArrayHelper :: Int -> Ordering;
                     compareArrayHelper !index =
