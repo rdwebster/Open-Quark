@@ -91,6 +91,14 @@ foreign unsafe import jvm "constructor"
     public makeTimeFromTicks :: Long -> Time;
 
 /**
+ * Converts a Time to a number of ticks, as a {@link Long@}.
+ * @arg time
+ * @return ticks
+ */
+foreign unsafe import jvm "method getTicks"
+    public timeToTicks :: Time -> Long;
+
+/**
  * @arg year
  * @arg month
  * @arg day
