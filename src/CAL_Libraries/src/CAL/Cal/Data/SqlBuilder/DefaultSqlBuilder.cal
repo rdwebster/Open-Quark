@@ -734,7 +734,7 @@ default_operatorText !operator =
     Sql.OpIsNotNull     -> " IS NOT NULL";
     Sql.OpExists        -> "EXISTS ";
     Sql.OpEq            -> "=";
-    Sql.OpNullSafeEq    -> "<=>";       // Not widely supported currently.
+    Sql.OpNullSafeEq    -> "<=>";       // Not widely supported currently. Could generate the following for other DBs:  IFNULL(arg1 = arg2, FALSE) OR (arg1 IS NULL AND arg2 IS NULL)
     Sql.OpLt            -> "<";
     Sql.OpLtEq          -> "<=";
     Sql.OpGt            -> ">";
