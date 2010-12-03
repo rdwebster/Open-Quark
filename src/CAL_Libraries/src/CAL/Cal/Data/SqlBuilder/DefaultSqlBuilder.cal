@@ -671,6 +671,7 @@ default_functionToSql !builder !builderState !func !arguments =
             | Sql.OpIsNotNull) -> unaryOperationText False;
 
         (Sql.OpEq       // Binary operators which are done on one line.
+            | Sql.OpNullSafeEq
             | Sql.OpLt
             | Sql.OpLtEq
             | Sql.OpGt
@@ -733,6 +734,7 @@ default_operatorText !operator =
     Sql.OpIsNotNull     -> " IS NOT NULL";
     Sql.OpExists        -> "EXISTS ";
     Sql.OpEq            -> "=";
+    Sql.OpNullSafeEq    -> "<=>";       // Not widely supported currently.
     Sql.OpLt            -> "<";
     Sql.OpLtEq          -> "<=";
     Sql.OpGt            -> ">";

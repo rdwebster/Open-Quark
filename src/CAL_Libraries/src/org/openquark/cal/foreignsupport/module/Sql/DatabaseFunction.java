@@ -58,6 +58,7 @@ public abstract class DatabaseFunction {
         public static final Operator EXISTS_OPERATOR                = new Operator("Exists",                "EXISTS",   1);
 
         public static final Operator EQUAL_OPERATOR                 = new Operator("Equal",                 "=",        2);
+        public static final Operator NULL_SAFE_EQUAL_OPERATOR       = new Operator("Null-Safe Equal",       "<=>",      2);
         public static final Operator LESS_THAN_OPERATOR             = new Operator("Less Than",             "<",        2);
         public static final Operator LESS_THAN_OR_EQUAL_OPERATOR    = new Operator("Less Than Or Equal",    "<=",       2);
         public static final Operator GREATER_THAN_OPERATOR          = new Operator("Greater Than",          ">",        2);

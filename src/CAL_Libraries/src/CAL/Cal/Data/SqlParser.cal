@@ -537,11 +537,13 @@ comparison_operator =
         notLessThan      = exclmnToken `pSeq` ltToken `pSeq` pReturn Sql.OpGtEq;
         notGreaterThan   = exclmnToken `pSeq` gtToken `pSeq` pReturn Sql.OpLtEq;
         equal            = eqToken `pSeq` pReturn Sql.OpEq;
+        nullSafeEqual    = ltToken `pSeq` eqToken `pSeq` gtToken `pSeq` pReturn Sql.OpNullSafeEq;
         lessThan         = ltToken `pSeq` pReturn Sql.OpLt;
         greaterThan      = gtToken `pSeq` pReturn Sql.OpGt;
     in
         try notEqual1 `pOr` 
         try notEqual2 `pOr` 
+        try nullSafeEqual `pOr`
         try lessThanEqual `pOr` 
         try greaterThanEqual `pOr` 
         try notLessThan `pOr` 

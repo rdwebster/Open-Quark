@@ -1178,7 +1178,8 @@ data public DbFunction =
     | public OpExists
     
     // Binary operators
-    | public OpEq | public OpLt | public OpLtEq | public OpGt | public OpGtEq | public OpNotEq 
+    | public OpEq | public OpLt | public OpLtEq | public OpGt | public OpGtEq | public OpNotEq
+    | public OpNullSafeEq       // Null-safe equals operator -- not widely supported.
     | public OpAnd | public OpOr
     | public OpLike | public OpIn | public OpNotIn
     | public OpCat
@@ -1492,6 +1493,17 @@ public untypedBinaryExpr func leftArgument rightArgument = FunctionExpr func [le
  */
 eqExpr :: Eq a => TypedExpr a -> TypedExpr a -> TypedExpr Boolean;
 public eqExpr = functionExpr2 OpEq;
+
+/**
+ * Constructs a database expression which test two operand expressions for null-safe equality.
+ * Unlike the regular equals operator, this will compare 2 Null values as equal, and will return False
+ * (instead of Null) for a comparison with Null against a non-null value.
+ * @arg expr1  a database expression for the first operand
+ * @arg expr2  a database expression for the second operand
+ * @return     a Boolean database expression to test the operand expressions for null-safe equality
+ */
+nullSafeEqExpr :: Eq a => TypedExpr a -> TypedExpr a -> TypedExpr Boolean;
+public nullSafeEqExpr = functionExpr2 OpNullSafeEq;
 
 /**
  * Constructs a database expression which tests two operand expressions for inequality.
@@ -4285,6 +4297,7 @@ public operatorPrecedence func =
     OpNegate -> 7;
 
     OpEq     -> 4;
+    OpNullSafeEq -> 4;
     OpLt     -> 4;
     OpLtEq   -> 4;
     OpGt     -> 4;
@@ -4875,6 +4888,7 @@ isBinaryFunction :: DbFunction -> Boolean;
 public isBinaryFunction dbFun = 
     case dbFun of
     (OpEq 
+    | OpNullSafeEq
     | OpLt 
     | OpLtEq 
     | OpGt 
@@ -5372,6 +5386,7 @@ foreign unsafe import jvm "static field org.openquark.cal.foreignsupport.module.
 foreign unsafe import jvm "static field org.openquark.cal.foreignsupport.module.Sql.DatabaseFunction$Operator.ISNOTNULL_OPERATOR"             jIsNotNullOperator          :: JDatabaseFunction;
 foreign unsafe import jvm "static field org.openquark.cal.foreignsupport.module.Sql.DatabaseFunction$Operator.EXISTS_OPERATOR"                jExistsOperator             :: JDatabaseFunction;
 foreign unsafe import jvm "static field org.openquark.cal.foreignsupport.module.Sql.DatabaseFunction$Operator.EQUAL_OPERATOR"                 jEqualOperator              :: JDatabaseFunction;
+foreign unsafe import jvm "static field org.openquark.cal.foreignsupport.module.Sql.DatabaseFunction$Operator.NULL_SAFE_EQUAL_OPERATOR"       jNullSafeEqualsOperator     :: JDatabaseFunction;
 foreign unsafe import jvm "static field org.openquark.cal.foreignsupport.module.Sql.DatabaseFunction$Operator.LESS_THAN_OPERATOR"             jLessThanOperator           :: JDatabaseFunction;
 foreign unsafe import jvm "static field org.openquark.cal.foreignsupport.module.Sql.DatabaseFunction$Operator.LESS_THAN_OR_EQUAL_OPERATOR"    jLessThanOrEqualOperator    :: JDatabaseFunction;
 foreign unsafe import jvm "static field org.openquark.cal.foreignsupport.module.Sql.DatabaseFunction$Operator.GREATER_THAN_OPERATOR"          jGreaterThanOperator        :: JDatabaseFunction;
@@ -5415,6 +5430,7 @@ outputDbFunction !func =
     OpIsNotNull     -> jIsNotNullOperator;
     OpExists        -> jExistsOperator;
     OpEq            -> jEqualOperator;
+    OpNullSafeEq    -> jNullSafeEqualsOperator;
     OpLt            -> jLessThanOperator;
     OpLtEq          -> jLessThanOrEqualOperator;
     OpGt            -> jGreaterThanOperator;
