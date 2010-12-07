@@ -180,10 +180,10 @@ msSqlServer_buildCreateTableStatement builder !tableDesc !isTemporary !skipIfTab
                                 ++ createText)
         else createText;
 
-msSqlServer_buildDropTableStatement :: SqlBuilder -> TableReference -> Boolean -> Document;
-msSqlServer_buildDropTableStatement builder tableRef !onlyIfTableExists = 
+msSqlServer_buildDropTableStatement :: SqlBuilder -> TableReference -> Boolean -> Boolean -> Document;
+msSqlServer_buildDropTableStatement builder tableRef !isTemporary !onlyIfTableExists = 
     let
-        dropText = defaultSqlBuilderFunctions.buildDropTableStatement builder tableRef False;
+        dropText = defaultSqlBuilderFunctions.buildDropTableStatement builder tableRef isTemporary False;
     in
         if (onlyIfTableExists) then
             text "IF EXISTS("

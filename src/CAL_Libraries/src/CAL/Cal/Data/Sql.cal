@@ -3749,9 +3749,9 @@ data public SqlBuilder =
             (SqlBuilderState -> Query -> Query)        
 
         constructQueryFn :: 
-            // (builderState selectBody fromBody whereBody 
+            // (builderState queryOptions selectBody fromBody whereBody 
             //               groupByBody havingBody orderByBody)
-            (SqlBuilderState -> Document -> Document -> Document -> 
+            (SqlBuilderState -> [QueryOption] -> Document -> Document -> Document -> 
                                 Document -> Document -> Document -> Document)
 
                     
@@ -3800,8 +3800,8 @@ data public SqlBuilder =
             (TableReference -> Query -> Boolean -> Document)
 
         buildDropTableStatementFn ::
-            // (tableRef onlyIfTableExists)
-            (TableReference -> Boolean -> Document)
+            // (tableRef isTemporary onlyIfTableExists)
+            (TableReference -> Boolean -> Boolean -> Document)
             
         buildDropViewStatementFn ::
             // (viewRef onlyIfViewExists)
@@ -3887,7 +3887,7 @@ data public SqlBuilder =
  * The advantage of this approach is that a SqlBuilder can easily override selected functions from the record of another SqlBuilder.
  */
 makeSqlBuilder :: { prepareQuery                    :: SqlBuilderState -> Query -> Query,
-                    constructQuery                  :: SqlBuilder -> SqlBuilderState -> Document -> Document -> Document -> Document -> Document -> Document -> Document,
+                    constructQuery                  :: SqlBuilder -> SqlBuilderState -> [QueryOption] -> Document -> Document -> Document -> Document -> Document -> Document -> Document,
                     constructUnionQuery             :: SqlBuilder -> SqlBuilderState -> Document -> Document -> Boolean -> Document,
                      
                     buildSelectClause               :: SqlBuilder -> SqlBuilderState -> [QueryOption] -> [(Expr, String)] -> Document,
@@ -3901,7 +3901,7 @@ makeSqlBuilder :: { prepareQuery                    :: SqlBuilderState -> Query 
                     buildDropDatabaseStatement      :: SqlBuilder -> DatabaseReference -> Boolean -> Document,
                     buildCreateTableStatement       :: SqlBuilder -> TableDescription -> Boolean -> Boolean -> Document,
                     buildCreateViewStatement        :: SqlBuilder -> TableReference -> Query -> Boolean -> Document,
-                    buildDropTableStatement         :: SqlBuilder -> TableReference -> Boolean -> Document,
+                    buildDropTableStatement         :: SqlBuilder -> TableReference -> Boolean -> Boolean -> Document,
                     buildDropViewStatement          :: SqlBuilder -> TableReference -> Boolean -> Document,                    
                     buildAlterTableAddIndexStatement :: SqlBuilder -> TableReference -> Boolean -> Maybe String -> [String] -> Document,
                     
@@ -3992,9 +3992,9 @@ private prepareToBuildQueryText !sqlBuilder builderState query =
 /**
  * Constructs a complete SQL query from the component parts.
  */
-constructQuery :: SqlBuilder -> SqlBuilderState -> Document -> Document -> Document -> Document -> Document -> Document -> Document;
-private constructQuery !sqlBuilder builderState selectBody fromBody whereBody groupByBody havingBody orderByBody = 
-    (sqlBuilder.SqlBuilder.constructQueryFn) builderState selectBody fromBody whereBody groupByBody havingBody orderByBody;
+constructQuery :: SqlBuilder -> SqlBuilderState -> [QueryOption] -> Document -> Document -> Document -> Document -> Document -> Document -> Document;
+private constructQuery !sqlBuilder builderState !queryOptions selectBody fromBody whereBody groupByBody havingBody orderByBody = 
+    (sqlBuilder.SqlBuilder.constructQueryFn) builderState queryOptions selectBody fromBody whereBody groupByBody havingBody orderByBody;
 
 constructUnionQuery :: SqlBuilder -> SqlBuilderState -> Document -> Document -> Boolean -> Document;
 private constructUnionQuery !sqlBuilder builderState query1Text query2Text unionAll = 
@@ -4444,7 +4444,7 @@ private queryText2 builder builderState query =
             havingBody  = buildHavingClause builder newBuilderState untypedGroupRestriction;
             orderByBody = buildOrderByClause builder newBuilderState updatedOrderings;
         in
-            constructQuery builder newBuilderState selectBody fromBody whereBody groupByBody havingBody orderByBody;
+            constructQuery builder newBuilderState options selectBody fromBody whereBody groupByBody havingBody orderByBody;
 
     Union {query1, query2, unionAll} -> 
         let
@@ -4609,6 +4609,7 @@ data public Statement =
     |
     private DropTableStatement 
         tableRef          :: TableReference 
+        isTemporary       :: Boolean
         onlyIfTableExists :: Boolean
     |
     private DropViewStatement
@@ -4666,7 +4667,10 @@ makeCreateViewStatement :: TableReference -> Query -> Boolean -> Statement;
 public makeCreateViewStatement = CreateViewStatement;
 
 makeDropTableStatement :: TableReference -> Boolean -> Statement;
-public makeDropTableStatement = DropTableStatement;
+public makeDropTableStatement !tableRef !onlyIfTableExists = DropTableStatement tableRef False onlyIfTableExists;
+
+makeDropTemporaryTableStatement :: TableReference -> Boolean -> Statement;
+public makeDropTemporaryTableStatement !tableRef !onlyIfTableExists = DropTableStatement tableRef True onlyIfTableExists;
 
 makeDropViewStatement :: TableReference -> Boolean -> Statement;
 public makeDropViewStatement = DropViewStatement;
@@ -4818,8 +4822,8 @@ public statementText !builder !forDisplay statement =
                     buildCreateTableStatementFn tableDesc isTemporary skipIfTableExists;
                 CreateViewStatement {viewRef, viewDefinition, skipIfViewExists} -> 
                     buildCreateViewStatementFn viewRef viewDefinition skipIfViewExists;
-                DropTableStatement {tableRef, onlyIfTableExists} -> 
-                    buildDropTableStatementFn tableRef onlyIfTableExists;
+                DropTableStatement {tableRef, isTemporary, onlyIfTableExists} -> 
+                    buildDropTableStatementFn tableRef isTemporary onlyIfTableExists;
                 DropViewStatement {viewRef, onlyIfViewExists} -> 
                     buildDropViewStatementFn viewRef onlyIfViewExists;
                 AlterTableAddIndexStatement {tableRef, unique, indexName, indexColumnNames} -> 

@@ -165,8 +165,14 @@ public defaultSqlBuilder = Sql.makeSqlBuilder defaultSqlBuilderFunctions;
 default_prepareQuery :: SqlBuilderState -> Query -> Query;
 default_prepareQuery !builderState !query = query;
 
-default_constructQuery :: SqlBuilder -> SqlBuilderState -> Document -> Document -> Document -> Document -> Document -> Document -> Document;
-default_constructQuery !builder !builderState !selectBody !fromBody !whereBody !groupByBody !havingBody !orderByBody = 
+default_constructQuery :: SqlBuilder -> SqlBuilderState -> [QueryOption] -> Document -> Document -> Document -> Document -> Document -> Document -> Document;
+default_constructQuery = constructQuery Nothing Nothing;
+
+/**
+ * Builds the overall SQL statement with optional text included at the start and/or end.
+ */
+constructQuery :: Maybe Document -> Maybe Document -> SqlBuilder -> SqlBuilderState -> [QueryOption] -> Document -> Document -> Document -> Document -> Document -> Document -> Document;
+public constructQuery !preQueryText !postQueryText !builder !builderState !queryOptions !selectBody !fromBody !whereBody !groupByBody !havingBody !orderByBody = 
     let
         selectDoc  = group (text "SELECT" ++ nest 4 (line ++ selectBody));
         fromDoc    = if (isEmpty fromBody)    then empty else group (text "FROM"     ++ nest 4 (line ++ fromBody));
@@ -175,8 +181,7 @@ default_constructQuery !builder !builderState !selectBody !fromBody !whereBody !
         havingDoc  = if (isEmpty havingBody)  then empty else group (text "HAVING"   ++ nest 4 (line ++ havingBody));
         orderByDoc = if (isEmpty orderByBody) then empty else group (text "ORDER BY" ++ nest 4 (line ++ orderByBody));
     in
-        group (stack [selectDoc, fromDoc, whereDoc, groupByDoc, havingDoc, orderByDoc]);
-
+        group (stack (maybeToList preQueryText ++ [selectDoc, fromDoc, whereDoc, groupByDoc, havingDoc, orderByDoc] ++ maybeToList postQueryText));
 
 default_constructUnionQuery :: SqlBuilder -> SqlBuilderState -> Document -> Document -> Boolean -> Document;
 default_constructUnionQuery !builder !builderState !query1Text !query2Text !unionAll = 
@@ -391,8 +396,9 @@ public buildCreateViewStatement !preStatementNameText !preViewNameText !postView
     );
 
 // TODO: make use of the 'onlyIfTableExists' flag...
-default_buildDropTableStatement :: SqlBuilder -> TableReference -> Boolean -> Document;
-default_buildDropTableStatement !builder !tableRef !onlyIfTableExists = 
+// TODO: make use of the 'isTemporary' flag...
+default_buildDropTableStatement :: SqlBuilder -> TableReference -> Boolean -> Boolean -> Document;
+default_buildDropTableStatement !builder !tableRef !isTemporary !onlyIfTableExists = 
     text "DROP TABLE" ++ singleSpace ++ Sql.quoteIdentifier builder (getTableNameFromReference tableRef);
 
 default_buildDropViewStatement :: SqlBuilder -> TableReference -> Boolean -> Document;

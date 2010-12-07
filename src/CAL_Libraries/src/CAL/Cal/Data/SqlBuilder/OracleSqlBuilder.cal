@@ -310,11 +310,11 @@ oracle_buildCreateViewStatement builder viewRef viewDefinition !skipIfViewExists
                 ++ text "END;"
         else createViewText;
 
-oracle_buildDropTableStatement :: SqlBuilder -> TableReference -> Boolean -> Document;
-oracle_buildDropTableStatement builder tableRef !onlyIfTableExists =
+oracle_buildDropTableStatement :: SqlBuilder -> TableReference -> Boolean -> Boolean -> Document;
+oracle_buildDropTableStatement builder tableRef !isTemporary !onlyIfTableExists =
     let
         dropTableText :: Document;
-        dropTableText = defaultSqlBuilderFunctions.buildDropTableStatement builder tableRef False;
+        dropTableText = defaultSqlBuilderFunctions.buildDropTableStatement builder tableRef isTemporary False;
     in
         if (onlyIfTableExists) then
             text "DECLARE tab_exist PLS_INTEGER;" ++ line
