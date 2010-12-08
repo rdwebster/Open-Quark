@@ -146,6 +146,12 @@ public class Executor implements CALExecutor {
     private static final int ACTION_CONTINUE = 0;
     private static final int ACTION_QUIT = 1;
 
+    /**
+     * A flag to suppress cancellation.
+     * The cancel flag will be ignored while this flag is set.
+     */
+    private boolean cancelOverrideFlag = false;
+    
     /** Execution context associated with this executor. */
     private ExecutionContextImpl executionContext;
     
@@ -1051,7 +1057,7 @@ public class Executor implements CALExecutor {
         try {
             for (;;) {
                 if (continueAction != ACTION_CONTINUE) {
-                    if (continueAction == ACTION_QUIT) {
+                    if (!cancelOverrideFlag && continueAction == ACTION_QUIT) {
                         throw (new CALExecutorException.ExternalException.TerminatedByClientException("Evaluation halted by client.", null));
                     }
                 }
@@ -1263,6 +1269,21 @@ public class Executor implements CALExecutor {
         executionContext.setStepping(true);
     }
 
+    /**
+     * Check whether cancellation should be overridden.
+     */
+    public boolean getCancelOverride() {
+        return cancelOverrideFlag;
+    }
+    
+    /**
+     * Set whether cancellation should be overridden.
+     * The cancel flag will be ignored while this flag is set.
+     */
+    public void setCancelOverride(boolean cancelOverrideFlag) {
+        this.cancelOverrideFlag = cancelOverrideFlag;
+    }
+    
     /**
      * Set the regular expression that the tracing code uses to filter the traces.
      * 

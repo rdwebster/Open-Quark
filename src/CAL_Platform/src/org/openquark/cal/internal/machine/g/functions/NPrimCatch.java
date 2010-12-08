@@ -61,6 +61,7 @@ public final class NPrimCatch extends NPrimitiveFunc {
     private NPrimCatch () {/* constructor made private for singleton */ }    
 
     /** {@inheritDoc} */
+    @SuppressWarnings("finally")
     @Override
     public Node doEvaluation(Node[] arguments, Executor executor) throws CALExecutorException {
                
@@ -88,6 +89,25 @@ public final class NPrimCatch extends NPrimitiveFunc {
             
             return arguments[1].apply(new NValObject(errorException));
                     
+        } catch (CALExecutorException.ExternalException.TerminatedByClientException terminatedByClientException) {
+            // This exception will be thrown when a cancellation is triggered in CAL.
+            // Invoke the handler to give the CAL code a chance to perform clean up.
+            
+            // Set an flag to override cancellation.
+            boolean oldCancelOverride = executor.getCancelOverride();
+            executor.setCancelOverride(true);
+            
+            try {
+                // Apply the Throwable argument to the function and force evaluation.
+                // Then, discard the result and re-throw the cancellation exception.
+                executor.internalEvaluate(arguments[1].apply(new NValObject(terminatedByClientException)));
+            }
+            finally {
+                // Reset the flag to override cancellation.
+                executor.setCancelOverride(oldCancelOverride);
+
+                throw terminatedByClientException;
+            }
         } catch (Throwable throwable) {
             
             if (throwable instanceof CALExecutorException) {
@@ -102,9 +122,6 @@ public final class NPrimCatch extends NPrimitiveFunc {
             //but this is a performance hit.
             return arguments[1].apply(new NValObject(throwable));
         }   
-        
-        //todoBI handle CALExecutor.CALTerminatedByClientException. We may want to give code a chance to clean up after
-        //a client has terminated.      
     }
 
     /** {@inheritDoc} */

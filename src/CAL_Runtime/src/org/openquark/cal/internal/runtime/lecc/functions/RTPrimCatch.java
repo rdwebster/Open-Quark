@@ -96,6 +96,7 @@ public final class RTPrimCatch extends RTSupercombinator {
                 $ec);
     }
 
+    @SuppressWarnings("finally")
     @Override
     public final RTValue f2S(RTValue expr, RTValue handler, RTExecutionContext $ec) throws CALExecutorException {
 
@@ -125,7 +126,26 @@ public final class RTPrimCatch extends RTSupercombinator {
         } catch (CALExecutorException.ExternalException.ErrorFunctionException errorException) {
 
             return handler.apply(CAL_Opaque.make(errorException));
+            
+        } catch (CALExecutorException.ExternalException.TerminatedByClientException terminatedByClientException) {
+            // This exception will be thrown when a cancellation is triggered in CAL.
+            // Invoke the handler to give the CAL code a chance to perform clean up.
+            
+            // Set an flag to override cancellation.
+            boolean oldCancelOverride = $ec.getCancelOverride();
+            $ec.setCancelOverride(true);
+            
+            try {
+                // Apply the Throwable argument to the function and force evaluation.
+                // Then, discard the result and re-throw the cancellation exception.
+                handler.apply(CAL_Opaque.make(terminatedByClientException)).evaluate($ec);
+            }
+            finally {
+                // Reset the flag to override cancellation.
+                $ec.setCancelOverride(oldCancelOverride);
 
+                throw terminatedByClientException;
+            }
         } catch (Throwable throwable) {
 
             if (throwable instanceof CALExecutorException) {
@@ -139,9 +159,6 @@ public final class RTPrimCatch extends RTSupercombinator {
             //but this is a performance hit.
             return handler.apply(CAL_Opaque.make(throwable));
         }
-
-        //todoBI handle CALExecutor.CALTerminatedByClientException. We may want to give code a chance to clean up after
-        //a client has terminated.
     }
 
     /** {@inheritDoc} */

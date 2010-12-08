@@ -92,6 +92,11 @@ public final class RTExecutionContext extends ExecutionContextImpl {
     /** Interval at which the actual volatile boolean quit flag is accessed. */
     private static final int CHECK_QUIT_INTERVAL = 20;
 
+    /**
+     * A flag to suppress cancellation.
+     * The cancel flag will be ignored while this flag is set.
+     */
+    private boolean cancelOverrideFlag = false;
 
     /**
      * Constructs an instance of this class with the specified properties.
@@ -126,6 +131,11 @@ public final class RTExecutionContext extends ExecutionContextImpl {
     public boolean isQuitRequested() {
         if (checkQuitCount++ > CHECK_QUIT_INTERVAL) {
             checkQuitCount = 0;
+            
+            // Check whether cancel is overridden.
+            if (cancelOverrideFlag) {
+                return false;
+            }
             if (continueAction == ACTION_CONTINUE) {
                 return false;
             } else if (continueAction == ACTION_QUIT) {
@@ -135,6 +145,21 @@ public final class RTExecutionContext extends ExecutionContextImpl {
         return false;
     }
 
+    /**
+     * Check whether cancellation should be overridden.
+     */
+    public boolean getCancelOverride() {
+        return cancelOverrideFlag;
+    }
+    
+    /**
+     * Set whether cancellation should be overridden.
+     * The cancel flag will be ignored while this flag is set.
+     */
+    public void setCancelOverride(boolean cancelOverrideFlag) {
+        this.cancelOverrideFlag = cancelOverrideFlag;
+    }
+    
     /*
      * Some methods used to track runtime statistics.
      */
