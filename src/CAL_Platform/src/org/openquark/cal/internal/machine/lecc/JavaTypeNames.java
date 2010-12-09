@@ -77,6 +77,8 @@ import org.openquark.cal.internal.runtime.lecc.functions.RTInsertTextualRecordFi
 import org.openquark.cal.internal.runtime.lecc.functions.RTNotEqualsRecord;
 import org.openquark.cal.internal.runtime.lecc.functions.RTOrdinalValue;
 import org.openquark.cal.internal.runtime.lecc.functions.RTPrimCatch;
+import org.openquark.cal.internal.runtime.lecc.functions.RTPrimFinally;
+import org.openquark.cal.internal.runtime.lecc.functions.RTPrimOnException;
 import org.openquark.cal.internal.runtime.lecc.functions.RTPrimThrow;
 import org.openquark.cal.internal.runtime.lecc.functions.RTRecordFieldTypePrimitive;
 import org.openquark.cal.internal.runtime.lecc.functions.RTRecordFieldValuePrimitive;
@@ -193,6 +195,8 @@ final class JavaTypeNames {
     
     static final JavaTypeName RTTHROW = JavaTypeName.make(RTPrimThrow.class);
     static final JavaTypeName RTCATCH = JavaTypeName.make(RTPrimCatch.class);
+    static final JavaTypeName RTFINALLY = JavaTypeName.make(RTPrimFinally.class);
+    static final JavaTypeName RTON_EXCEPTION = JavaTypeName.make(RTPrimOnException.class);
     static final JavaTypeName RTSHOW_RECORD = JavaTypeName.make(RTShowRecord.class);
     static final JavaTypeName RTSEQ = JavaTypeName.make(RTSeq.class);
     static final JavaTypeName RTDEEP_SEQ = JavaTypeName.make(RTDeepSeq.class);

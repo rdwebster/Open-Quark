@@ -56,6 +56,7 @@ import org.openquark.cal.internal.module.Cal.Core.CAL_Exception_internal;
 import org.openquark.cal.internal.module.Cal.Core.CAL_Prelude_internal;
 import org.openquark.cal.internal.module.Cal.Core.CAL_Record_internal;
 import org.openquark.cal.internal.module.Cal.Utilities.CAL_QuickCheck_internal;
+import org.openquark.cal.module.Cal.Core.CAL_Exception;
 import org.openquark.cal.module.Cal.Core.CAL_Prelude;
 
 
@@ -1258,6 +1259,8 @@ final class ExpressionGenerator {
             //of their custom lecc functions. In fact, throw and catch are both strict in their first argument.
             generateBuiltInFunction(CAL_Exception_internal.Functions.primThrow, new boolean[] {false});
             generateBuiltInFunction(CAL_Exception_internal.Functions.primCatch, new boolean[] {false, false});
+            generateBuiltInFunction(CAL_Exception.Functions.finally_, new boolean[] {false, false});
+            generateBuiltInFunction(CAL_Exception_internal.Functions.primOnException, new boolean[] {false, false});
             
         } else if (currentModuleName.equals(CAL_QuickCheck_internal.MODULE_NAME)) { 
             

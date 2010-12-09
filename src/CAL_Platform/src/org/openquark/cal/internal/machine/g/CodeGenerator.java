@@ -78,6 +78,8 @@ import org.openquark.cal.internal.machine.g.functions.NInsertTextualRecordFieldP
 import org.openquark.cal.internal.machine.g.functions.NNotEqualsRecord;
 import org.openquark.cal.internal.machine.g.functions.NOrdinalValue;
 import org.openquark.cal.internal.machine.g.functions.NPrimCatch;
+import org.openquark.cal.internal.machine.g.functions.NPrimFinally;
+import org.openquark.cal.internal.machine.g.functions.NPrimOnException;
 import org.openquark.cal.internal.machine.g.functions.NPrimThrow;
 import org.openquark.cal.internal.machine.g.functions.NRecordFieldTypePrimitive;
 import org.openquark.cal.internal.machine.g.functions.NRecordFieldValuePrimitive;
@@ -145,6 +147,8 @@ class CodeGenerator extends org.openquark.cal.machine.CodeGenerator {
         primitiveFuncMap.put (NSeq.name, NSeq.instance);
         primitiveFuncMap.put (NPrimCatch.name, NPrimCatch.instance);
         primitiveFuncMap.put (NPrimThrow.name, NPrimThrow.instance);
+        primitiveFuncMap.put (NPrimFinally.name, NPrimFinally.instance);
+        primitiveFuncMap.put (NPrimOnException.name, NPrimOnException.instance);
 
         primitiveFuncMap.put (NBuildList.name, NBuildList.instance);
         primitiveFuncMap.put (NBuildRecord.name, NBuildRecord.instance);

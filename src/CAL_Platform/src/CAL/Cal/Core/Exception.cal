@@ -65,16 +65,15 @@
 module Cal.Core.Exception;
 import Cal.Core.Prelude using
     typeClass = Inputable, Outputable, Typeable;
-    typeConstructor = Boolean, Either, Maybe, CalValue, JObject, JClass, String;
-    dataConstructor = Left, Right, False, True, Nothing, Just;
-    function = seq, unsafeCoerce, output, input, foreignClass, undefined, typeOf, toCalValue, unsafeFromCalValue;
+    typeConstructor = Boolean, CalValue, Either, JClass, JObject, Maybe;
+    dataConstructor = True, Left, Right, Nothing, Just;
+    function = foreignClass, input, output, seq, toCalValue, typeOf, undefined, unsafeCoerce, unsafeFromCalValue;
     ;
 import Cal.Core.Debug using
     typeClass = Show;
     ;
 import Cal.Core.Dynamic using
-    typeConstructor = Dynamic;
-    function = toDynamic, fromDynamic;
+    function = fromDynamic, toDynamic;
     ;
 friend Cal.Test.Core.Exception_Tests;
 
@@ -239,25 +238,72 @@ public try expr =
  * If an exception is raised while doing this, then {@link finally@} evaluates the argument {@code finalizer@}
  * to weak-head normal form, before re-raising the exception.
  * Otherwise, {@link finally@} will still evaluate {@code finalizer@} to weak-head normal form before returning {@code expr@}.
+ * 
+ * Cancellation will be suspended while the {@code finalizer@} argument is evaluated to prevent
+ * interruption.
  * @arg expr expression to evaluate to weak-head normal form
  * @arg finalizer expression to evaluate to weak-head normal form, even if an exception was raised while evaluating expr.
  * @return expr
  */
-finally :: a -> b -> a;
-public finally expr finalizer =
-    (
-        expr
-        `primCatch`
-        (
-            \exception -> finalizer `seq` primThrow exception
-        )
-    )
-    `seq`
-    finalizer
-    `seq`
+primitive public finally :: a -> b -> a;    // Implement this as a primitive function to give more control over cancellation when evaluating the finalizer.
+//finally :: a -> b -> a;
+//public finally expr finalizer =
+//    (
+//        expr
+//        `primCatch`
+//        (
+//            \exception -> finalizer `seq` primThrow exception
+//        )
+//    )
+//    `seq`
+//    finalizer
+//    `seq`
+//    expr
+//    ;
+
+
+
+/**
+ * {@link onException@} evaluates the argument {@code expr@} to weak-head normal form.
+ * If no exception is raised, then the {@code expr@} argument is simply returned.
+ * If an exception is raised, and the handler function is of the appropriate type to handle the exception,
+ * then the handler function is applied to the raised exception, and the original exception is propagated 
+ * (discarding the result of the handler function).
+ * Otherwise, the exception is simply not caught and propagated ownward.
+ * 
+ * Cancellation will be suspended while the {@code handler@} function is evaluated to prevent
+ * interruption.
+ */
+onException :: Exception e => a -> (e -> b) -> a;
+public onException expr handler =
     expr
-    ;
-        
+    `primOnException`
+    (
+        \throwable ->
+            case fromJThrowable throwable of
+            Nothing -> primThrow throwable;
+            Just exception -> handler exception;                   
+    );
+
+primitive private primOnException :: a -> (JThrowable -> b) -> a;
+
+/**
+ * As {@link onException@} except that any exception type is handled.
+ * The exception is not passed as an argument to the handler.
+ * This is similar to {@link finally@} except that the handler is not executed when 
+ * {@code expr@} evaluated with no exception.
+ */
+onAnyException :: a -> b -> a;
+public onAnyException expr handler = 
+    let
+        eHandler :: JThrowable -> ();
+        eHandler e = handler `seq` ();
+    in
+        expr
+        `primOnException`
+        eHandler;
+
+
 /**
  * {@link bracket@} is used to acquire a resource, do some work with it, and then release the resource even
  * if an exception is raised while doing the work with the resource.

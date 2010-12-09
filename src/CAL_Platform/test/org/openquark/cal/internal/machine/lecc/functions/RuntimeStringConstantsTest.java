@@ -53,6 +53,8 @@ import org.openquark.cal.internal.runtime.lecc.functions.RTInsertTextualRecordFi
 import org.openquark.cal.internal.runtime.lecc.functions.RTNotEqualsRecord;
 import org.openquark.cal.internal.runtime.lecc.functions.RTOrdinalValue;
 import org.openquark.cal.internal.runtime.lecc.functions.RTPrimCatch;
+import org.openquark.cal.internal.runtime.lecc.functions.RTPrimFinally;
+import org.openquark.cal.internal.runtime.lecc.functions.RTPrimOnException;
 import org.openquark.cal.internal.runtime.lecc.functions.RTPrimThrow;
 import org.openquark.cal.internal.runtime.lecc.functions.RTRecordFieldTypePrimitive;
 import org.openquark.cal.internal.runtime.lecc.functions.RTRecordFieldValuePrimitive;
@@ -64,6 +66,7 @@ import org.openquark.cal.internal.runtime.lecc.functions.RTRecordTypeDictionary;
 import org.openquark.cal.internal.runtime.lecc.functions.RTSeq;
 import org.openquark.cal.internal.runtime.lecc.functions.RTShowRecord;
 import org.openquark.cal.internal.runtime.lecc.functions.RTStrictRecordPrimitive;
+import org.openquark.cal.module.Cal.Core.CAL_Exception;
 import org.openquark.cal.module.Cal.Core.CAL_Prelude;
 
 /**
@@ -118,6 +121,12 @@ public final class RuntimeStringConstantsTest extends TestCase {
         testFunction(RTPrimCatch.$instance,
             CAL_Exception_internal.Functions.primCatch);
         
+        testFunction(RTPrimFinally.$instance,
+            CAL_Exception.Functions.finally_);
+
+        testFunction(RTPrimOnException.$instance,
+            CAL_Exception_internal.Functions.primOnException);
+                
         testFunction(RTPrimThrow.$instance,
             CAL_Exception_internal.Functions.primThrow);
         

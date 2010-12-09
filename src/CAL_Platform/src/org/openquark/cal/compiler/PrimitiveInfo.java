@@ -49,6 +49,7 @@ import org.openquark.cal.internal.module.Cal.Core.CAL_Exception_internal;
 import org.openquark.cal.internal.module.Cal.Core.CAL_Prelude_internal;
 import org.openquark.cal.internal.module.Cal.Core.CAL_Record_internal;
 import org.openquark.cal.internal.module.Cal.Utilities.CAL_QuickCheck_internal;
+import org.openquark.cal.module.Cal.Core.CAL_Exception;
 import org.openquark.cal.module.Cal.Core.CAL_Prelude;
 
 
@@ -208,6 +209,8 @@ final class PrimitiveInfo {
               
         addBuiltInFunction(CAL_Exception_internal.Functions.primThrow);
         addBuiltInFunction(CAL_Exception_internal.Functions.primCatch);
+        addBuiltInFunction(CAL_Exception.Functions.finally_);
+        addBuiltInFunction(CAL_Exception_internal.Functions.primOnException);
                       
         addBuiltInFunction(CAL_Debug_internal.Functions.showRecord);
         

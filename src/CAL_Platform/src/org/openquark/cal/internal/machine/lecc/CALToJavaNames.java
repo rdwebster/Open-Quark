@@ -59,6 +59,7 @@ import org.openquark.cal.internal.module.Cal.Utilities.CAL_QuickCheck_internal;
 import org.openquark.cal.internal.runtime.lecc.LECCMachineConfiguration;
 import org.openquark.cal.machine.Module;
 import org.openquark.cal.machine.ProgramResourceLocator;
+import org.openquark.cal.module.Cal.Core.CAL_Exception;
 import org.openquark.cal.module.Cal.Core.CAL_Prelude;
 
 
@@ -112,6 +113,8 @@ final class CALToJavaNames {
         primitiveFunctionsMap.put(CAL_Prelude.Functions.error, JavaTypeNames.RTERROR);
         primitiveFunctionsMap.put(CAL_Exception_internal.Functions.primThrow, JavaTypeNames.RTTHROW);
         primitiveFunctionsMap.put(CAL_Exception_internal.Functions.primCatch, JavaTypeNames.RTCATCH);
+        primitiveFunctionsMap.put(CAL_Exception.Functions.finally_, JavaTypeNames.RTFINALLY);
+        primitiveFunctionsMap.put(CAL_Exception_internal.Functions.primOnException, JavaTypeNames.RTON_EXCEPTION);
         primitiveFunctionsMap.put(CAL_QuickCheck_internal.Functions.arbitraryRecordPrimitive, JavaTypeNames.RTARBITRARY_RECORD_PRIMITIVE);
         primitiveFunctionsMap.put(CAL_QuickCheck_internal.Functions.coarbitraryRecordPrimitive, JavaTypeNames.RTCOARBITRARY_RECORD_PRIMITIVE);
         primitiveFunctionsMap.put(CAL_Debug_internal.Functions.showRecord, JavaTypeNames.RTSHOW_RECORD);

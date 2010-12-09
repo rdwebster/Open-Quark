@@ -210,6 +210,13 @@ public final class CAL_Exception_internal {
 		public static final QualifiedName primCatch = 
 			QualifiedName.make(CAL_Exception_internal.MODULE_NAME, "primCatch");
 
+        /**
+         * Name binding for function: primOnException.
+         * @see #primOnException(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+         */
+        public static final QualifiedName primOnException = 
+            QualifiedName.make(CAL_Exception_internal.MODULE_NAME, "primOnException");
+        
 		/**
 		 * Primitive for raising an exception. Because the return type is polymorphic, an exception can be raised in any expression
 		 * in CAL.
