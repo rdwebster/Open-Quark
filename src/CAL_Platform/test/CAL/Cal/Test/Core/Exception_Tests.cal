@@ -67,9 +67,6 @@ import Cal.Core.Exception using
     function = isError, isJavaNullPointerException, isJavaIllegalStateException, isPatternMatchingFailure, isJavaException;
     ;
 
-import Cal.IO.Console;
-
-
 
 safeHead :: [a] -> Either a String;
 public safeHead list =    
@@ -599,13 +596,17 @@ testCalThrownException6 =
 // Note:  Many of the following functions to test 'finally' and 'onAnyException' either run in an infinite loop until a cancel is 
 //        triggered or else throw exceptions.  As a result, these are not added to the module test suite.
 
+// Utility function for tracing to the console.
+printLine :: String -> ();
+printLine !str = Debug.trace (str ++ "\n") ();
+
 // Test using finally with cancellation.
 // This should trigger the finalizer message and return a cancellation exception (TerminatedByClientException).
 testFinally1 :: Int;
 testFinally1 = 
     List.length (List.repeat 1 :: [Int])
     `finally`
-    Console.printLine "******************************** finally!";
+    printLine "******************************** finally!";
 
 // Test using finally with cancellation where the finalizer is non-trivial (to ensure that another cancel is not triggered in the finalizer evaluation).
 // This should trigger the finalizer message and return a cancellation exception (TerminatedByClientException).
@@ -613,7 +614,7 @@ testFinally2 :: Int;
 testFinally2 = 
     List.length (List.repeat 1 :: [Int])
     `finally`
-    Console.printLine ("******************************** finally!" ++ intToString (List.subscript M1.allPrimes 100));
+    printLine ("******************************** finally!" ++ intToString (List.subscript M1.allPrimes 100));
 
 // Test throwing an exception in the finalizer when a cancel occurs.
 // This should trigger the finalizer, but should result in a cancellation exception (TerminatedByClientException).
@@ -621,7 +622,7 @@ testFinally3 :: Int;
 testFinally3 = 
     List.length (List.repeat 1 :: [Int])
     `finally`
-    (Console.printLine ("******************************** finally!" ++ intToString (List.subscript M1.allPrimes 100))
+    (printLine ("******************************** finally!" ++ intToString (List.subscript M1.allPrimes 100))
      `seq` M1.throwException "java.lang.IllegalStateException" "hello, I am thrown by exceptionTest1");
 
 // Test cancel from within a finally block.
@@ -630,9 +631,9 @@ testFinally4 :: String;
 testFinally4 = 
     M1.throwException "java.lang.IllegalStateException" "hello, I am thrown by exceptionTest1"
     `finally`
-    (Console.printLine "******************************** finally -- START" 
+    (printLine "******************************** finally -- START" 
      `seq` List.length (List.seqList $ List.map (\!i -> Debug.sleep 100 $ Debug.traceShowable "" i) $ upFromTo (1 :: Int) 100)
-     `seq` Console.printLine "******************************** finally -- END" 
+     `seq` printLine "******************************** finally -- END" 
     );
 
 // Test cancel from within a finalizer when no exception is thrown.
@@ -641,24 +642,24 @@ testFinally5 :: String;
 testFinally5 = 
     "everything OK"
     `finally`
-    (Console.printLine "******************************** finally -- START" 
+    (printLine "******************************** finally -- START" 
      `seq` List.length (List.seqList $ List.map (\!i -> Debug.sleep 100 $ Debug.traceShowable "" i) $ upFromTo (1 :: Int) 100)
-     `seq` Console.printLine "******************************** finally -- END" 
+     `seq` printLine "******************************** finally -- END" 
     );
 
 // Test finally where no exception is thrown and there is no cancel.
 testFinally6 :: String;
 testFinally6 = 
-    (Console.printLine "******************************** evaluating expr" `seq` "everything OK")
+    (printLine "******************************** evaluating expr" `seq` "everything OK")
     `finally`
-    Console.printLine "******************************** finally!";
+    printLine "******************************** finally!";
 
 // Test finally where an exception is thrown when evaluating the expression.
 testFinally7 :: String;
 testFinally7 = 
     M1.throwException "java.lang.IllegalStateException" "hello, I am thrown by exceptionTest1"
     `finally`
-    Console.printLine "******************************** finally!";
+    printLine "******************************** finally!";
 
 
 // Test 'onAnyException' where no exception occurs.
@@ -666,21 +667,21 @@ onAnyExceptionTest1 :: String;
 onAnyExceptionTest1 = 
     "everything OK"
     `onAnyException`
-    Console.printLine "******************************** exception -- SHOULD NOT SEE THIS!";
+    printLine "******************************** exception -- SHOULD NOT SEE THIS!";
 
 // Test 'onAnyException' where an exception occurs.
 onAnyExceptionTest2 :: String;
 onAnyExceptionTest2 = 
     M1.throwException "java.lang.IllegalStateException" "hello, I am thrown by exceptionTest1"
     `onAnyException`
-    Console.printLine "******************************** exception!";
+    printLine "******************************** exception!";
 
 // Test handling a non-Java exception.
 onAnyExceptionTest3 :: String;
 onAnyExceptionTest3 = 
     throw 1234.567
     `onAnyException`
-    Console.printLine "******************************** exception!";
+    printLine "******************************** exception!";
 
 // Test handling a cancellation exception.
 // This should trigger the handler, but should result in a cancellation exception (TerminatedByClientException).
@@ -688,7 +689,7 @@ onAnyExceptionTest4 :: Int;
 onAnyExceptionTest4 = 
     List.length (List.repeat 1 :: [Int])
     `onAnyException`
-    (Console.printLine ("******************************** exception!" ++ intToString (List.subscript M1.allPrimes 100))
+    (printLine ("******************************** exception!" ++ intToString (List.subscript M1.allPrimes 100))
      `seq` M1.throwException "java.lang.IllegalStateException" "hello, I am thrown by exceptionTest1");
 
 // Test cancel from within a handler.
@@ -697,9 +698,9 @@ onAnyExceptionTest5 :: String;
 onAnyExceptionTest5 = 
     M1.throwException "java.lang.IllegalStateException" "hello, I am thrown by exceptionTest1"
     `onAnyException`
-    (Console.printLine "******************************** exception -- START" 
+    (printLine "******************************** exception -- START" 
      `seq` List.length (List.seqList $ List.map (\!i -> Debug.sleep 100 $ Debug.traceShowable "" i) $ upFromTo (1 :: Int) 100)
-     `seq` Console.printLine "******************************** exception -- END" 
+     `seq` printLine "******************************** exception -- END" 
     );
 
 
