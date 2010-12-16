@@ -60,11 +60,11 @@ import Cal.Utilities.PrettyPrinter using
     ;
 
 import Cal.Data.DatabaseMetadata using
-    typeConstructor = DatabaseReference, FieldDescription, TableDescription, TableReference;
+    typeConstructor = DatabaseReference, FieldDescription, TableDescription, TableIndex, TableReference;
     function =
-        getDatabaseNameFromReference, getFieldDataType, getFieldName, getTableConstraints, getTableFields,
+        getDatabaseNameFromReference, getFieldDataType, getFieldName, getTableConstraints, getTableFields, getTableIndexes,
         getTableNameFromReference, getTableReference, isFieldNullable;
-    dataConstructor = PrimaryKeyConstraint, UniqueConstraint, ForeignKeyConstraint;
+    dataConstructor = PrimaryKeyConstraint, UniqueConstraint, ForeignKeyConstraint, TableIndex;
     ;
 
 import Cal.Data.SqlType using
@@ -347,10 +347,12 @@ public buildCreateTableStatement !preStatementNameText !preTableNameText !postTa
         tableRef = getTableReference tableDesc;
         fieldDescriptions = getTableFields tableDesc;
         constraints = getTableConstraints tableDesc;
+        indexes = getTableIndexes tableDesc;
         tableNameText = getTableNameFromReference tableRef;
 
         fieldDefinitions = map (Sql.fieldDescriptionText builder) fieldDescriptions;
         constraintDefinitions = mapIndexed constraintDescriptionText constraints;
+        indexDefinitions = List.map indexDescriptionText indexes;
 
         constraintName suffix constraintN = 
             text (Sql.makeSafeSqlName builder (tableNameText ++ "_" ++ suffix ++ (if (constraintN == 0) then "" else intToString constraintN)));
@@ -374,11 +376,20 @@ public buildCreateTableStatement !preStatementNameText !preTableNameText !postTa
                     ++ singleSpace ++ text "REFERENCES" ++ singleSpace ++ Sql.quoteIdentifier builder (getTableNameFromReference foreignTableRef) ++ singleSpace 
                     ++ text "(" ++ join(text ", ") (map (\pr -> Sql.quoteIdentifier builder (field2 pr)) referencedFields) ++ text ")";
             ;
+        
+        indexDescriptionText :: TableIndex -> Document;
+        indexDescriptionText !tableIndex = 
+            case tableIndex of
+            TableIndex {indexFieldNames} -> 
+                if (isEmpty indexFieldNames) then empty
+                else text "INDEX" ++ singleSpace 
+                    ++ text "(" ++ join (text ", ") (map (Sql.quoteIdentifier builder) indexFieldNames) ++ text ")";
+            ;
     in
         group (
         spread (maybeToList preStatementNameText ++ [text statementName] ++ maybeToList preTableNameText ++ [Sql.quoteIdentifier builder tableNameText] ++ maybeToList postTableNameText)
             ++ line ++ text "("
-            ++ nest 4 (line ++ fillSeparatedList True "," (fieldDefinitions ++ constraintDefinitions))
+            ++ nest 4 (line ++ fillSeparatedList True "," (fieldDefinitions ++ constraintDefinitions ++ indexDefinitions))
             ++ line ++ text ")"
             );
 

@@ -235,16 +235,24 @@ inputTableReference !obj =
  */
 data public TableDescription =
     private TableDescription 
-        tableRef    :: TableReference 
-        fields      :: [FieldDescription] 
-        constraints :: [TableConstraint] 
+        tableRef    :: !TableReference 
+        fields      :: ![FieldDescription] 
+        constraints :: ![TableConstraint] 
+        indexes     :: ![TableIndex]         // Non-unique indexes.  Use uniqueness Constraints for unique indexes.
     deriving Eq;
 
 /**
  * Constructor function
  */
 makeTableDescription :: TableReference -> [FieldDescription] -> [TableConstraint] -> TableDescription;
-public makeTableDescription tableRef fields constraints = TableDescription tableRef fields constraints;
+public makeTableDescription !tableRef !fields !constraints = TableDescription tableRef fields constraints [];
+
+/**
+ * Construct a table definition which may include non-unique indexes.
+ */
+makeTableDescriptionWithIndexes :: TableReference -> [FieldDescription] -> [TableConstraint] -> [TableIndex] -> TableDescription;
+public makeTableDescriptionWithIndexes !tableRef !fields !constraints !indexes = TableDescription tableRef fields constraints indexes;
+
 
 /**
  * Returns the {@link typeConstructor = TableReference@} that can be used to reference this table
@@ -263,7 +271,13 @@ public getTableFields !td = td.TableDescription.fields;
  */
 getTableConstraints :: TableDescription -> [TableConstraint];
 public getTableConstraints !td = td.TableDescription.constraints;
-    
+
+/**
+ * Returns the table indexes applied to the given table.
+ */
+getTableIndexes :: TableDescription -> [TableIndex];
+public getTableIndexes !td = td.TableDescription.indexes;
+
 /**
  * A convenience function for getting the table name of the given table
  */
@@ -569,6 +583,15 @@ outputTableConstraint !tableConstraint =
         output $ makeJForeignKeyConstraint (makeJTableReference $ getTableNameFromReference foreignTableRef) 
                                            (outputList $ map field1 referencedFields) 
                                            (outputList $ map field2 referencedFields);
+    ;
+
+/**
+ * A table index on a specified list of fields.
+ */
+data public TableIndex = 
+    public TableIndex 
+        indexFieldNames :: ![String]
+    deriving Eq
     ;
 
 
