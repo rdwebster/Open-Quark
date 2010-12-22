@@ -73,6 +73,7 @@ JAVACP_PATH=$JAVACP_PATH:$BINDIR/calSamples_test.jar
 JAVACP_PATH=$JAVACP_PATH:$LIBDIR/Resources/GemCutterHelpFiles.jar
 JAVACP_PATH=$JAVACP_PATH:$LIBDIR/Resources/External/java/asm-all-3.0.jar
 JAVACP_PATH=$JAVACP_PATH:$LIBDIR/Resources/External/java/commons-collections-3.1.jar
+JAVACP_PATH=$JAVACP_PATH:$LIBDIR/Resources/External/java/guava-r07.jar
 JAVACP_PATH=$JAVACP_PATH:$LIBDIR/Resources/External/java/icu4j.jar
 JAVACP_PATH=$JAVACP_PATH:$LIBDIR/Resources/External/java/junit.jar
 JAVACP_PATH=$JAVACP_PATH:$LIBDIR/Resources/External/java/log4j.jar

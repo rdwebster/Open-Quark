@@ -1191,19 +1191,21 @@ final class JavaDefinitionBuilder {
                 for (final MachineFunction mf : functions.getTopLevelCALFunctions()) {
                     if (mf.isCAF()) {
 
-                        //we do not synchronize the instance map, but rather the methods in the CAF class that mutate it.
-                        //this is because the make method has check-then-modify semantics, and so needs to be synchronized at the method
-                        //level anyways.
-                        JavaExpression instancesMapInit = new ClassInstanceCreationExpression(JavaTypeName.WEAK_HASH_MAP);
-
+                        // Generate the following code:
+                        //   private static final ConcurrentMap $instancesMap = new MapMaker().weakKeys().makeMap();
+                        
+                        JavaExpression newMapMakerExpr = new ClassInstanceCreationExpression(JavaTypeName.MAP_MAKER);
+                        JavaExpression weakKeysMapMakerExpr = new MethodInvocation.Instance(newMapMakerExpr, "weakKeys", JavaTypeName.MAP_MAKER, MethodInvocation.InvocationType.VIRTUAL);
+                        JavaExpression instancesMapInit = new MethodInvocation.Instance(weakKeysMapMakerExpr, "makeMap", JavaTypeName.CONCURRENT_MAP, MethodInvocation.InvocationType.VIRTUAL);
+                        
                         String mapPrefix = functions.getFNamePrefix(mf.getName());
                         JavaFieldDeclaration instancesMap =
                             new JavaFieldDeclaration (
                                 Modifier.STATIC | Modifier.PRIVATE | Modifier.FINAL,
-                                JavaTypeName.MAP,
+                                JavaTypeName.CONCURRENT_MAP,
                                 mapPrefix + "$instancesMap",
                                 instancesMapInit);
-
+                        
                         instancesMap.setJavaDoc(new JavaDocComment("Execution context -> instance map for " + mf.getName()));
                         javaClassRep.addFieldDeclaration(instancesMap);
                     }
@@ -1262,7 +1264,7 @@ final class JavaDefinitionBuilder {
 
             //todoBI it may be better to guard each instance map by synchronizing on it directly. However, currently the ASM bytecode
             //generator does not support synchronization blocks, and so this is adequate.
-            final int modifiers = Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL | Modifier.SYNCHRONIZED;
+            final int modifiers = Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL;
             JavaTypeName returnType = JavaTypeName.VOID;
 
             // Add the method to the class.
@@ -1275,7 +1277,7 @@ final class JavaDefinitionBuilder {
                 }
                 String mapPrefix = functions.getFNamePrefix(mf.getName());
 
-                JavaField instanceField = new JavaField.Static(className, mapPrefix+"$instancesMap", JavaTypeName.MAP);
+                JavaField instanceField = new JavaField.Static(className, mapPrefix+"$instancesMap", JavaTypeName.CONCURRENT_MAP);
                 MethodInvocation remove = new MethodInvocation.Instance (instanceField,
                                                              "remove",
                                                              new JavaExpression[]{SCJavaDefn.EXECUTION_CONTEXT_VAR},
@@ -1305,14 +1307,7 @@ final class JavaDefinitionBuilder {
                 throw new CodeGenerationException("zero-arity functions can only be in a component of size 1.");
             }
 
-            final int modifiers;
-            if (functions.includesCAFs()) {
-                //todoBI it may be better to guard each instance map by synchronizing on it directly. However, currently the ASM bytecode
-                //generator does not support synchronization blocks, and so this is adequate.
-                modifiers = Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL | Modifier.SYNCHRONIZED;
-            } else {
-                modifiers = Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL;
-            }
+            final int modifiers = Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL;
 
             JavaTypeName returnType = JavaTypeNames.RTFUNCTION;
 
@@ -1364,7 +1359,7 @@ final class JavaDefinitionBuilder {
 
                         String instanceMapFieldName = functions.getFNamePrefix(mf.getName()) + "$instancesMap";
                         JavaField instanceMapField =
-                            new JavaField.Static(className, instanceMapFieldName, JavaTypeName.MAP);
+                            new JavaField.Static(className, instanceMapFieldName, JavaTypeName.CONCURRENT_MAP);
 
                         // RTFunction newInstance = (RTFunction)$instancesMap.get($ec);
                         JavaExpression.LocalVariable newInstanceVar =
@@ -1390,22 +1385,32 @@ final class JavaDefinitionBuilder {
                         // $instancesMap.put($ec, newInstance);
                         JavaStatement.Block then = new JavaStatement.Block();
                         then.addStatement(new ExpressionStatement(new JavaExpression.Assignment(newInstanceVar, new JavaExpression.ClassInstanceCreationExpression(_0TypeName, instanceField, JavaTypeNames.RTSUPERCOMBINATOR))));
-                        JavaExpression cacheValue = new MethodInvocation.Instance(
-                                instanceMapField,
-                                "put",
-                                new JavaExpression[] {
-                                        SCJavaDefn.EXECUTION_CONTEXT_VAR,
-                                        newInstanceVar },
-                                new JavaTypeName[] {
+                        
+                        // Generate the following code:
+                        //  RTFunction existingInstance = (RTFunction) Concat_List.$instancesMap.putIfAbsent($ec, newInstance);
+                        //  if (existingInstance != null) {
+                        //      return existingInstance;
+                        //  }
+                        
+                        JavaExpression existingValInitializer = new JavaExpression.CastExpression(
+                                returnType,
+                                new MethodInvocation.Instance(
+                                        instanceMapField,
+                                        "putIfAbsent",
+                                        new JavaExpression[]{SCJavaDefn.EXECUTION_CONTEXT_VAR, newInstanceVar}, 
+                                        new JavaTypeName[]{JavaTypeName.OBJECT, JavaTypeName.OBJECT},
                                         JavaTypeName.OBJECT,
-                                        JavaTypeName.OBJECT },
-                                JavaTypeName.OBJECT,
-                                MethodInvocation.InvocationType.INTERFACE);
-                        then.addStatement(new ExpressionStatement(cacheValue));
+                                        MethodInvocation.InvocationType.INTERFACE));
+                        JavaExpression.LocalVariable existingInstanceVar =
+                            new JavaExpression.LocalVariable("existingInstance", returnType);
+                        
+                        then.addStatement(new JavaStatement.LocalVariableDeclaration(existingInstanceVar, existingValInitializer));
+                        
+                        JavaExpression conditionIfExisting = new JavaExpression.OperatorExpression.Binary(JavaOperator.NOT_EQUALS_OBJECT, existingInstanceVar, JavaExpression.LiteralWrapper.NULL);
+                        then.addStatement(new JavaStatement.IfThenElseStatement(conditionIfExisting, new ReturnStatement(existingInstanceVar)));
 
                         // Put the whole if expression together.
-                        JavaStatement ifthen = new JavaStatement.IfThenElseStatement(comparison, then);
-                        b.addStatement(ifthen);
+                        b.addStatement(new JavaStatement.IfThenElseStatement(comparison, then));
                         b.addStatement(new ReturnStatement(newInstanceVar));
 
                         javaMethod.addStatement(b);
@@ -1445,7 +1450,7 @@ final class JavaDefinitionBuilder {
 
                         String instanceMapFieldName = functions.getFNamePrefix(mf.getName()) + "$instancesMap";
                         JavaField instanceMapField =
-                            new JavaField.Static(className, instanceMapFieldName, JavaTypeName.MAP);
+                            new JavaField.Static(className, instanceMapFieldName, JavaTypeName.CONCURRENT_MAP);
 
 
                         // RTFunction newInstance = (RTFunction)$instancesMap.get($ec);
@@ -1469,27 +1474,39 @@ final class JavaDefinitionBuilder {
                         // $instancesMap.put($ec, newInstance);
                         JavaStatement.Block then = new JavaStatement.Block();
                         then.addStatement(new ExpressionStatement(new JavaExpression.Assignment(newInstanceVar, new JavaExpression.ClassInstanceCreationExpression(_0TypeName, instanceField, JavaTypeNames.RTSUPERCOMBINATOR))));
-                        JavaExpression cacheValue =
-                            new MethodInvocation.Instance(instanceMapField,
-                                                 "put",
-                                                 new JavaExpression[]{SCJavaDefn.EXECUTION_CONTEXT_VAR, newInstanceVar},
-                                                 new JavaTypeName[]{JavaTypeName.OBJECT, JavaTypeName.OBJECT},
-                                                 JavaTypeName.OBJECT,
-                                                 MethodInvocation.InvocationType.INTERFACE);
-                        then.addStatement(new ExpressionStatement(cacheValue));
 
+                        // Generate the following code:
+                        //  RTFunction existingInstance = (RTFunction) Concat_List.$instancesMap.putIfAbsent($ec, newInstance);
+                        //  if (existingInstance != null) {
+                        //      return existingInstance;
+                        //  }
+                        
+                        JavaExpression existingValInitializer = new JavaExpression.CastExpression(
+                                returnType,
+                                new MethodInvocation.Instance(
+                                        instanceMapField,
+                                        "putIfAbsent",
+                                        new JavaExpression[]{SCJavaDefn.EXECUTION_CONTEXT_VAR, newInstanceVar}, 
+                                        new JavaTypeName[]{JavaTypeName.OBJECT, JavaTypeName.OBJECT},
+                                        JavaTypeName.OBJECT,
+                                        MethodInvocation.InvocationType.INTERFACE));
+                        JavaExpression.LocalVariable existingInstanceVar =
+                            new JavaExpression.LocalVariable("existingInstance", returnType);
+                        
+                        then.addStatement(new JavaStatement.LocalVariableDeclaration(existingInstanceVar, existingValInitializer));
+                        
+                        JavaExpression conditionIfExisting = new JavaExpression.OperatorExpression.Binary(JavaOperator.NOT_EQUALS_OBJECT, existingInstanceVar, JavaExpression.LiteralWrapper.NULL);
+                        then.addStatement(new JavaStatement.IfThenElseStatement(conditionIfExisting, new ReturnStatement(existingInstanceVar)));
+                        
                         // Put the whole if expression together.
-                        JavaStatement ifthen = new JavaStatement.IfThenElseStatement(comparison, then);
-                        b.addStatement(ifthen);
+                        b.addStatement(new JavaStatement.IfThenElseStatement(comparison, then));
                         b.addStatement(new ReturnStatement(newInstanceVar));
 
                         switchStatement.addCase(
                                 new SwitchStatement.IntCaseGroup(
                                         functionIndex,
                                         b));
-
                     }
-
                 }
 
                 MethodInvocation mi =

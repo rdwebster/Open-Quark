@@ -44,6 +44,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.openquark.cal.compiler.ModuleName;
 import org.openquark.cal.compiler.QualifiedName;
@@ -56,6 +57,8 @@ import org.openquark.cal.runtime.DebugSupport;
 import org.openquark.cal.runtime.ErrorInfo;
 import org.openquark.cal.services.Assert;
 import org.openquark.cal.util.EquivalenceRelation;
+
+import com.google.common.collect.MapMaker;
 
 
 
@@ -135,6 +138,7 @@ abstract public class JavaTypeName {
     public static final JavaTypeName BIG_INTEGER = makeCached(BigInteger.class);
     public static final JavaTypeName LIST = makeCached(java.util.List.class);     
     public static final JavaTypeName MAP = makeCached(java.util.Map.class);
+    public static final JavaTypeName CONCURRENT_MAP = makeCached(ConcurrentMap.class);
     public static final JavaTypeName WEAK_HASH_MAP = makeCached(WeakHashMap.class);
     public static final JavaTypeName SYSTEM = makeCached(System.class);
     public static final JavaTypeName PRINT_STREAM = makeCached(PrintStream.class);  
@@ -144,6 +148,9 @@ abstract public class JavaTypeName {
     public static final JavaTypeName ITERATOR = makeCached(java.util.Iterator.class);
     public static final JavaTypeName CLASS = makeCached(Class.class);
    
+    // Utility classes
+    public static final JavaTypeName MAP_MAKER = makeCached(MapMaker.class);
+    
     // Exception types from the standard Java libraries
     public static final JavaTypeName CLASS_CAST_EXCEPTION = makeCached(ClassCastException.class);
     public static final JavaTypeName RUNTIME_EXCEPTION = makeCached(RuntimeException.class);

@@ -11,5 +11,6 @@
 	<classpathentry kind="lib" path="/import/Titan_Research/win32_x86/release/bin/External/java/xmlParserAPIs.jar"/>
 	<classpathentry kind="lib" path="/import/Titan_Research/win32_x86/release/bin/External/java/antlr.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/CAL_Runtime"/>
+	<classpathentry kind="lib" path="/import/Titan_Research/win32_x86/release/bin/External/java/guava-r07.jar"/>
 	<classpathentry kind="output" path="src"/>
 </classpath>

@@ -69,6 +69,7 @@
         <patternset id="import.buildpath">
             <include name="${antlr.jar}" />
             <include name="${commons-collections.jar}" />
+            <include name="${guava.jar}" />
             <include name="${icu4j.jar}" />
             <include name="${junit.jar}" />
         </patternset>

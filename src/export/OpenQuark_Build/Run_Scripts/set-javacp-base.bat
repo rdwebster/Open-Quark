@@ -71,6 +71,7 @@ set JAVACP_PATH=%JAVACP_PATH%;%BINDIR%/calSamples_test.jar
 set JAVACP_PATH=%JAVACP_PATH%;%LIBDIR%/Resources/GemCutterHelpFiles.jar
 set JAVACP_PATH=%JAVACP_PATH%;%LIBDIR%/Resources/External/java/asm-all-3.0.jar
 set JAVACP_PATH=%JAVACP_PATH%;%LIBDIR%/Resources/External/java/commons-collections-3.1.jar
+set JAVACP_PATH=%JAVACP_PATH%;%LIBDIR%/Resources/External/java/guava-r07.jar
 set JAVACP_PATH=%JAVACP_PATH%;%LIBDIR%/Resources/External/java/icu4j.jar
 set JAVACP_PATH=%JAVACP_PATH%;%LIBDIR%/Resources/External/java/junit.jar
 set JAVACP_PATH=%JAVACP_PATH%;%LIBDIR%/Resources/External/java/log4j.jar
