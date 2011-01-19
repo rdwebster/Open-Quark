@@ -44,8 +44,9 @@
 module Cal.Utilities.Time;
 import Cal.Core.Prelude using
     typeClass = Eq, Inputable, Ord, Outputable;
-    typeConstructor = Double, Int, JList, Long, String;
+    typeConstructor = Boolean, Double, Int, JList, Long, String;
     function = input, output;
+    dataConstructor = False, True;
     ;       
 import Cal.Core.Debug using
     typeClass = Show;
@@ -428,9 +429,36 @@ foreign unsafe import jvm "static method org.openquark.util.time.Time.fromSerial
  * Default display of time values. This uses the fixed format yyyy/MM/dd HH:mm:ss z (where z represents the time zone).
  */
 instance Show Time where
-    show = showTime;
+    show = showTimeDefault;
     ;
 
-showTime :: Time -> String;
-showTime timeValue = formatTime timeValue TimeZone.currentTimeZone Time.gregorianCalendar "yyyy/MM/dd HH:mm:ss z" Locale.defaultLocale;
+showTimeDefault :: Time -> String;
+showTimeDefault = showTime TimeZone.currentTimeZone True;
+
+/**
+ * Show a Time value using the specified time zone.
+ * The time zone may be optionally included in the string output as well.
+ */
+showTime :: TimeZone -> Boolean -> Time -> String;
+public showTime !timeZone !includeTimeZone !time = 
+    let
+        parts = timeParts timeZone time;
+        
+        // Choose the format pattern based on which parts are non-zero.
+        basePattern :: String;
+        basePattern = 
+            if parts.seconds != 0 then "yyyy/MM/dd HH:mm:ss"
+            else if parts.hours != 0 || parts.minutes != 0 then "yyyy/MM/dd HH:mm"
+            else "yyyy/MM/dd";
+        
+        pattern :: String;
+        pattern = if includeTimeZone then basePattern ++ " z" else basePattern;
+    in
+        formatTime time timeZone gregorianCalendar pattern Locale.defaultLocale;
+
+/**
+ * Show a Time value using the UTC time zone.
+ */
+showTimeInUTC :: Time -> String;
+public showTimeInUTC = showTime TimeZone.utcTimeZone False;
 

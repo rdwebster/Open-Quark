@@ -1468,16 +1468,22 @@ instance Show a => Show (Range a) where
     ;
     
 showRange :: Show a => Range a -> String;
-private showRange !range =
+private showRange = showRangeWith show;
+
+/**
+ * Shows the range using the specified function to show endpoint values.
+ */
+showRangeWith :: (a -> String) -> Range a -> String;
+public showRangeWith !showValue !range = 
     case range of
-    IsLessThan u -> concat ["(x < ", show u, ")"];
-    IsLessThanEquals u -> concat ["(x <= ", show u, ")"];
-    IsGreaterThanEquals u -> concat ["(x >= ", show u, ")"];
-    IsGreaterThan u -> concat ["(x > ", show u, ")"];
-    BetweenIncludingEndpoints u v -> concat ["(", show u, " <= x <= ", show v, ")"];
-    BetweenIncludingLeftEndpoint u v -> concat ["(", show u, " <= x < ", show v, ")"];
-    BetweenIncludingRightEndpoint u v -> concat ["(", show u, " < x <= ", show v, ")"];
-    BetweenExcludingEndpoints u v -> concat ["(", show u, " < x < ", show v, ")"];
+    IsLessThan u -> concat ["(x < ", showValue u, ")"];
+    IsLessThanEquals u -> concat ["(x <= ", showValue u, ")"];
+    IsGreaterThanEquals u -> concat ["(x >= ", showValue u, ")"];
+    IsGreaterThan u -> concat ["(x > ", showValue u, ")"];
+    BetweenIncludingEndpoints u v -> concat ["(", showValue u, " <= x <= ", showValue v, ")"];
+    BetweenIncludingLeftEndpoint u v -> concat ["(", showValue u, " <= x < ", showValue v, ")"];
+    BetweenIncludingRightEndpoint u v -> concat ["(", showValue u, " < x <= ", showValue v, ")"];
+    BetweenExcludingEndpoints u v -> concat ["(", showValue u, " < x < ", showValue v, ")"];
     EntireRange -> "(entire range)";
     ;
 
