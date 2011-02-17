@@ -208,7 +208,7 @@ public abstract class SourceModel {
          *          element in the original source text.  May return null.
          */
         // todo-jowong make this final again, when all the offending non-entire-range source ranges in subclasses are refactored
-        SourceRange getSourceRange() {
+        public SourceRange getSourceRange() {
             return sourceRange;
         }
         
@@ -221,7 +221,7 @@ public abstract class SourceModel {
          * @return the source range of the entire statement excluding the CAL doc
          */
         // todo-jowong this should refactored, so that getSourceRange is *always* the source range of the definition
-        SourceRange getSourceRangeOfDefn(){
+        public SourceRange getSourceRangeOfDefn(){
             return getSourceRange();
         }
 
@@ -415,7 +415,7 @@ public abstract class SourceModel {
          */
         // todo-jowong refactor this so that the primary source range of the source element is its entire source range
         @Deprecated
-        SourceRange getSourceRange() {
+        public SourceRange getSourceRange() {
             return getSourceRangeOfModuleName();
         }
 
@@ -2430,7 +2430,7 @@ public abstract class SourceModel {
          */
         // todo-jowong refactor this so that the primary source range of the source element is its entire source range
         @Deprecated
-        SourceRange getSourceRange() {
+        public SourceRange getSourceRange() {
             return getSourceRangeOfNameNotIncludingPotentialPling();
         }
 
@@ -6104,11 +6104,11 @@ public abstract class SourceModel {
              */
             // todo-jowong refactor this so that the primary source range of the source element is its entire source range
             @Deprecated
-            SourceRange getSourceRange() {
+            public SourceRange getSourceRange() {
                 return getSourceRangeOfName();
             }
 
-            SourceRange getSourceRangeOfName() {
+            public SourceRange getSourceRangeOfName() {
                 return super.getSourceRange();
             }
 
@@ -7358,11 +7358,11 @@ public abstract class SourceModel {
              */
             // todo-jowong refactor this so that the primary source range of the source element is its entire source range
             @Deprecated
-            SourceRange getSourceRange() {
+            public SourceRange getSourceRange() {
                 return getSourceRangeOfName();
             }
 
-            SourceRange getSourceRangeOfName() {
+            public SourceRange getSourceRangeOfName() {
                 return super.getSourceRange();
             }
 
@@ -7504,7 +7504,7 @@ public abstract class SourceModel {
         /**
          * @return the range of the entire type def statement.
          */
-        SourceRange getSourceRangeOfDefn(){
+        public SourceRange getSourceRangeOfDefn(){
             return sourceRangeOfDefn;
         }
         
@@ -7514,11 +7514,11 @@ public abstract class SourceModel {
          */
         // todo-jowong refactor this so that the primary source range of the source element is its entire source range
         @Deprecated
-        SourceRange getSourceRange() {
+        public SourceRange getSourceRange() {
             return getSourceRangeOfName();
         }
 
-        SourceRange getSourceRangeOfName() {
+        public SourceRange getSourceRangeOfName() {
             return super.getSourceRange();
         }
 
@@ -7783,11 +7783,11 @@ public abstract class SourceModel {
              */
             // todo-jowong refactor this so that the primary source range of the source element is its entire source range
             @Deprecated
-            SourceRange getSourceRange() {
+            public SourceRange getSourceRange() {
                 return getSourceRangeOfName();
             }
 
-            SourceRange getSourceRangeOfName() {
+            public SourceRange getSourceRangeOfName() {
                 return super.getSourceRange();
             }
 
@@ -8030,7 +8030,7 @@ public abstract class SourceModel {
                 /**
                  * @return get the source range of the definition.
                  */
-                SourceRange getSourceRangeOfDefn(){
+                public SourceRange getSourceRangeOfDefn(){
                     return sourceRangeOfDefn;
                 }
                 
@@ -8088,11 +8088,11 @@ public abstract class SourceModel {
                  */
                 // todo-jowong refactor this so that the primary source range of the source element is its entire source range
                 @Deprecated
-                SourceRange getSourceRange() {
+                public SourceRange getSourceRange() {
                     return getSourceRangeOfName();
                 }
 
-                SourceRange getSourceRangeOfName() {
+                public SourceRange getSourceRangeOfName() {
                     return super.getSourceRange();
                 }
 
@@ -8232,11 +8232,11 @@ public abstract class SourceModel {
              */
             // todo-jowong refactor this so that the primary source range of the source element is its entire source range
             @Deprecated
-            SourceRange getSourceRange() {
+            public SourceRange getSourceRange() {
                 return getSourceRangeOfName();
             }
 
-            SourceRange getSourceRangeOfName() {
+            public SourceRange getSourceRangeOfName() {
                 return super.getSourceRange();
             }
 
@@ -8308,7 +8308,7 @@ public abstract class SourceModel {
          * @return An optional SourceRange specifying the range occupied by the body
          *          element in the original source text.  May return null.
          */
-        final SourceRange getSourceRangeOfDefn() {
+        public final SourceRange getSourceRangeOfDefn() {
             return sourceRangeOfDefn;
         }
         
@@ -8324,7 +8324,7 @@ public abstract class SourceModel {
         }
         
         // todo-jowong maybe the name can be encapsulated by its own source element
-        abstract SourceRange getSourceRangeOfName();
+        public abstract SourceRange getSourceRangeOfName();
         
         public Scope getScope() {
             return scope;
@@ -8470,11 +8470,11 @@ public abstract class SourceModel {
                  */
                 // todo-jowong refactor this so that the primary source range of the source element is its entire source range
                 @Deprecated
-                SourceRange getSourceRange() {
+                public SourceRange getSourceRange() {
                     return getSourceRangeOfName();
                 }
 
-                SourceRange getSourceRangeOfName() {
+                public SourceRange getSourceRangeOfName() {
                     return super.getSourceRange();
                 }
 
@@ -8512,7 +8512,7 @@ public abstract class SourceModel {
                     return typeConsName;
                 }
                 
-                SourceRange getSourceRangeOfDefn(){
+                public SourceRange getSourceRangeOfDefn(){
                     return sourceRangeOfDefn;
                 }
                 
@@ -8677,7 +8677,7 @@ public abstract class SourceModel {
                     return new Record(elemTypeVar, sourceRange, sourceRangeOfDefn);
                 }
                 
-                SourceRange getSourceRangeOfDefn(){
+                public SourceRange getSourceRangeOfDefn(){
                     return sourceRangeOfDefn;
                 }
                 
@@ -8824,7 +8824,7 @@ public abstract class SourceModel {
              */
             // todo-jowong refactor this so that the primary source range of the source element is its entire source range
             @Deprecated
-            SourceRange getSourceRange() {
+            public SourceRange getSourceRange() {
                 return getSourceRangeOfResolvingFunctionName();
             }
 
@@ -8967,7 +8967,7 @@ public abstract class SourceModel {
         }        
         
         // todo-jowong maybe the name can be encapsulated by its own source element
-        SourceRange getSourceRangeOfName(){
+        public SourceRange getSourceRangeOfName(){
             if (typeClassName.getSourceRange() == null || instanceTypeCons.getSourceRangeOfDefn() ==null) {
                 return null;
             }
@@ -9135,7 +9135,7 @@ public abstract class SourceModel {
             return typeSignature;
         }
         
-        SourceRange getSourceRangeOfDefn(){
+        public SourceRange getSourceRangeOfDefn(){
             return sourceRangeOfDefn;
         }
         
@@ -9145,11 +9145,11 @@ public abstract class SourceModel {
          */
         // todo-jowong refactor this so that the primary source range of the source element is its entire source range
         @Deprecated
-        SourceRange getSourceRange() {
+        public SourceRange getSourceRange() {
             return getSourceRangeOfName();
         }
 
-        SourceRange getSourceRangeOfName() {
+        public SourceRange getSourceRangeOfName() {
             return super.getSourceRange();
         }
 
@@ -11322,7 +11322,7 @@ public abstract class SourceModel {
                  */
                 // todo-jowong refactor this so that the primary source range of the source element is its entire source range
                 @Deprecated
-                SourceRange getSourceRange() {
+                public SourceRange getSourceRange() {
                     return getSourceRangeOfReference();
                 }
 
