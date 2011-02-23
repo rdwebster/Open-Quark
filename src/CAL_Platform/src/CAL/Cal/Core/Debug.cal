@@ -200,6 +200,15 @@ traceEvalTime :: String -> a -> a;
 public traceEvalTime !message val = 
     trace (message ++ " -- " ++ longToString (evalTime val) ++ " ms\n") val;
 
+/**
+ * Traces messages for the start and end of the evaluation of an expression to WHNF.
+ * The end trace will include the evaluation time.
+ */
+traceEvalStartAndEnd :: String -> a -> a;
+public traceEvalStartAndEnd !message val = 
+    trace ("START -- " ++ message ++ "\n") $
+    trace ("END   -- " ++ message ++ " -- " ++ longToString (evalTime val) ++ " ms\n") val;
+
 
 /**
 The type class {@code Show@} is intended for debug purposes only. In particular, the output string format
