@@ -2379,7 +2379,7 @@ public abstract class SourceModel {
          *          element in the original source text.  May return null.
          */
         // todo-jowong maybe the name can be encapsulated by its own source element
-        SourceRange getNameSourceRange() {
+        public SourceRange getNameSourceRange() {
             return nameSourceRange;
         }
         SourceRange getSourceRangeExcludingCaldoc() {
