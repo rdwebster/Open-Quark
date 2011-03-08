@@ -48,17 +48,18 @@ module Cal.Test.Collections.Map_Tests;
 
 import Cal.Core.Prelude using
     typeClass = Ord;
-    typeConstructor = Boolean, Char, Int, String;
+    typeConstructor = Boolean, Char, Double, Int, String;
     function = assert, downFrom, equals, fst, lessThan, lessThanEquals, not, seq, snd, upFromTo;
+    dataConstructor = Just, Nothing;
     ;
 import Cal.Collections.List using
     function = foldLeftStrict, take;
     ;
 import Cal.Collections.Map using
     typeConstructor = Map;
-    function = 
-        delete, difference, empty, filter, filterWithKey, find, fromDistinctAscList, fromList, insert, insertWith, 
-        intersection, isSubmapBy, partition, toList, union, unionWith;
+    function =
+        ceilingAssoc, delete, difference, empty, filter, filterWithKey, find, floorAssoc, fromDistinctAscList, fromList,
+        higherAssoc, insert, insertWith, intersection, isSubmapBy, lowerAssoc, partition, toList, union, unionWith;
     ;
 
 //{-
@@ -494,6 +495,70 @@ differenceTests =
         ;    
 
 
+nearestKeyTests :: Boolean;
+nearestKeyTests = 
+    let
+        nearestKeyMap :: Map Double String;
+        nearestKeyMap = fromList [(0, "zero"), (1, "one"), (2, "two"), (3, "three"), (4, "four"), (5, "five")];
+    in
+        assert (floorAssoc (-1) nearestKeyMap == Nothing)
+        && assert (floorAssoc 0   nearestKeyMap == Just (0, "zero"))
+        && assert (floorAssoc 0.5 nearestKeyMap == Just (0, "zero"))
+        && assert (floorAssoc 1   nearestKeyMap == Just (1, "one"))
+        && assert (floorAssoc 1.5 nearestKeyMap == Just (1, "one"))
+        && assert (floorAssoc 2   nearestKeyMap == Just (2, "two"))
+        && assert (floorAssoc 2.5 nearestKeyMap == Just (2, "two"))
+        && assert (floorAssoc 3   nearestKeyMap == Just (3, "three"))
+        && assert (floorAssoc 3.5 nearestKeyMap == Just (3, "three"))
+        && assert (floorAssoc 4   nearestKeyMap == Just (4, "four"))
+        && assert (floorAssoc 4.5 nearestKeyMap == Just (4, "four"))
+        && assert (floorAssoc 5   nearestKeyMap == Just (5, "five"))
+        && assert (floorAssoc 5.5 nearestKeyMap == Just (5, "five"))
+    
+        && assert (lowerAssoc (-1) nearestKeyMap == Nothing)
+        && assert (lowerAssoc 0   nearestKeyMap == Nothing)
+        && assert (lowerAssoc 0.5 nearestKeyMap == Just (0, "zero"))
+        && assert (lowerAssoc 1   nearestKeyMap == Just (0, "zero"))
+        && assert (lowerAssoc 1.5 nearestKeyMap == Just (1, "one"))
+        && assert (lowerAssoc 2   nearestKeyMap == Just (1, "one"))
+        && assert (lowerAssoc 2.5 nearestKeyMap == Just (2, "two"))
+        && assert (lowerAssoc 3   nearestKeyMap == Just (2, "two"))
+        && assert (lowerAssoc 3.5 nearestKeyMap == Just (3, "three"))
+        && assert (lowerAssoc 4   nearestKeyMap == Just (3, "three"))
+        && assert (lowerAssoc 4.5 nearestKeyMap == Just (4, "four"))
+        && assert (lowerAssoc 5   nearestKeyMap == Just (4, "four"))
+        && assert (lowerAssoc 5.5 nearestKeyMap == Just (5, "five"))
+    
+        && assert (ceilingAssoc (-1) nearestKeyMap == Just (0, "zero"))
+        && assert (ceilingAssoc 0   nearestKeyMap == Just (0, "zero"))
+        && assert (ceilingAssoc 0.5 nearestKeyMap == Just (1, "one"))
+        && assert (ceilingAssoc 1   nearestKeyMap == Just (1, "one"))
+        && assert (ceilingAssoc 1.5 nearestKeyMap == Just (2, "two"))
+        && assert (ceilingAssoc 2   nearestKeyMap == Just (2, "two"))
+        && assert (ceilingAssoc 2.5 nearestKeyMap == Just (3, "three"))
+        && assert (ceilingAssoc 3   nearestKeyMap == Just (3, "three"))
+        && assert (ceilingAssoc 3.5 nearestKeyMap == Just (4, "four"))
+        && assert (ceilingAssoc 4   nearestKeyMap == Just (4, "four"))
+        && assert (ceilingAssoc 4.5 nearestKeyMap == Just (5, "five"))
+        && assert (ceilingAssoc 5   nearestKeyMap == Just (5, "five"))
+        && assert (ceilingAssoc 5.5 nearestKeyMap == Nothing)
+        
+        && assert (higherAssoc (-1) nearestKeyMap == Just (0, "zero"))
+        && assert (higherAssoc 0   nearestKeyMap == Just (1, "one"))
+        && assert (higherAssoc 0.5 nearestKeyMap == Just (1, "one"))
+        && assert (higherAssoc 1   nearestKeyMap == Just (2, "two"))
+        && assert (higherAssoc 1.5 nearestKeyMap == Just (2, "two"))
+        && assert (higherAssoc 2   nearestKeyMap == Just (3, "three"))
+        && assert (higherAssoc 2.5 nearestKeyMap == Just (3, "three"))
+        && assert (higherAssoc 3   nearestKeyMap == Just (4, "four"))
+        && assert (higherAssoc 3.5 nearestKeyMap == Just (4, "four"))
+        && assert (higherAssoc 4   nearestKeyMap == Just (5, "five"))
+        && assert (higherAssoc 4.5 nearestKeyMap == Just (5, "five"))
+        && assert (higherAssoc 5   nearestKeyMap == Nothing)
+        && assert (higherAssoc 5.5 nearestKeyMap == Nothing)
+        ;
+
+
 /**
  * @return true if the testing predicates in this module all run successfully.
  */
@@ -505,5 +570,6 @@ public testModule =
   && assert unionWithTests
   && assert isSubmapByTests
   && assert differenceTests
+  && assert nearestKeyTests
   ;
 //please leave testModule last! 

@@ -3674,17 +3674,96 @@ showMap !m =
 //need not be structurally equal.
 deepEquals :: (Eq a, Eq b) => Map a b -> Map a b -> Boolean;            
 private deepEquals t1 t2 =
-case t1 of
-Bin size1 key1 value1 leftMap1 rightMap1 ->
-    case t2 of
-    Bin size2 key2 value2 leftMap2 rightMap2 ->
-        size1 == size2 && key1 == key2 && value1 == value2 && (deepEquals leftMap1 leftMap2) && (deepEquals rightMap1 rightMap2);
-    Tip -> False;
+    case t1 of
+    Bin size1 key1 value1 leftMap1 rightMap1 ->
+        case t2 of
+        Bin size2 key2 value2 leftMap2 rightMap2 ->
+            size1 == size2 && key1 == key2 && value1 == value2 && (deepEquals leftMap1 leftMap2) && (deepEquals rightMap1 rightMap2);
+        Tip -> False;
+        ;
+    Tip ->
+        case t2 of
+        Bin size2 key2 value2 leftMap2 rightMap2 -> False;
+        Tip -> True;
+        ;
+    ;            
+
+
+/** Returns the map association with the highest key strictly less than the specified key value, if any. */
+lowerAssoc :: Ord k => k -> Map k a -> Maybe (k, a);
+public lowerAssoc !k !map = 
+    case map of
+    Tip -> Nothing;
+    Bin size kx value leftMap rightMap -> 
+        case compare k kx of
+        (LT | EQ) -> lowerAssoc k leftMap;
+        GT ->
+            let
+                fromRight = lowerAssoc k rightMap;
+            in
+                case fromRight of
+                Nothing -> Just (kx, value);
+                _ -> fromRight;
+                ;
+        ;
     ;
-Tip ->
-    case t2 of
-    Bin size2 key2 value2 leftMap2 rightMap2 -> False;
-    Tip -> True;
+
+/** Returns the map association with the highest key less than or equal to the specified key value, if any. */
+floorAssoc :: Ord k => k -> Map k a -> Maybe (k, a);
+public floorAssoc !k !map = 
+    case map of
+    Tip -> Nothing;
+    Bin size kx value leftMap rightMap -> 
+        case compare k kx of
+        LT -> floorAssoc k leftMap;
+        GT ->
+            let
+                fromRight = floorAssoc k rightMap;
+            in
+                case fromRight of
+                Nothing -> Just (kx, value);
+                _ -> fromRight;
+                ;
+        EQ -> Just (kx, value);
+        ;
     ;
-;            
+
+/** Returns the map association with the lowest key strictly greater than the specified key value, if any. */
+higherAssoc :: Ord k => k -> Map k a -> Maybe (k, a);
+public higherAssoc !k !map = 
+    case map of
+    Tip -> Nothing;
+    Bin size kx value leftMap rightMap -> 
+        case compare k kx of
+        LT -> 
+            let
+                fromLeft = higherAssoc k leftMap;
+            in
+                case fromLeft of
+                Nothing -> Just (kx, value);
+                _ -> fromLeft;
+                ;
+        (GT | EQ) -> higherAssoc k rightMap;
+        ;
+    ;
+
+/** Returns the map association with the lowest key greater than or equal to the specified key value, if any. */
+ceilingAssoc :: Ord k => k -> Map k a -> Maybe (k, a);
+public ceilingAssoc !k !map = 
+    case map of
+    Tip -> Nothing;
+    Bin size kx value leftMap rightMap -> 
+        case compare k kx of
+        LT -> 
+            let
+                fromLeft = ceilingAssoc k leftMap;
+            in
+                case fromLeft of
+                Nothing -> Just (kx, value);
+                _ -> fromLeft;
+                ;
+        GT -> ceilingAssoc k rightMap;
+        EQ -> Just (kx, value);
+        ;
+    ;
 
