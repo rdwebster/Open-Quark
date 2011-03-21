@@ -209,6 +209,14 @@ public traceEvalStartAndEnd !message val =
     trace ("START -- " ++ message ++ "\n") $
     trace ("END   -- " ++ message ++ " -- " ++ longToString (evalTime val) ++ " ms\n") val;
 
+/**
+ * Traces messages for the start and end of the deep (as in deepSeq) evaluation of an expression.
+ * The end trace will include the evaluation time.
+ */
+traceDeepEvalStartAndEnd :: String -> a -> a;
+public traceDeepEvalStartAndEnd !message val = 
+    trace ("START -- " ++ message ++ "\n") $
+    trace ("END   -- " ++ message ++ " -- " ++ longToString (deepEvalTime val) ++ " ms\n") val;
 
 /**
 The type class {@code Show@} is intended for debug purposes only. In particular, the output string format
@@ -654,7 +662,19 @@ public evalTime f =
         end = getSystemTime;
     in
         Prelude.seq (Prelude.seq (Prelude.seq start f) end) (end - start);
+
+/** Evaluates the given expression {@code f@} deeply (as in deepSeq) and returns the time taken to evaluate it. */
+deepEvalTime :: a -> Prelude.Long;
+public deepEvalTime f =
+    let
+        start :: Long;
+        start = getSystemTime;
         
+        end :: Long;
+        end = getSystemTime;
+    in
+        Prelude.seq (Prelude.deepSeq (Prelude.seq start f) end) (end - start);
+
 /**
  * Evaluates the given expressions ({@code f1@} and {@code f2@}) to WHNF and returns a record containing
  * the time to evalute each expression and the difference expressed as an absolute and a percentage of the
