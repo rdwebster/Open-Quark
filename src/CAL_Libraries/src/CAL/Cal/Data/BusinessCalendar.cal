@@ -77,6 +77,10 @@ import Cal.Data.DictionaryQuery using
     typeConstructor = Expr;
     ;
 
+import Cal.Utilities.TimeZone using
+    typeConstructor = TimeZone;
+    ;
+
 friend Cal.Data.FiscalBusinessCalendar;
 
 
@@ -359,8 +363,8 @@ data public BusinessCalendar =
     private BusinessCalendar
         periodValueRangeFn    :: (Period -> PeriodType -> (Int, Int))     // periodValueRange(parentPeriod, periodType)
         periodDisplayNameFn   :: (Period -> PeriodType -> Int -> String)  // periodDisplayName(parentPeriod, periodType, periodValue)
-        periodTimeRangeFn     :: (Period -> Range Time)                   // periodTimeRange(period)
-        periodValueFromTimeFn :: (Time -> PeriodType -> Int)              // periodValueFromTime(time, periodType)
+        periodTimeRangeFn     :: (Period -> TimeZone -> Range Time)       // periodTimeRange(period, timeZone)
+        periodValueFromTimeFn :: (Time -> TimeZone -> PeriodType -> Int)  // periodValueFromTime(time, timeZone, periodType)
         timePartExprFn        :: (Expr -> PeriodType -> Expr)             // timePartExpr(baseTimeExpr, periodType)
     ;
 
@@ -381,8 +385,8 @@ data public BusinessCalendar =
  */
 makeBusinessCalendar :: (Period -> PeriodType -> (Int, Int)) 
                          -> (Period -> PeriodType -> Int -> String) 
-                         -> (Period -> Range Time) 
-                         -> (Time -> PeriodType -> Int) 
+                         -> (Period -> TimeZone -> Range Time) 
+                         -> (Time -> TimeZone -> PeriodType -> Int) 
                          -> (Expr -> PeriodType -> Expr) 
                          -> BusinessCalendar;
 public makeBusinessCalendar = BusinessCalendar; 
@@ -423,20 +427,20 @@ public periodDisplayName !businessCalendar parentPeriod !periodType !periodValue
  * If the info cannot be determined for this period, then the range returned
  * will not be bounded on either end.
  */
-getPeriodTimeRange :: BusinessCalendar -> Period -> Range Time;
-public getPeriodTimeRange !businessCalendar !period = 
+getPeriodTimeRange :: BusinessCalendar -> Period -> TimeZone -> Range Time;
+public getPeriodTimeRange !businessCalendar !period !timeZone = 
     case businessCalendar of
-    BusinessCalendar {periodTimeRangeFn} -> periodTimeRangeFn period;
+    BusinessCalendar {periodTimeRangeFn} -> periodTimeRangeFn period timeZone;
     ;
 
 /**
  * Queries a given {@link typeConstructor=BusinessCalendar @} to determine the
  * value of a given {@link typeConstructor=PeriodType @} for the specified time.
  */
-getPeriodValueFromTime :: BusinessCalendar -> Time -> PeriodType -> Int;
-public getPeriodValueFromTime !businessCalendar !time !periodType = 
+getPeriodValueFromTime :: BusinessCalendar -> Time -> TimeZone -> PeriodType -> Int;
+public getPeriodValueFromTime !businessCalendar !time !timeZone !periodType = 
     case businessCalendar of
-    BusinessCalendar {periodValueFromTimeFn} -> periodValueFromTimeFn time periodType;
+    BusinessCalendar {periodValueFromTimeFn} -> periodValueFromTimeFn time timeZone periodType;
     ;
 
 /**
@@ -455,13 +459,13 @@ public getTimePartExpr !businessCalendar !baseTimeExpr !periodType =
  * value into a {@link typeConstructor=Period @} with the specified
  * {@link typeConstructor=PeriodType @}s.
  */
-getPeriodFromTime :: BusinessCalendar -> Time -> [PeriodType] -> Period;
-public getPeriodFromTime !businessCalendar !time !periodTypes = 
+getPeriodFromTime :: BusinessCalendar -> Time -> TimeZone -> [PeriodType] -> Period;
+public getPeriodFromTime !businessCalendar !time !timeZone !periodTypes = 
     let
         orderedPeriodTypes :: [PeriodType];
         orderedPeriodTypes = List.sort $ List.removeDuplicates periodTypes;
     in
-        makePeriod $ map (\!pt -> (pt, getPeriodValueFromTime businessCalendar time pt)) orderedPeriodTypes;
+        makePeriod $ map (\!pt -> (pt, getPeriodValueFromTime businessCalendar time timeZone pt)) orderedPeriodTypes;
 
 /**
  * Queries a given {@link typeConstructor=BusinessCalendar @} to determine the

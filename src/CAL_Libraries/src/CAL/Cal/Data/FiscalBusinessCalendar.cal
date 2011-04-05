@@ -77,6 +77,10 @@ import Cal.Data.DictionaryQuery using
     ;
 import Cal.Data.Sql;
 
+import Cal.Utilities.TimeZone using
+    typeConstructor = TimeZone;
+    ;
+
 
 /**
  * Construct a fiscal business calendar that is offset from the default Gregorian 
@@ -188,8 +192,8 @@ private fiscal_periodDisplayName !nMonthsOffset parentPeriod !periodType !period
  * NB: If this cannot be determined (esp. if no Year period value is specified),
  * then the range will be unbounded in both directions.
  */
-fiscal_periodTimeRange :: Int -> Period -> Range Time;
-private fiscal_periodTimeRange !nMonthsOffset period = 
+fiscal_periodTimeRange :: Int -> Period -> TimeZone -> Range Time;
+private fiscal_periodTimeRange !nMonthsOffset !period !timeZone = 
     let
         // TODO: this will not work if the period doesn't contain months...
         gregorianPeriod :: Period;
@@ -222,17 +226,17 @@ private fiscal_periodTimeRange !nMonthsOffset period =
                     // Shift the periods by N months and get the time range from the Gregorian calendar.
                     firstMonthOfTimeRange :: Range Time;
                     firstMonthOfTimeRange = 
-                        getPeriodTimeRange defaultBusinessCalendar $ convertToGregorianPeriod nMonthsOffset firstMonthOfPeriod;
+                        getPeriodTimeRange defaultBusinessCalendar (convertToGregorianPeriod nMonthsOffset firstMonthOfPeriod) timeZone;
 
                     firstMonthOfNextTimeRange :: Range Time;
                     firstMonthOfNextTimeRange = 
-                        getPeriodTimeRange defaultBusinessCalendar $ convertToGregorianPeriod nMonthsOffset firstMonthOfNextPeriod;
+                        getPeriodTimeRange defaultBusinessCalendar (convertToGregorianPeriod nMonthsOffset firstMonthOfNextPeriod) timeZone;
                 in
                     // Create a time range from the start of the period up to the start of the next period.
                     makeBetweenIncludingLeftEndpointRange (leftEndpoint firstMonthOfTimeRange) (leftEndpoint firstMonthOfNextTimeRange);
             MonthPeriod -> 
                 // Convert the period to the gregorian equivalent, then defer to the gregorian calendar to get the time range.
-                getPeriodTimeRange defaultBusinessCalendar gregorianPeriod;
+                getPeriodTimeRange defaultBusinessCalendar gregorianPeriod timeZone;
             WeekOfYearPeriod -> 
                 error "Case not implemented";   // TODO: ...
             DayOfYearPeriod -> 
@@ -243,7 +247,7 @@ private fiscal_periodTimeRange !nMonthsOffset period =
              | SecondPeriod) -> 
                 if hasMonth then 
                     // Convert the period to the gregorian equivalent, then defer to the gregorian calendar to get the time range.
-                    getPeriodTimeRange defaultBusinessCalendar gregorianPeriod
+                    getPeriodTimeRange defaultBusinessCalendar gregorianPeriod timeZone
                 else 
                     makeEntireRange;
             DayOfWeekPeriod -> 
@@ -254,11 +258,11 @@ private fiscal_periodTimeRange !nMonthsOffset period =
 /**
  * Returns the value of the specified period for the time value.
  */
-fiscal_periodValueFromTime :: Int -> Time -> PeriodType -> Int;
-private fiscal_periodValueFromTime !nMonthsOffset !time !periodType = 
+fiscal_periodValueFromTime :: Int -> Time -> TimeZone -> PeriodType -> Int;
+private fiscal_periodValueFromTime !nMonthsOffset !time !timeZone !periodType = 
     let
         baseGregorianPeriod :: Period;
-        baseGregorianPeriod = getPeriodFromTime defaultBusinessCalendar time [YearPeriod, QuarterPeriod, MonthPeriod];
+        baseGregorianPeriod = getPeriodFromTime defaultBusinessCalendar time timeZone [YearPeriod, QuarterPeriod, MonthPeriod];
 
         shiftedPeriod :: Period;
         shiftedPeriod = convertFromGregorianPeriod nMonthsOffset baseGregorianPeriod;
@@ -276,13 +280,13 @@ private fiscal_periodValueFromTime !nMonthsOffset !time !periodType =
         DayOfYearPeriod -> 
             let
                 fiscalYear :: Int;
-                fiscalYear = fiscal_periodValueFromTime nMonthsOffset time YearPeriod;
+                fiscalYear = fiscal_periodValueFromTime nMonthsOffset time timeZone YearPeriod;
 
                 firstDayOfFiscalYearPeriod :: Period;
                 firstDayOfFiscalYearPeriod = makePeriod [(YearPeriod, fiscalYear), (MonthPeriod, 1), (DayOfMonthPeriod, 1)];
 
                 fiscalYearStartTime :: Time;
-                fiscalYearStartTime = Range.leftEndpoint $ fiscal_periodTimeRange nMonthsOffset firstDayOfFiscalYearPeriod;
+                fiscalYearStartTime = Range.leftEndpoint $ fiscal_periodTimeRange nMonthsOffset firstDayOfFiscalYearPeriod timeZone;
 
                 timeDiff :: Duration;
                 timeDiff = Time.subtractTimeFromTime time fiscalYearStartTime;
@@ -294,7 +298,7 @@ private fiscal_periodValueFromTime !nMonthsOffset !time !periodType =
          | MinutePeriod
          | SecondPeriod) -> 
             // The day of the month and time components will be the same as in the gregorian calendar.
-            getPeriodValueFromTime defaultBusinessCalendar time periodType;
+            getPeriodValueFromTime defaultBusinessCalendar time timeZone periodType;
 
         DayOfWeekPeriod -> 
             error "Case not implemented";   // TODO: implement this...

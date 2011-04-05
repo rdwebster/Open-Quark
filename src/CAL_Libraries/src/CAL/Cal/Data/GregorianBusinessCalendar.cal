@@ -59,7 +59,9 @@ import Cal.Utilities.Range using
     typeConstructor = Range;
     function = makeBetweenIncludingLeftEndpointRange, makeEntireRange;
     ;
-import Cal.Utilities.TimeZone;
+import Cal.Utilities.TimeZone using
+    typeConstructor = TimeZone;
+    ;
 import Cal.Utilities.Time using
     typeConstructor = Time;
     function = makeTimeValue;
@@ -721,11 +723,9 @@ private dayOfYearToDayOfMonth !year !dayOfYear =
  * NB: If this cannot be determined (esp. if no Year period value is specified),
  * then the range will be unbounded in both directions.
  */
-gregorian_periodTimeRange :: Period -> Range Time;
-private gregorian_periodTimeRange !period = 
+gregorian_periodTimeRange :: Period -> TimeZone -> Range Time;
+private gregorian_periodTimeRange !period !tz = 
     let
-        tz = TimeZone.currentTimeZone;
-
         maybeYear = getPeriodValue period YearPeriod;
         maybeQuarter = getPeriodValue period QuarterPeriod;
         maybeMonth = getPeriodValue period MonthPeriod;
@@ -809,10 +809,9 @@ private gregorian_periodTimeRange !period =
 /**
  * Returns the value of the specified period for the time value.
  */
-gregorian_periodValueFromTime :: Time -> PeriodType -> Int;
-private gregorian_periodValueFromTime !time !periodType = 
+gregorian_periodValueFromTime :: Time -> TimeZone -> PeriodType -> Int;
+private gregorian_periodValueFromTime !time !tz !periodType = 
     let
-        tz = TimeZone.currentTimeZone;    // TODO: is this ok?
         timeParts = Time.timeParts tz time;
     in
         case periodType of
