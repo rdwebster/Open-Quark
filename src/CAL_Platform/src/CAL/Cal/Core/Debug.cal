@@ -147,11 +147,23 @@ public traceShowInternalStrict !msg !val = Debug.traceShowInternal msg val;
  * @return        the list augmented with tracing information for every nth element
  */
 traceListMemberAccess :: String -> Int -> [a] -> [a];
-public traceListMemberAccess message !interval lst = 
+public traceListMemberAccess message !interval !lst = 
     if interval <= 0 then
         lst
     else
-        List.mapIndexed (\val !idx -> if (idx % interval == 0) then trace (message ++ intToString idx ++ "\n") val else val) lst;
+        let
+            mapHelper !index !lst = 
+                case lst of
+                [] ->
+                    trace (message ++ " end " ++ intToString (index - 1) ++ "\n") [];
+                lstHead : lstTail -> 
+                    if index % interval == 0 then
+                        trace (message ++ " " ++ intToString index ++ "\n") lstHead : mapHelper (index + 1) lstTail
+                    else lstHead : mapHelper (index + 1) lstTail;
+                ;
+        in
+            trace (message ++ " start\n") $
+            mapHelper 1 lst;
 
 /**
  * Modifies the specified transformation function to trace the input value and the result value when evaluated.
