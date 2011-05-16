@@ -213,6 +213,31 @@ mySql_functionToSql builder builderState func arguments =
         Sql.ConvertToDoubleFunction -> convertFunctionSql "DECIMAL";    // TODO: is this OK?
         Sql.ConvertToTimeFunction   -> convertFunctionSql "DATETIME";
 
+        // Work around MySQL problems using IS NOT NULL in certain queries.
+        // The following MySQL statements result in an error with MySQL 5.1:  
+        //      [Error Code: 1292, SQL State: 22001]  Data truncation: Truncated incorrect INTEGER value: 'bar'
+        //
+        //    CREATE TABLE test1 (
+        //        a VARCHAR(255),
+        //        b INT
+        //    )
+        //    
+        //    INSERT INTO test1 
+        //    VALUES ('abc', 1), ('xyz', 2)
+        //    
+        //    CREATE TABLE test2 (
+        //        a VARCHAR(255),
+        //        b INT
+        //    )
+        //    
+        //    INSERT INTO test2
+        //    SELECT a, b
+        //    FROM test1
+        //    WHERE IF (a = 'abc', NULL, 'bar') IS NOT NULL
+        //
+        Sql.OpIsNull -> mySql_functionToSql builder builderState Sql.OpNullSafeEq [head arguments, Sql.toUntypedExpr Sql.nullValue];
+        Sql.OpIsNotNull -> mySql_functionToSql builder builderState Sql.OpNot [Sql.untypedFunctionExpr Sql.OpIsNull arguments];
+
         _ -> 
             // MySQL doesn't seem to allow the parens to be omitted for zero-argument functions, so ensure that the parens are included in this case.
             // However, special keywords (such as data type constants) need to be included without parens.
