@@ -3644,7 +3644,7 @@ removeConstantGroupingAndOrdering !query =
             newOrderings = filter (\!ord -> not (isExprConstant (field1 ord))) orderings;
         in
             // Handle the (common) case where nothing needs to be changed.
-            if (length newGroups == length groups || length newOrderings == length orderings) then query
+            if (length newGroups == length groups && length newOrderings == length orderings) then query
             else Query options columns restriction newOrderings joins newGroups groupRestriction;
 
     Union query1 query2 unionAll -> 
