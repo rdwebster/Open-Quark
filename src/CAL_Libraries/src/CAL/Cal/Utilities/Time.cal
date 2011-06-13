@@ -462,3 +462,12 @@ public showTime !timeZone !includeTimeZone !time =
 showTimeInUTC :: Time -> String;
 public showTimeInUTC = showTime TimeZone.utcTimeZone False;
 
+
+/** Convert a Java Date to the corresponding Time value. */
+foreign unsafe import jvm "static method org.openquark.util.time.Time.fromDate" public jDateToTime :: JDate -> Time;
+
+/** Convert a Time value to the nearest Java Date value. */
+foreign unsafe import jvm "method toDate" public timeToJDate :: Time -> JDate;
+
+data foreign unsafe import jvm public "java.util.Date" public JDate deriving Inputable, Outputable;
+
