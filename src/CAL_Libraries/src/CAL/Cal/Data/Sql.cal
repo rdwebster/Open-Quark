@@ -2328,6 +2328,9 @@ public doubleField table fieldName = TypedExpr (QueryField fieldName table);
 intField :: QueryTable -> String -> TypedExpr Int;
 public intField table fieldName = TypedExpr (QueryField fieldName table);
 
+longField :: QueryTable -> String -> TypedExpr Long;
+public longField table fieldName = TypedExpr (QueryField fieldName table);
+
 timeField :: QueryTable -> String -> TypedExpr Time;
 public timeField table fieldName = TypedExpr (QueryField fieldName table);
 
