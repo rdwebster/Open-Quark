@@ -48,13 +48,11 @@ module Cal.Experimental.Utilities.CollectionUtilities;
 import Cal.Core.Prelude using
     typeClass = Eq, Ord;
     typeConstructor = Boolean, Int, Maybe, String;
-    dataConstructor = False, Just, Nothing, True;
-    function = assert, equals, error, fromJust, fromMaybe, fst, induceComparator, isEmpty, isEven, isJust, not, snd;
+    dataConstructor = False, True, Nothing, Just;
+    function = assert, equals, error, fromJust, fromMaybe, fst, induceComparator, isEmpty, isEven, isJust, not, snd, strict;
     ;
 
-import Cal.Core.String using
-    function = dropWhile, startsWith;
-    ;
+import Cal.Core.String;
 
 import Cal.Collections.List;
 
@@ -248,7 +246,7 @@ public findInCorrespondingList !matchFn !lst1 !lst2 =
         case lst2 of
         [] -> Nothing;
         lst2Head : lst2Tail -> 
-            if (matchFn lst1Head) then Just lst2Head
+            if (matchFn lst1Head) then strict Just lst2Head
             else findInCorrespondingList matchFn lst1Tail lst2Tail;
         ;
     ;
@@ -262,6 +260,38 @@ findInCorrespondingListExamples =
     && assert (findInCorrespondingList isEven [1 :: Int, 3, 4, 6] ["a", "b", "c", "d"] == Just "c")
     && assert (findInCorrespondingList isEven [1 :: Int, 3] ["a", "b", "c", "d"] == Nothing)
     ; 
+
+/**
+ * Finds the first element in the first array for which the predicate function
+ * returns {@link True@}, if any, and returns the corresponding element in the
+ * second array.
+ * 
+ * @arg matchFn a predicate function that will return {@link True@} when an
+ *   element of the desired form is tested.
+ * @arg array1 the array in which to search.
+ * @arg array2 the array from which to return an element.
+ * 
+ * @return {@code {@link Just@} element@} if {@code matchFn element@} returns
+ *   {@link True@} and {@link Nothing @} otherwise.
+ */
+findInCorrespondingArray :: (a -> Boolean) -> Array a -> Array b -> Maybe b;
+public findInCorrespondingArray !matchFn !array1 !array2 = 
+    case Array.findIndex matchFn array1 of
+    Nothing -> Nothing;
+    Just idx -> 
+        if idx < Array.length array2 then strict Just $ Array.subscript array2 idx
+        else Nothing;
+    ;
+
+/* @example */
+findInCorrespondingArrayExamples :: Boolean;
+findInCorrespondingArrayExamples =
+    assert (findInCorrespondingArray isEven (Array.fromList []) (Array.fromList []) == (Nothing :: Maybe String))
+    && assert (findInCorrespondingArray isEven (Array.fromList [1 :: Int, 3, 4, 6]) (Array.fromList []) == (Nothing :: Maybe String))
+    && assert (findInCorrespondingArray isEven (Array.fromList []) (Array.fromList ["a", "b", "c", "d"]) == Nothing)
+    && assert (findInCorrespondingArray isEven (Array.fromList [1 :: Int, 3, 4, 6]) (Array.fromList ["a", "b", "c", "d"]) == Just "c")
+    && assert (findInCorrespondingArray isEven (Array.fromList [1 :: Int, 3]) (Array.fromList ["a", "b", "c", "d"]) == Nothing)
+    ;
 
 /**
  * Filters the elements of the first list using a predicate function and returns
