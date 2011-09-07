@@ -748,7 +748,7 @@ public sameEvalTimesTrace f1 f2 !margin =
  * @return returns {@code valueToReturn@} after sleeping for {@code millis@} milliseconds.
  */
 sleep :: Long -> a -> a;
-public sleep !millis !valueToReturn = 
+public sleep !millis valueToReturn = 
     thread_sleep millis
     `seq`
     valueToReturn;
