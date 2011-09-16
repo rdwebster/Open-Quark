@@ -222,6 +222,24 @@ public traceEvalStartAndEnd !message val =
     trace ("END   -- " ++ message ++ " -- " ++ longToString (evalTime val) ++ " ms\n") val;
 
 /**
+ * Traces messages for the start and end of the evaluation of an expression to WHNF.
+ * The end trace will include the evaluation time duration.
+ * The start and end time values (in system time) will be output as well.
+ */
+traceEvalStartAndEndTimes :: String -> a -> a;
+public traceEvalStartAndEndTimes !message val = 
+    let
+        start :: Long;
+        start = getSystemTime;
+        
+        end :: Long;
+        end = getSystemTime;
+    in
+        trace (show start ++ "  START -- " ++ message ++ "\n") $
+        val `seq`
+        trace (show end   ++ "  END   -- " ++ message ++ " -- " ++ longToString (end - start) ++ " ms\n") val;
+
+/**
  * Traces messages for the start and end of the deep (as in deepSeq) evaluation of an expression.
  * The end trace will include the evaluation time.
  */

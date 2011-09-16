@@ -3617,8 +3617,20 @@ public makeGroupingQuery !query =
                     ConstExpr {} -> curGrouping;
                     ListExpr {listValues} -> List.foldLeftStrict addGroupExprs curGrouping listValues;
                     FunctionExpr {func, arguments} -> 
+                        // If the function references fields, but no aggregation functions then add 
+                        // a grouping for the whole function.
+                        // If the function expression includes an aggregation function then try adding 
+                        // groupings for the function arguments instead.
                         if isAggregationFunction func then curGrouping
-                        else List.foldLeftStrict addGroupExprs curGrouping arguments;
+                        else if exprUsesAggregation expr then 
+                            List.foldLeftStrict addGroupExprs curGrouping arguments
+                        else if isExprConstant expr then 
+                            // If the expression is a constant value, then don't add it as a grouping.
+                            curGrouping
+                        else
+                            // If the non-constant expression does not contain an aggregation, then add the entire 
+                            // expression to the groupings.
+                            curGrouping ++ [expr];
                     SubQueryExpr {} -> curGrouping;
                     _ -> curGrouping;
                     ;
