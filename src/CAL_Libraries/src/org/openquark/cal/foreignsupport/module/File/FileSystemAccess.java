@@ -163,6 +163,15 @@ public final class FileSystemAccess {
     }
     
     /**
+     * Sets the last modification time of the specified file or directory.
+     * @param fileName the name of the file or directory.
+     * @param modificationTime the new last modification time for the file or directory.
+     */
+    public static void setModificationTime(File fileName, Time modificationTime) {
+        fileName.setLastModified(modificationTime.toDate().getTime());
+    }
+    
+    /**
      * Delete an entire directory tree.
      * @param dirName the root of the tree to be deleted.
      * @return true if all deletions were successful; false otherwise

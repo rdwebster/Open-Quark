@@ -344,6 +344,9 @@ foreign unsafe import jvm "method length"
 foreign unsafe import jvm "static method org.openquark.cal.foreignsupport.module.File.FileSystemAccess.getModificationTime"
     private jGetModificationTime :: JFile -> Time;
 
+foreign unsafe import jvm "static method org.openquark.cal.foreignsupport.module.File.FileSystemAccess.setModificationTime"
+    private jSetModificationTime :: JFile -> Time -> ();
+
 /**
  * Returns whether the specified file or directory is readable.
  * 
@@ -420,6 +423,16 @@ public getFileLength !fileName = jFile_length $ fileNameToJFile fileName;
  */
 getModificationTime :: FileName -> Time;
 public getModificationTime !fileName = jGetModificationTime $ fileNameToJFile fileName;
+
+/**
+ * Sets the last modification time of the specified file or directory.
+ * 
+ * @arg fileName the file whose last modification time is to be returned.
+ * @arg modificationTime the new modification time of the specified file or directory.
+ */
+setModificationTime :: FileName -> Time -> ();
+public setModificationTime !fileName !modificationTime = jSetModificationTime (fileNameToJFile fileName) modificationTime;
+
 
 ////==============================================================================
 /// Reading and writing files
