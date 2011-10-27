@@ -70,7 +70,7 @@ public class JDBC {
 //    }
     
     /**
-     * Wrapper around a JDBC Connection to hold specfic connection-oriented 
+     * Wrapper around a JDBC Connection to hold specific connection-oriented 
      * properties for JDBC use in Quark.
      * @author LEvans
      *
@@ -1059,6 +1059,11 @@ public class JDBC {
 
         // The JDBC (underlying) connection
         private java.sql.Connection jdbcConnection;
+        
+        // Connection URL and properties for creating a connection lazily.
+        private String connectionUrl;
+        private java.util.Properties connectionProperties; 
+        		
         private Statement jdbcStatement;
 
         // Static singletons
@@ -1080,17 +1085,69 @@ public class JDBC {
         /**
          * Construct an a Connection from and underlying JDBC Connection
          * @param jdbcConnection the JDBC Connection object
-             */
+         */
         public Connection(java.sql.Connection jdbcConnection) {
             this.jdbcConnection = jdbcConnection;
             this.jdbcStatement = null;
         }
 
         /**
+         * Construct a connection which will be opened when/if required.
+         * @param url the URL identifying the database (e.g. "jdbc:odbc:MyDatabase")
+         * @param login the user account valid for accessing the given database
+         * @param password the password on the given account
+         * @return Connection the connection object
+         */
+        public Connection(String url, String login, String password) {
+            java.util.Properties properties = new java.util.Properties();
+            if (login != null) {
+                properties.put("user", login);
+            }
+            if (password != null) {
+                properties.put("password", password);
+            }
+            
+//            // For SQLite.
+//            if (url.toLowerCase().startsWith("jdbc:sqlite:")) {
+//                properties.put("shared_cache", "true");
+//            }
+            
+            this.connectionUrl = url;
+            this.connectionProperties = properties;
+        }
+        
+        /**
          * Returns the jdbcConnection.
          * @return java.sql.Connection the underlying JDBC connection
+         * @throws DatabaseException 
          */
-        private java.sql.Connection getJdbcConnection() {
+        private java.sql.Connection getJdbcConnection() throws DatabaseException {
+        	
+        	// Create the connection if it hasn't already been created.
+        	if (jdbcConnection == null && connectionUrl != null) {
+	            try {
+	                logger.info("Connecting: url=" + connectionUrl + ", userID=" + connectionProperties.get("user"));
+	                
+	                java.sql.Connection conn = DriverManager.getConnection(connectionUrl, connectionProperties);
+	                
+	                // For PostgreSQL, turn off the auto-commit flag by default since this enables fetching of data in batches 
+	                // (instead of reading the entire resultset into memory).
+	                // TODO: this could be dangerous if the connection is to be used for processing updates to the database instead of querying it.
+	                if (isPostgresConnection(conn)) {
+	                    conn.setAutoCommit(false);
+	                }
+	                
+	                jdbcConnection = conn;
+	                
+	                // Clear the connection properties as they are no longer needed, and could contain password info.
+	                this.connectionUrl = null;
+	                this.connectionProperties = null;
+	            }
+	            catch (SQLException e) {
+	                throw new DatabaseException("Failed to connect: url=" + connectionUrl + ", userID=" + connectionProperties.get("user"), e);
+	            }
+        	}
+            
             return jdbcConnection;
         }
         
@@ -1098,8 +1155,9 @@ public class JDBC {
          * Returns a (cached) jdbcStatement.
          * @return java.sql.Statement a statement that can be used to execute
          * SQL.
+         * @throws DatabaseException 
          */
-        private java.sql.Statement getJdbcStatement() throws SQLException {
+        private java.sql.Statement getJdbcStatement() throws SQLException, DatabaseException {
             if(jdbcStatement == null) {
                 jdbcStatement = getJdbcConnection().createStatement();
             }
@@ -1140,9 +1198,8 @@ public class JDBC {
          */
         public void close() throws DatabaseException {
             try {
-                java.sql.Connection conn = getJdbcConnection();
-                if (conn != null && !conn.isClosed()) {
-                    conn.close();
+                if (jdbcConnection != null && !jdbcConnection.isClosed()) {
+                	jdbcConnection.close();
                 }
             } catch (SQLException sqle) {
                 throw new DatabaseException(sqle);
@@ -1152,8 +1209,7 @@ public class JDBC {
         /**
          * Indicates whether the connection is for a PostgreSQL JDBC driver.
          */
-        private boolean isPostgresConnection() {
-            java.sql.Connection conn = getJdbcConnection();
+        private static boolean isPostgresConnection(java.sql.Connection conn) {
             String connClassName = conn.getClass().getName();
             return connClassName.startsWith("org.postgresql.jdbc");
         }
@@ -1170,7 +1226,7 @@ public class JDBC {
                 final Statement stmt = getJdbcConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
                 // For PostgreSQL, set a reasonable fetch size to avoid reading all records into memory when fetching large resultsets.
-                if (isPostgresConnection ()) {
+                if (isPostgresConnection (getJdbcConnection())) {
                     stmt.setFetchSize(1000);
                 }
                 
@@ -1246,7 +1302,7 @@ public class JDBC {
          * @throws DatabaseException
          */
         public JDBCPreparedStatement createPreparedStatement(String sql) throws DatabaseException {
-            return new JDBCPreparedStatementImpl(sql, jdbcConnection);
+            return new JDBCPreparedStatementImpl(sql, getJdbcConnection());
         }
 
         /**
@@ -1314,7 +1370,7 @@ public class JDBC {
         public boolean commit() throws DatabaseException {
             long start = System.currentTimeMillis();
             try {
-                jdbcConnection.commit();
+            	getJdbcConnection().commit();
                 return true;
             } catch (SQLException e) {
                 throw new DatabaseException(e);
@@ -1334,7 +1390,7 @@ public class JDBC {
             try {
                 // Only rollback connections that are not set to auto-commit. 
                 if (!getAutoCommit()) {
-                    jdbcConnection.rollback();
+                	getJdbcConnection().rollback();
                 }
                 return true;
             } catch (SQLException e) {
@@ -1350,7 +1406,7 @@ public class JDBC {
          */
         public String getDatabaseProductName() throws DatabaseException {
             try {
-                return jdbcConnection.getMetaData().getDatabaseProductName();
+                return getJdbcConnection().getMetaData().getDatabaseProductName();
             }
             catch (SQLException e) {
                 throw new DatabaseException(e);
@@ -1404,14 +1460,6 @@ public class JDBC {
                     return (string == null || string.length () == 0) ? null : string; 
                 }
             };
-        }
-        /**
-         * Method getConnection
-         * 
-         * @return Returns the underlying JDBC connection
-         */
-        public java.sql.Connection getConnection () {
-            return jdbcConnection;
         }
 
         /**
@@ -1527,44 +1575,16 @@ public class JDBC {
     }
 
     /**
-     * Establish a connection to a given database, given by the URL, authenticated
-     * by the login and password.
+     * Create a connection to a given database, given by the URL, authenticated
+     * by the login and password.  The underlying JDBC connection will only 
+     * be opened when/if needed.
      * @param url the URL identifying the database (e.g. "jdbc:odbc:MyDatabase")
      * @param login the user account valid for accessing the given database
      * @param password the password on the given account
      * @return Connection the connection object
      */
-    public static Connection connect(String url, String login, String password) throws DatabaseException {
-        try {
-            logger.info("Connecting: url=" + url + ", userID=" + login);
-            
-            java.util.Properties properties = new java.util.Properties();
-            if (login != null) {
-                properties.put("user", login);
-            }
-            if (password != null) {
-                properties.put("password", password);
-            }
-            
-//            // For SQLite.
-//            if (url.toLowerCase().startsWith("jdbc:sqlite:")) {
-//                properties.put("shared_cache", "true");
-//            }
-
-            Connection conn = new Connection(DriverManager.getConnection(url, properties));
-            
-            // For PostgreSQL, turn off the auto-commit flag by default since this enables fetching of data in batches 
-            // (instead of reading the entire resultset into memory).
-            // TODO: this could be dangerous if the connection is to be used for processing updates to the database instead of querying it.
-            if (conn.isPostgresConnection()) {
-                conn.setAutoCommit(false);
-            }
-            
-            return conn;
-        }
-        catch (SQLException e) {
-            throw new DatabaseException("Failed to connect: url=" + url + ", userID=" + login, e);
-        }
+    public static Connection connect(String url, String login, String password) {
+    	return new Connection(url, login, password);
     }
 
     /**
