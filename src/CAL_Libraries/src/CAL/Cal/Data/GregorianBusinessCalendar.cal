@@ -744,6 +744,9 @@ private gregorian_periodTimeRange !period !tz =
         hasDayOfYear = isJust maybeDayOfYear;
         hasDayOfMonth = isJust maybeDayOfMonth;
         hasDayOfWeek = isJust maybeDayOfWeek;
+        hasHour = isJust maybeHour;
+        hasMinute = isJust maybeMinute;
+        hasSecond = isJust maybeSecond;
 
         year = fromJust maybeYear;
         quarter = fromJust maybeQuarter;
@@ -753,20 +756,29 @@ private gregorian_periodTimeRange !period !tz =
         hour = fromMaybe 0 maybeHour;
         minute = fromMaybe 0 maybeMinute;
         second = fromMaybe 0 maybeSecond;
+        
+        // If working in terms of Days or at a finer level, then determine the appropriate period
+        // for the period time span.
+        subDayPeriodDuration :: Time.Duration;
+        subDayPeriodDuration = 
+            if not hasHour then Time.nDaysDuration 1
+            else if not hasMinute then Time.nHoursDuration 1
+            else if not hasSecond then Time.nMinutesDuration 1
+            else Time.nSecondsDuration 1;
     in
         if not hasYear then makeEntireRange
         else if hasDayOfYear then
             let
                 (computedMonth, computedDayOfMonth) = dayOfYearToDayOfMonth year dayOfYear;
                 startTime = makeTimeValue year computedMonth computedDayOfMonth hour minute second 0 tz;
-                endTime = Time.addDurationToTime startTime (Time.nDaysDuration 1);
+                endTime = Time.addDurationToTime startTime subDayPeriodDuration;
             in
                 makeBetweenIncludingLeftEndpointRange startTime endTime
         else if hasDayOfMonth then
             if hasMonth then
                 let
                     startTime = makeTimeValue year month dayOfMonth hour minute second 0 tz;
-                    endTime = Time.addDurationToTime startTime (Time.nDaysDuration 1);
+                    endTime = Time.addDurationToTime startTime subDayPeriodDuration;
                 in
                     makeBetweenIncludingLeftEndpointRange startTime endTime
             else
