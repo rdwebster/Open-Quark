@@ -143,21 +143,14 @@ public mySqlBuilderFunctions =
 mySql_quoteIdentifier :: String -> Document;
 mySql_quoteIdentifier = quoteIdentifierHelper default_quotesNeeded "`" "`";
 
-// Generates timestamps in the following form:  '2005-05-20 13:23:45.0'
+// Generates timestamps in the following form:  '2005-05-20 13:23:45'
+// Note that no fraction is used as this is ignored in most cases, and can be problematic in certain cases.
 mySql_timestampPattern :: String;
 mySql_timestampPattern = "''yyyy-MM-dd HH:mm:ss''";
 
-mySql_timestampPattern_fractional :: String;
-mySql_timestampPattern_fractional = "''yyyy-MM-dd HH:mm:ss.S''";
-
 mySql_timeToSql :: Time -> TimeZone -> Document;
 mySql_timeToSql timeVal timeZone = 
-    let
-        pattern :: String;
-        pattern = if (Time.timeParts timeZone timeVal).ticks == 0 then mySql_timestampPattern
-                  else mySql_timestampPattern_fractional;
-    in
-        text (Time.formatTime timeVal timeZone Time.gregorianCalendar pattern Locale.defaultLocale);
+    text (Time.formatTime timeVal timeZone Time.gregorianCalendar mySql_timestampPattern Locale.defaultLocale);
 
 // MySQL recognizes TRUE and FALSE for Boolean literals.
 mySql_booleanToSql :: Boolean -> Document;
