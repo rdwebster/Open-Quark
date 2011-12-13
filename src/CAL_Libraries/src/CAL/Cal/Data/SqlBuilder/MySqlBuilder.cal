@@ -41,11 +41,12 @@ module Cal.Data.SqlBuilder.MySqlBuilder;
 import Cal.Core.Prelude using
     function = error, intToString, isEmpty, not;
     typeConstructor = Boolean, Maybe, String;
-    dataConstructor = False, Nothing, Just;
+    dataConstructor = False, True, Nothing, Just;
     ;
 
 import Cal.Data.Sql using
     typeConstructor = Expr, Query, QueryOption, SqlBuilder, SqlBuilderState;
+    function = expressionText2;
     ;
 
 import Cal.Data.SqlBuilder.DefaultSqlBuilder using
@@ -54,7 +55,7 @@ import Cal.Data.SqlBuilder.DefaultSqlBuilder using
 
 import Cal.Utilities.PrettyPrinter using
     typeConstructor = Document;
-    function = singleSpace, text;
+    function = fillSeparatedList, singleSpace, spread, text;
     ;
 
 import Cal.Utilities.Time using
@@ -136,6 +137,8 @@ public mySqlBuilderFunctions =
                   buildCreateViewStatement     := mySql_buildCreateViewStatement,
                   buildDropViewStatement       := mySql_buildDropViewStatement,
                   buildSelectClause            := mySql_buildSelectClause,
+                  buildOrderByClause           := mySql_buildOrderByClause,
+                  buildGroupByClause           := mySql_buildGroupByClause,
                   constructQuery               := mySql_constructQuery
             };
 
@@ -331,6 +334,36 @@ mySql_buildSelectClause !builder !builderState !options =
         // Build the default SQL with the TopN option removed (since it will be added as a LIMIT to the end of the query instead).
         defaultSqlBuilderFunctions.buildSelectClause builder builderState optionsNoTopN;
 
+mySql_buildOrderByClause :: SqlBuilder -> SqlBuilderState -> [(Expr, Boolean)] -> [(Expr, String)] -> Document;
+mySql_buildOrderByClause !builder !builderState !orderExprs projectionExprs = 
+    let
+        orderExprText orderExpr = 
+            let
+                exprText :: Document;
+                exprText = 
+                    case List.findIndex (\!projExpr -> orderExpr.#1 == projExpr.#1) projectionExprs of
+                    Nothing -> expressionText2 builder builderState orderExpr.#1;
+                    Just projColumnIndex -> text $ intToString $ projColumnIndex + 1; 
+                    ;
+                
+                sortDirectionText = if orderExpr.#2 then "ASC" else "DESC";
+            in
+                spread [exprText, text sortDirectionText];
+    in
+        fillSeparatedList True "," (List.map orderExprText orderExprs);
+
+mySql_buildGroupByClause :: SqlBuilder -> SqlBuilderState -> [Expr] -> [(Expr, String)] -> Document;
+mySql_buildGroupByClause !builder !builderState !groupExpressions !projectionExprs = 
+    let
+        groupExprText :: Expr -> Document;
+        groupExprText !groupExpr = 
+            case List.findIndex (\!projExpr -> groupExpr == projExpr.#1) projectionExprs of
+            Nothing -> expressionText2 builder builderState groupExpr;
+            Just projColumnIndex -> text $ intToString $ projColumnIndex + 1; 
+            ;
+    in
+        fillSeparatedList True "," (List.map groupExprText groupExpressions);
+
 mySql_constructQuery :: SqlBuilder -> SqlBuilderState -> [QueryOption] -> Document -> Document -> Document -> Document -> Document -> Document -> Document;
 mySql_constructQuery !builder !builderState !queryOptions = 
     let
@@ -348,4 +381,3 @@ mySql_constructQuery !builder !builderState !queryOptions =
     in
         DefaultSqlBuilder.constructQuery Nothing maybeTopNText builder builderState queryOptions;
 
-                

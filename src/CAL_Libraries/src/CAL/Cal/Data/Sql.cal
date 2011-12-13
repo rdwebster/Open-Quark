@@ -3802,12 +3802,12 @@ data public SqlBuilder =
             (SqlBuilderState -> (Maybe Expr) -> [JoinNode] -> Document)
             
         buildOrderByClauseFn ::
-            // (builderState orderExpressions)
-            (SqlBuilderState -> [(Expr, Boolean)] -> Document)
+            // (builderState orderExpressions projectionExprs)
+            (SqlBuilderState -> [(Expr, Boolean)] -> [(Expr, String)] -> Document)
             
         buildGroupByClauseFn ::
-            // (builderState groupExpressions)
-            (SqlBuilderState -> [Expr] -> Document)
+            // (builderState groupExpressions projectionExprs)
+            (SqlBuilderState -> [Expr] -> [(Expr, String)] -> Document)
         
         buildHavingClauseFn ::
             // (builderState groupRestrictions)
@@ -3923,8 +3923,8 @@ makeSqlBuilder :: { prepareQuery                    :: SqlBuilderState -> Query 
                     buildSelectClause               :: SqlBuilder -> SqlBuilderState -> [QueryOption] -> [(Expr, String)] -> Document,
                     buildFromClause                 :: SqlBuilder -> SqlBuilderState -> [JoinNode] -> Document,
                     buildWhereClause                :: SqlBuilder -> SqlBuilderState -> (Maybe Expr) -> [JoinNode] -> Document,
-                    buildOrderByClause              :: SqlBuilder -> SqlBuilderState -> [(Expr, Boolean)] -> Document,
-                    buildGroupByClause              :: SqlBuilder -> SqlBuilderState -> [Expr] -> Document,
+                    buildOrderByClause              :: SqlBuilder -> SqlBuilderState -> [(Expr, Boolean)] -> [(Expr, String)] -> Document,
+                    buildGroupByClause              :: SqlBuilder -> SqlBuilderState -> [Expr] -> [(Expr, String)] -> Document,
                     buildHavingClause               :: SqlBuilder -> SqlBuilderState -> (Maybe Expr) -> Document,
                      
                     buildCreateDatabaseStatement    :: SqlBuilder -> DatabaseReference -> Boolean -> Document,
@@ -4058,18 +4058,24 @@ private buildWhereClause !sqlBuilder builderState restrictions joins =
 /**
  * Constructs the text of the ORDER BY clause for the query, not including the
  * 'ORDER BY' keyword (or equivalent).
+ * The projection expressions (from the SELECT clause) are also provided to allow 
+ * for ordinals and/or aliases to be used for expressions appearing in the SELECT 
+ * and ORDER BY clauses.
  */
-buildOrderByClause :: SqlBuilder -> SqlBuilderState -> [(Expr, Boolean)] -> Document;
-private buildOrderByClause !sqlBuilder builderState orderExpressions = 
-    (sqlBuilder.SqlBuilder.buildOrderByClauseFn) builderState orderExpressions;
+buildOrderByClause :: SqlBuilder -> SqlBuilderState -> [(Expr, Boolean)] -> [(Expr, String)] -> Document;
+private buildOrderByClause !sqlBuilder builderState orderExpressions projectionExprs = 
+    (sqlBuilder.SqlBuilder.buildOrderByClauseFn) builderState orderExpressions projectionExprs;
 
 /**
  * Constructs the text of the GROUP BY clause for the query, not including the
  * 'GROUP BY' keyword (or equivalent).
+ * The projection expressions (from the SELECT clause) are also provided to allow 
+ * for ordinals and/or aliases to be used for expressions appearing in the SELECT 
+ * and GROUP BY clauses.
  */
-buildGroupByClause :: SqlBuilder -> SqlBuilderState -> [Expr] -> Document;
-private buildGroupByClause !sqlBuilder builderState groupExpressions = 
-    (sqlBuilder.SqlBuilder.buildGroupByClauseFn) builderState groupExpressions;
+buildGroupByClause :: SqlBuilder -> SqlBuilderState -> [Expr] -> [(Expr, String)] -> Document;
+private buildGroupByClause !sqlBuilder builderState groupExpressions projectionExprs = 
+    (sqlBuilder.SqlBuilder.buildGroupByClauseFn) builderState groupExpressions projectionExprs;
 
 /**
  * Constructs the text of the HAVING clause for the query, not including the
@@ -4470,9 +4476,9 @@ private queryText2 builder builderState query =
             selectBody  = buildSelectClause builder newBuilderState options columns;
             fromBody    = buildFromClause builder newBuilderState updatedJoins;
             whereBody   = buildWhereClause builder newBuilderState untypedRestriction updatedJoins;
-            groupByBody = buildGroupByClause builder newBuilderState updatedGrouping;
+            groupByBody = buildGroupByClause builder newBuilderState updatedGrouping columns;
             havingBody  = buildHavingClause builder newBuilderState untypedGroupRestriction;
-            orderByBody = buildOrderByClause builder newBuilderState updatedOrderings;
+            orderByBody = buildOrderByClause builder newBuilderState updatedOrderings columns;
         in
             constructQuery builder newBuilderState options selectBody fromBody whereBody groupByBody havingBody orderByBody;
 

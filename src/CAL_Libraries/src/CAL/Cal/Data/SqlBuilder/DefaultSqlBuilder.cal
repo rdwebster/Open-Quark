@@ -238,8 +238,8 @@ default_buildSelectClause !builder !builderState !options !columns =
     in
         stack [prefixText, fillSeparatedList True "," columnTextVals];
 
-default_buildOrderByClause :: SqlBuilder -> SqlBuilderState -> [(Expr, Boolean)] -> Document;
-default_buildOrderByClause !builder !builderState !orderExprs = 
+default_buildOrderByClause :: SqlBuilder -> SqlBuilderState -> [(Expr, Boolean)] -> [(Expr, String)] -> Document;
+default_buildOrderByClause !builder !builderState !orderExprs projectionExprs = 
     let
         orderExprText orderExpr = 
             let
@@ -250,8 +250,9 @@ default_buildOrderByClause !builder !builderState !orderExprs =
     in
         fillSeparatedList True "," (map orderExprText orderExprs);
 
-default_buildGroupByClause :: SqlBuilder -> SqlBuilderState -> [Expr] -> Document;
-default_buildGroupByClause = fillExpressionList;
+default_buildGroupByClause :: SqlBuilder -> SqlBuilderState -> [Expr] -> [(Expr, String)] -> Document;
+default_buildGroupByClause !builder !builderState !groupExpressions projectionExprs =
+    fillExpressionList builder builderState groupExpressions;
 
 default_buildFromClause :: SqlBuilder -> SqlBuilderState -> [JoinNode] -> Document;
 default_buildFromClause !builder !builderState !joins = 

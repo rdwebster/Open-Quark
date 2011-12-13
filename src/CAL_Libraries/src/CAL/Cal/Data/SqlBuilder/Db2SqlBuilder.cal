@@ -200,7 +200,7 @@ db2_functionToSql builder builderState func arguments =
 
                 orderExprs = map argListPairToOrderInfo (chop 2 arguments);
 
-                orderByText = defaultSqlBuilderFunctions.buildOrderByClause builder builderState orderExprs;
+                orderByText = defaultSqlBuilderFunctions.buildOrderByClause builder builderState orderExprs [];
 
                 rankFunctionName = if (isPercentRank) then "PERCENT_RANK" else "RANK";
             in
