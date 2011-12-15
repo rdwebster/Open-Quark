@@ -3663,7 +3663,7 @@ isCorrelatedSubQuery !outerQueryTables !subQuery =
  * Removes any constant expressions from the grouping and ordering lists.
  */
 removeConstantGroupingAndOrdering :: Query -> Query;
-removeConstantGroupingAndOrdering !query = 
+public removeConstantGroupingAndOrdering !query = 
     case query of
     Query options columns restriction orderings joins groups groupRestriction ->
         let
@@ -4426,9 +4426,9 @@ public queryTextDocument builder query =
     let
         builderState = newSqlBuilderState;
         fixedGroupingQuery = modifyQueries fixQueryForGroupBy query;
-        removedConstantsQuery = modifyQueries removeConstantGroupingAndOrdering fixedGroupingQuery;
+//        removedConstantsQuery = modifyQueries removeConstantGroupingAndOrdering fixedGroupingQuery;
 
-        preparedQuery = modifyQueries (prepareToBuildQueryText builder builderState) removedConstantsQuery;
+        preparedQuery = modifyQueries (prepareToBuildQueryText builder builderState) fixedGroupingQuery;
     in
         queryText2 builder builderState preparedQuery;
 
