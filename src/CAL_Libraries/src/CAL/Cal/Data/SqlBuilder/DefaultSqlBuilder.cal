@@ -472,14 +472,14 @@ public default_buildMultiRowInsertValuesStatement !builder !tableRef !maybeDestC
             text ("(" ++ join ", " (map (Sql.expressionText builder) rowValues) ++ ")");
         
         allRowsText :: Document;
-        allRowsText = join (text ", ") $ List.map rowValuesText rowsOfValues;
+        allRowsText = fillSeparatedList True "," $ List.map rowValuesText rowsOfValues;
     in
         group (
         spread [text "INSERT INTO",
                 Sql.quoteIdentifier builder (getTableNameFromReference tableRef),
                 destColumnText,
                 text "VALUES",
-                allRowsText
+                nest 4 allRowsText
                ]
         );
 
