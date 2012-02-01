@@ -56,9 +56,10 @@ public final class ClassInfo {
     private static final CallingClassFinder FINDER = new CallingClassFinder();
     
     /** The file protocol type for the JBoss VFS. */
-    private static final String VFSFILE_PROTOCOL = "vfsfile"; 
-    private static final String VFSZIP_PROTOCOL = "vfszip";
-    private static final String VFSMEMORY_PROTOCOL = "vfsmemory";
+    private static final String VFS_PROTOCOL_PREFIX = "vfs"; 
+//    private static final String VFSFILE_PROTOCOL = "vfsfile"; 
+//    private static final String VFSZIP_PROTOCOL = "vfszip";
+//    private static final String VFSMEMORY_PROTOCOL = "vfsmemory";
 
     /**
      * A class to determine the class of a method in the current execution stack.
@@ -216,7 +217,8 @@ public final class ClassInfo {
      */
     private static boolean isVfsProtocol(URL resource) {
         String protocol = (resource == null) ? null : resource.getProtocol();
-        return VFSFILE_PROTOCOL.equals(protocol) || VFSZIP_PROTOCOL.equals(protocol) || VFSMEMORY_PROTOCOL.equals(protocol);
+//        return VFSFILE_PROTOCOL.equals(protocol) || VFSZIP_PROTOCOL.equals(protocol) || VFSMEMORY_PROTOCOL.equals(protocol);
+        return protocol != null && protocol.startsWith(VFS_PROTOCOL_PREFIX);
     }
     
     /**
