@@ -2245,7 +2245,7 @@ public mapAccumulateLeftStrict accumulatorFunction !initialAccumulator !list =
     list_head : list_tail ->
         let
             updatedAccumulator  = accumulatorFunction initialAccumulator list_head;
-            result = mapAccumulateLeft accumulatorFunction (fst updatedAccumulator) list_tail;
+            result = mapAccumulateLeftStrict accumulatorFunction (fst updatedAccumulator) list_tail;
         in (fst result, snd updatedAccumulator : snd result);
     ;
 
