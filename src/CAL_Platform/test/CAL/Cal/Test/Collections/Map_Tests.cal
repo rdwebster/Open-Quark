@@ -47,7 +47,7 @@
 module Cal.Test.Collections.Map_Tests;
 
 import Cal.Core.Prelude using
-    typeClass = Ord;
+typeClass = Ord;
     typeConstructor = Boolean, Char, Double, Int, String;
     function = assert, downFrom, equals, fst, lessThan, lessThanEquals, not, seq, snd, upFromTo;
     dataConstructor = Just, Nothing;
@@ -559,6 +559,61 @@ nearestKeyTests =
         ;
 
 
+
+/**
+ * Tests for the insertUpdate function.
+ */
+insertUpdateTests :: Boolean;
+insertUpdateTests = 
+    let
+        testCorrect :: Map Int Int;
+        testCorrect = fromList $ List.map (\key -> (key,key+1)) $ [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
+        
+        test1 :: Map Int Int;
+        test1 =            
+            (\x -> x.#2) $ lookupInsert 11 12 $
+            (\x -> x.#2) $ lookupInsert 10 11 $
+            (\x -> x.#2) $ lookupInsert 14 15 $
+            (\x -> x.#2) $ lookupInsert 12 13 $
+            (\x -> x.#2) $ lookupInsert 15 16 $
+            (\x -> x.#2) $ lookupInsert 8  9  $
+            (\x -> x.#2) $ lookupInsert 13 14 $
+            (\x -> x.#2) $ lookupInsert 9  10 $
+            
+            (\x -> x.#2) $ lookupInsert 4 5 $
+            (\x -> x.#2) $ lookupInsert 5 6 $
+            (\x -> x.#2) $ lookupInsert 6 7 $
+            (\x -> x.#2) $ lookupInsert 7 8 $
+            
+            (\x -> x.#2) $ lookupInsert 3 4 $
+            (\x -> x.#2) $ lookupInsert 2 3 $
+            (\x -> x.#2) $ lookupInsert 1 2 $
+            (\x -> x.#2) $ lookupInsert 0 1 $
+            empty;
+        
+        test2 :: Map Int Int;
+        test2 =
+            (\x -> x.#2) $ lookupInsert 3 0 $
+            (\x -> x.#2) $ lookupInsert 2 0 $
+            (\x -> x.#2) $ lookupInsert 1 0 $
+            (\x -> x.#2) $ lookupInsert 0 0 $
+            test1;
+        
+        and :: [Boolean] -> Boolean;
+        and xs = foldLeftStrict (\x y -> x && y) Prelude.True xs;
+        
+        fnValue key value = (\x->x.#1) $ lookupInsert key value $ test2;
+        fnChanged key value = (\x->x.#3) $ lookupInsert key value $ test2;
+    in
+           assert (testCorrect == test1)
+        && assert (testCorrect == test2)
+        && assert (and $ List.map (\key -> fnValue key 0 == (key+1))         [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15])
+        && assert (and $ List.map (\key -> fnValue key 0 == 0)               [-21,-20,20,21])
+        && assert (and $ List.map (\key -> fnChanged key 0 == Prelude.False) [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15])
+        && assert (and $ List.map (\key -> fnChanged key 0 == Prelude.True)  [-21,-20,20,21])
+        ;  
+
+
 /**
  * @return true if the testing predicates in this module all run successfully.
  */
@@ -571,5 +626,7 @@ public testModule =
   && assert isSubmapByTests
   && assert differenceTests
   && assert nearestKeyTests
+  && insertUpdateTests
   ;
-//please leave testModule last! 
+//please leave testModule last!
+

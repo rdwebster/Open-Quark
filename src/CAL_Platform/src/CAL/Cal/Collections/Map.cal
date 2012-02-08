@@ -588,6 +588,45 @@ public insert !key value !map =
     ;
 
 /**
+ * Looks up the value at a key in the map or inserts the default value if not found.
+ * 
+ * Complexity: O(log n)
+ * 
+ * @arg key the key.
+ * @arg value the default value to be used if a
+ * @arg map the map.
+ * 
+ * @return A tuple with (1) the value found (or default if not found)
+ *                      (2) the potentially modified Map
+ *                      (3) whether the map was modified 
+ */
+lookupInsert :: Ord k => k -> a -> Map k a -> (a, Map k a, Boolean);
+public lookupInsert !key value !map =
+    case map of
+    Tip -> (value, single key value, True);
+    Bin sz kx x l r ->
+        case compare key kx of
+        LT ->
+            let
+                (v, lNew, wasModified) = lookupInsert key value l;
+            in
+                if wasModified then
+                    (v, balance kx x lNew r, wasModified)
+                else
+                    (v, map, wasModified);
+        GT ->
+            let
+                (v, rNew, wasModified) = lookupInsert key value r;
+            in
+                if wasModified then
+                    (v, balance kx x l rNew, wasModified)
+                else
+                    (v, map, wasModified);
+        EQ -> (x, map, False);
+        ;
+    ; 
+
+/**
  * A strict version of {@link insert @} which will reduce the new value to WHNF (weak head normal form) 
  * before inserting it into the map.  This should be used carefully, but can help to control space usage
  * in some situations.
