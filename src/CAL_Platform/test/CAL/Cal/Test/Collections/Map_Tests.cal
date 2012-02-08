@@ -59,7 +59,7 @@ import Cal.Collections.Map using
     typeConstructor = Map;
     function =
         ceilingAssoc, delete, difference, empty, filter, filterWithKey, find, floorAssoc, fromDistinctAscList, fromList,
-        higherAssoc, insert, insertWith, intersection, isSubmapBy, lowerAssoc, partition, toList, union, unionWith;
+        higherAssoc, insert, insertWith, intersection, isSubmapBy, lookupInsert, lowerAssoc, partition, toList, union, unionWith;
     ;
 
 //{-
