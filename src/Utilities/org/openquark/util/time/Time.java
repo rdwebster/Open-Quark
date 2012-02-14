@@ -279,7 +279,11 @@ public final class Time implements Comparable<Time>, Serializable {
     public int [] timeParts (TimeZone tz) {
         int [] result = new int [7]; // year, month, day, hour, minute, second, ticks
         
-        long truncatedTicks = (ticks / ticksPerSecond) * ticksPerSecond;
+        // Determine the ticks value at the start of the second.
+        // Watch out for negative ticks values here.
+        long truncatedTicks = 
+            (ticks >= 0) ? (ticks / ticksPerSecond) * ticksPerSecond
+            		     : ((ticks - ticksPerSecond + 1) / ticksPerSecond) * ticksPerSecond;
         
         Calendar utcCalendar = Calendar.getInstance(tz.toICUTimeZone());
         
@@ -291,7 +295,7 @@ public final class Time implements Comparable<Time>, Serializable {
         result [3] = utcCalendar.get(Calendar.HOUR_OF_DAY);
         result [4] = utcCalendar.get(Calendar.MINUTE);
         result [5] = utcCalendar.get(Calendar.SECOND);
-        result [6] = (int) (ticks % ticksPerSecond);
+        result [6] = (int) (ticks - truncatedTicks);
         
         return result;
     }
