@@ -49,8 +49,8 @@ module Cal.Test.Collections.Map_Tests;
 import Cal.Core.Prelude using
 typeClass = Ord;
     typeConstructor = Boolean, Char, Double, Int, String;
-    function = assert, downFrom, equals, fst, lessThan, lessThanEquals, not, seq, snd, upFromTo;
-    dataConstructor = Just, Nothing;
+    function = assert, downFrom, equals, fst, lessThan, lessThanEquals, max, not, seq, snd, upFromTo;
+    dataConstructor = Nothing, Just;
     ;
 import Cal.Collections.List using
     function = foldLeftStrict, take;
@@ -59,8 +59,14 @@ import Cal.Collections.Map using
     typeConstructor = Map;
     function =
         ceilingAssoc, delete, difference, empty, filter, filterWithKey, find, floorAssoc, fromDistinctAscList, fromList,
-        higherAssoc, insert, insertWith, intersection, isSubmapBy, lowerAssoc, partition, toList, union, unionWith;
+        higherAssoc, insert, insertWith, intersection, isSubmapBy, lookupInsert, lowerAssoc, partition, toList, union, unionWith;
     ;
+
+import Cal.Utilities.QuickCheck using
+    function = check, defaultResizing, makeConfig, makeDefaultGenParams;
+    ;
+
+
 
 //{-
 //{--------------------------------------------------------------------
@@ -613,6 +619,32 @@ insertUpdateTests =
         && assert (and $ List.map (\key -> fnChanged key 0 == Prelude.True)  [-21,-20,20,21])
         ;  
 
+/**
+ * Tests for the unionWithMaybe function.
+ */
+unionWithMaybeTests :: Boolean;
+unionWithMaybeTests =
+    let
+        prop_filtered :: Map Int Int -> Map Int Int -> Boolean;
+        prop_filtered map1 map2 =
+            let
+                filt map = Map.filter (\x -> x % 2 == 0) map;
+            in
+                (filt $ Map.unionWith max (filt map1) (filt map2))
+                ==
+                (Map.unionWithMaybe (\x y -> if (max x y) % 2 == 0 then Just $ max x y else Nothing) (filt map1) (filt map2));
+    in
+        // Uncomment to see failing test case.
+        // Debug.trace (formatResults $ testResults (mapConfig 2000) prop_filtered) $
+        check (mapConfig 2000) prop_filtered;
+
+/**
+ * QuickCheck setup.
+ */
+mapGenParams = QuickCheck.resize 300 makeDefaultGenParams;
+
+mapConfig :: Int -> QuickCheck.Config;
+mapConfig numTests = makeConfig numTests (numTests*10) defaultResizing mapGenParams;
 
 /**
  * @return true if the testing predicates in this module all run successfully.
@@ -626,7 +658,8 @@ public testModule =
   && assert isSubmapByTests
   && assert differenceTests
   && assert nearestKeyTests
-  && insertUpdateTests
+  && assert insertUpdateTests
+  && assert unionWithMaybeTests
   ;
 //please leave testModule last!
 

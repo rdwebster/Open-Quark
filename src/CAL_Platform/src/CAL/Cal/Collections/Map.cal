@@ -294,17 +294,23 @@ import Cal.Core.Prelude using
     typeClass = Appendable, Eq, Inputable, Ord, Outputable;
     typeConstructor = Boolean, Int, JObject, Maybe, Ordering, String;
     dataConstructor = False, True, Nothing, Just, LT, EQ, GT;
-    function = 
-        compare, concat, const, equals, error, fromMaybe, fst, greaterThan, input, lessThan, lessThanEquals, not, 
-        output, seq, snd;
+    function =
+        compare, concat, const, equals, error, fromMaybe, fst, greaterThan, id, input, lessThan, lessThanEquals, not, output,
+        seq, snd;
     ;
 import Cal.Collections.List using
-    function = foldLeftStrict, length;
+    function = foldLeftStrict, length, take;
     ;
 import Cal.Collections.Set;
 import Cal.Core.Debug using
     typeClass = Show;
     function = show;
+    ;
+
+import Cal.Utilities.QuickCheck using
+    typeClass = Arbitrary;
+    typeConstructor = Gen;
+    function = arbitrary, chooseOneOfWithFreq, makeBoundedIntGen, makeListGen, zipWithGen;
     ;
 
 
@@ -1497,6 +1503,21 @@ private hedgeUnionR cmplo cmphi !t1 !t2 =
 unionWith :: Ord k => (a -> a -> a) -> Map k a -> Map k a -> Map k a;
 public unionWith f !map1 !map2 = unionWithKey (\k x y -> f x y) map1 map2;
 
+/**
+ * Returns the left-biased union of two maps, with a combining function. The
+ * implementation uses the efficient {@em hedge-union@} algorithm. If the combining
+ * function returns Nothing, that item is omitted from the resulting map.
+ * 
+ * Complexity: O(n+m)
+ * 
+ * @arg f the combining function.
+ * @arg map1 the first map.
+ * @arg map2 the second map.
+ * @return the left-biased union of two maps.
+ */
+unionWithMaybe :: Ord k => (a -> a -> Maybe a) -> Map k a -> Map k a -> Map k a;
+public unionWithMaybe f !map1 !map2 = unionWithKeyMaybe (\k x y -> f x y) map1 map2;
+
 //
 //-- | /O(n+m)/.
 //-- Union with a combining function. The implementation uses the efficient /hedge-union/ algorithm.
@@ -1534,6 +1555,31 @@ public unionWithKey f !map1 !map2 =
         in
             hedgeUnionWithKey flipf (const LT) (const GT) map2 map1;
 
+/**
+ * Returns the left-biased union of two maps, with a combining function. The
+ * implementation uses the efficient {@em hedge-union@} algorithm. If the combining
+ * function returns Nothing, that item is omitted from the resulting map.
+ * 
+ * Complexity: O(n+m)
+ * 
+ * @arg f the combining function.
+ * @arg map1 the first map.
+ * @arg map2 the second map.
+ * @return the left-biased union of two maps.
+ */
+unionWithKeyMaybe :: Ord k => (k -> a -> a -> Maybe a) -> Map k a -> Map k a -> Map k a;
+public unionWithKeyMaybe f !map1 !map2 = 
+    if (isEmpty map1) then
+        map2
+    else if (isEmpty map1) then
+        map1
+    else if (size map1 >= size map2) then //hedge-union is more efficient on (bigset `union` smallset)
+        hedgeUnionWithKeyMaybe f (const LT) (const GT) map1 map2
+    else
+        let
+            flipf k x y   = f k y x;
+        in
+            hedgeUnionWithKeyMaybe flipf (const LT) (const GT) map2 map1;
 
 //
 //hedgeUnionWithKey f cmplo cmphi t1 Tip 
@@ -1574,6 +1620,35 @@ private hedgeUnionWithKey f cmplo cmphi !t1 !t2 =
             in                                        
                 join kx newx (hedgeUnionWithKey f cmplo cmpkx l lt) (hedgeUnionWithKey f cmpkx cmphi r gt);
     ;
+
+hedgeUnionWithKeyMaybe :: Ord k => (k-> a -> a -> Maybe a) -> (k -> Ordering) -> (k -> Ordering) -> Map k a -> Map k a -> Map k a;
+private hedgeUnionWithKeyMaybe f cmplo cmphi !t1 !t2 =
+    if (isEmpty t2) then
+        t1
+    else if (isEmpty t1) then
+        case t2 of
+        Bin _ kx x l r ->
+            join kx x (filterGt cmplo l) (filterLt cmphi r);
+    else
+        case t1 of
+        Bin _ kx x l r ->
+            let
+                cmpkx k = compare kx k;
+                lt = trim cmplo cmpkx t2;
+                (found, gt) = trimLookupLo kx cmphi t2;
+                maybeNewx =
+                    case found of
+                    Nothing -> Just x;
+                    Just y  -> f kx x y;
+                    ;        
+            in
+                case maybeNewx of 
+                Nothing ->
+                    merge (hedgeUnionWithKeyMaybe f cmplo cmpkx l lt) (hedgeUnionWithKeyMaybe f cmpkx cmphi r gt);
+                Just newx ->
+                    join kx newx (hedgeUnionWithKeyMaybe f cmplo cmpkx l lt) (hedgeUnionWithKeyMaybe f cmpkx cmphi r gt);
+                ;
+        ;
  
 //
 //{--------------------------------------------------------------------
@@ -3707,6 +3782,27 @@ showMap !m =
         concat ["Map.Map{",
                 List.join ", " (List.map showEntry $ toList m),
                 "}"];
+
+
+instance (Ord a, Arbitrary a, Arbitrary b) => Arbitrary (Map a b) where    
+    arbitrary = mapArbitrary;
+    coarbitrary = mapCoarbitrary;
+    ;
+    
+mapArbitrary :: (Ord a, Arbitrary a, Arbitrary b) => Gen (Map a b);
+mapArbitrary =
+    let
+        gen = makeListGen (makeBoundedIntGen 2 1000) arbitrary;        
+        fn f as bs = Map.fromList $ f $ as `List.zip` bs;
+    in
+        chooseOneOfWithFreq [
+            (10, zipWithGen (fn id) gen gen),       // size >= 2
+            (1,  zipWithGen (fn $ take 1) gen gen), // size == 1
+            (1,  zipWithGen (fn $ take 0) gen gen)  // size == 0
+        ];
+
+mapCoarbitrary :: (Ord a, Arbitrary a, Arbitrary b) => Map a b -> Gen c -> Gen c;
+mapCoarbitrary a b = error "testModule: unimplemented.";
 
 
 //used to test structural equality of 2 maps. This is for debugging purposes since 2 maps that are equal under Prelude.equals
