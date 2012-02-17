@@ -289,7 +289,7 @@ public final class Time implements Comparable<Time>, Serializable {
         
         utcCalendar.setTimeInMillis(ticksToJavaUtilDateMilliseconds(truncatedTicks));
         
-        result [0] = utcCalendar.get(Calendar.YEAR);
+        result [0] = utcCalendar.get(Calendar.EXTENDED_YEAR);
         result [1] = utcCalendar.get(Calendar.MONTH) + 1;
         result [2] = utcCalendar.get(Calendar.DATE);
         result [3] = utcCalendar.get(Calendar.HOUR_OF_DAY);
