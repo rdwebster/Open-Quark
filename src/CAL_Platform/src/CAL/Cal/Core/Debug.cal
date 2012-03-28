@@ -166,6 +166,28 @@ public traceListMemberAccess message !interval !lst =
             mapHelper 1 lst;
 
 /**
+ * As traceListMemberAccess, except that the system time is shown next to each trace.
+ */
+traceListMemberAccessTimes :: String -> Int -> [a] -> [a];
+public traceListMemberAccessTimes message !interval !lst = 
+    if interval <= 0 then
+        lst
+    else
+        let
+            mapHelper !index !lst = 
+                case lst of
+                [] ->
+                    trace (show (getSystemTime - initialTime) ++ "  " ++ message ++ " end " ++ intToString (index - 1) ++ "\n") [];
+                lstHead : lstTail -> 
+                    if index % interval == 0 then
+                        trace (show (getSystemTime - initialTime) ++ "  " ++ message ++ " " ++ intToString index ++ "\n") lstHead : mapHelper (index + 1) lstTail
+                    else lstHead : mapHelper (index + 1) lstTail;
+                ;
+        in
+            trace (show (getSystemTime - initialTime) ++ "  " ++ message ++ " start\n") $
+            mapHelper 1 lst;
+
+/**
  * Modifies the specified transformation function to trace the input value and the result value when evaluated.
  * @arg message      a message to be included with each trace output, followed by the input and result values
  * @arg transformFn  the function to be augmented to include tracing information
@@ -235,9 +257,12 @@ public traceEvalStartAndEndTimes !message val =
         end :: Long;
         end = getSystemTime;
     in
-        trace (show start ++ "  START -- " ++ message ++ "\n") $
+        trace (show (start - initialTime) ++ "  START -- " ++ message ++ "\n") $
         val `seq`
-        trace (show end   ++ "  END   -- " ++ message ++ " -- " ++ longToString (end - start) ++ " ms\n") val;
+        trace (show (end - initialTime)   ++ "  END   -- " ++ message ++ " -- " ++ longToString (end - start) ++ " ms\n") val;
+
+initialTime :: Long;
+initialTime = getSystemTime;
 
 /**
  * Traces messages for the start and end of the deep (as in deepSeq) evaluation of an expression.
