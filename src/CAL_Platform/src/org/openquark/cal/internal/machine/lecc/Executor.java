@@ -210,6 +210,7 @@ public class Executor implements CALExecutor {
             instrument (new CallCountInfo (executionContext.getCallCounts(), "Call counts:"));
             instrument (new CallCountInfo (executionContext.getDcConstructorCounts(), "DataConstructor instance counts:"));
             instrument (new CallCountInfo (executionContext.getDcFunctionCounts(), "DataConstructor functional form counts:"));
+            instrument (new CallCountInfo (executionContext.getCafFunctionCounts(), "CAF call counts:"));
         }
 
         finishedInitialExecution ();

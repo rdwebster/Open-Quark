@@ -73,6 +73,7 @@ public final class RTExecutionContext extends ExecutionContextImpl {
     private final ConcurrentMap<QualifiedName, AtomicInteger> callCounts = new ConcurrentHashMap<QualifiedName, AtomicInteger>(); 
     private final ConcurrentMap<QualifiedName, AtomicInteger> dcConstructorCounts = new ConcurrentHashMap<QualifiedName, AtomicInteger>();
     private final ConcurrentMap<QualifiedName, AtomicInteger> dcFunctionCounts = new ConcurrentHashMap<QualifiedName, AtomicInteger>();
+    private final ConcurrentMap<QualifiedName, AtomicInteger> cafCallCounts = new ConcurrentHashMap<QualifiedName, AtomicInteger>();
 
     /**
      * Used by the client to tell the executor to stop prematurely.
@@ -182,6 +183,10 @@ public final class RTExecutionContext extends ExecutionContextImpl {
     public final void dcFunctionCalled (String moduleName, String unqualifiedName) {
         incrementCounts(moduleName, unqualifiedName, dcFunctionCounts);        
     }
+    public final void cafFunctionCalled (String moduleName, String unqualifiedName) {
+        incrementCounts(moduleName, unqualifiedName, cafCallCounts);        
+    }
+    
     private static void incrementCounts(
             final String moduleName,
             final String unqualifiedName,
@@ -235,6 +240,12 @@ public final class RTExecutionContext extends ExecutionContextImpl {
     public final Map<QualifiedName, Integer> getDcFunctionCounts() {
         return copyMap(dcFunctionCounts);
     }
+    /**
+     * @return Returns the cafCallCounts. This is a copy and can be freely modified.
+     */
+    public final Map<QualifiedName, Integer> getCafFunctionCounts() {
+        return copyMap(cafCallCounts);
+    }
     
     private static Map<QualifiedName, Integer> copyMap(ConcurrentMap<QualifiedName, AtomicInteger> map) {
         Map<QualifiedName, Integer> result = new HashMap<QualifiedName, Integer>();
@@ -260,6 +271,7 @@ public final class RTExecutionContext extends ExecutionContextImpl {
         callCounts.clear();
         dcConstructorCounts.clear();
         dcFunctionCounts.clear();
+        cafCallCounts.clear();
         continueAction = ACTION_CONTINUE;
         setRuntimeEnvironment(newRuntimeEnvironment);
     }

@@ -1411,6 +1411,24 @@ final class JavaDefinitionBuilder {
 
                         // Put the whole if expression together.
                         b.addStatement(new JavaStatement.IfThenElseStatement(comparison, then));
+                        
+                        if (LECCMachineConfiguration.generateCallCounts()) {
+                            JavaExpression args[] = new JavaExpression[2];
+                            JavaTypeName ccArgTypes[] = new JavaTypeName[2];
+                            args[0] = LiteralWrapper.make(mf.getQualifiedName().getModuleName().toSourceText());
+                            args[1] = LiteralWrapper.make(mf.getQualifiedName().getUnqualifiedName());
+                            ccArgTypes[0] = ccArgTypes[1] = JavaTypeName.STRING;
+                            MethodInvocation mi =
+                                new MethodInvocation.Instance(SCJavaDefn.EXECUTION_CONTEXT_VAR,
+                                                     "cafFunctionCalled",
+                                                     args,
+                                                     ccArgTypes,
+                                                     JavaTypeName.VOID,
+                                                     MethodInvocation.InvocationType.VIRTUAL);
+
+                            javaMethod.addStatement(new ExpressionStatement(mi));
+                        }
+                        
                         b.addStatement(new ReturnStatement(newInstanceVar));
 
                         javaMethod.addStatement(b);
