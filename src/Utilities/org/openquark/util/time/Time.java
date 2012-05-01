@@ -154,7 +154,7 @@ public final class Time implements Comparable<Time>, Serializable {
      * @param tz      - time zone
      */
     public Time (int year, int month, int day, int hour, int minute, int second, int ticks, TimeZone tz) {
-        Calendar cal = Calendar.getInstance(tz.toICUTimeZone());
+    	Calendar cal = tz.getICUCalendar();
 
         cal.set(year, month - 1, day, hour, minute, second);
         cal.set(Calendar.MILLISECOND, 0);  
@@ -285,7 +285,7 @@ public final class Time implements Comparable<Time>, Serializable {
             (ticks >= 0) ? (ticks / ticksPerSecond) * ticksPerSecond
             		     : ((ticks - ticksPerSecond + 1) / ticksPerSecond) * ticksPerSecond;
         
-        Calendar utcCalendar = Calendar.getInstance(tz.toICUTimeZone());
+        Calendar utcCalendar = tz.getICUCalendar();
         
         utcCalendar.setTimeInMillis(ticksToJavaUtilDateMilliseconds(truncatedTicks));
         
@@ -326,7 +326,7 @@ public final class Time implements Comparable<Time>, Serializable {
     public int getDayOfWeek (TimeZone tz ) {
         long truncatedTicks = (ticks / ticksPerSecond) * ticksPerSecond;
         
-        Calendar utcCalendar = Calendar.getInstance(tz.toICUTimeZone());
+        Calendar utcCalendar = tz.getICUCalendar();
         
         utcCalendar.setTimeInMillis(ticksToJavaUtilDateMilliseconds(truncatedTicks));
 
