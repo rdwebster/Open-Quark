@@ -442,6 +442,9 @@ data foreign unsafe import jvm "byte[]" JByteArray deriving Inputable, Outputabl
 foreign unsafe import jvm "static method org.openquark.cal.foreignsupport.module.File.FileIO.readFile"
     private jReadFile :: JFile -> JIOResult; // actual result type: String
 
+foreign unsafe import jvm "static method org.openquark.cal.foreignsupport.module.File.FileIO.readFileUTF8"
+    private jReadFileUTF8 :: JFile -> JIOResult; // actual result type: String
+
 foreign unsafe import jvm "static method org.openquark.cal.foreignsupport.module.File.FileIO.readFileBinary"
     private jReadFileBinary :: JFile -> JIOResult; // actual result type: JByteArray;
 
@@ -450,6 +453,9 @@ foreign unsafe import jvm "static method org.openquark.cal.foreignsupport.module
 
 foreign unsafe import jvm "static method org.openquark.cal.foreignsupport.module.File.FileIO.writeFile"
     private jWriteFile :: JFile -> String -> JIOResult; // actual result type: ()
+
+foreign unsafe import jvm "static method org.openquark.cal.foreignsupport.module.File.FileIO.writeFileUTF8"
+    private jWriteFileUTF8 :: JFile -> String -> JIOResult; // actual result type: ()
 
 foreign unsafe import jvm "static method org.openquark.cal.foreignsupport.module.File.FileIO.writeFileBinary"
     private jWriteFileBinary :: JFile -> JByteArray -> JIOResult; // actual result type: ()
@@ -514,6 +520,16 @@ readFile :: FileName -> Either IOError String;
 public readFile !fileName = ioTry "readFile" $ jReadFile $ fileNameToJFile fileName;
 
 /**
+ * Reads the contents of the specified text file (in UTF-8 encoding) into a string.
+ * 
+ * @arg fileName the path of the file to be read.
+ * @return either a {@code {@link Left@} ioError@} indicating that the operation has failed, or a {@code {@link Right@} fileContents@} encapsulating
+ * the contents of the file. 
+ */
+readFileUTF8 :: FileName -> Either IOError String;
+public readFileUTF8 !fileName = ioTry "readFile" $ jReadFileUTF8 $ fileNameToJFile fileName;
+
+/**
  * Reads the contents of the specified file into a byte array.
  * 
  * @arg fileName the path of the file to be read.
@@ -535,7 +551,7 @@ public readBinaryContentsFromFileOrUrl !fileNameOrUrl = ioTryWith jByteArrayToBy
 
 /**
  * Reads the lines of the specified text file.
- * The file will be closes when the end of the input is reached.
+ * The file will be closed when the end of the input is reached.
  * 
  * @arg fileName  the path of the file to be read
  * @return        either a {@code {@link Left@} ioError@} indicating that the operation has failed, or a 
@@ -574,6 +590,17 @@ public readFileLines !fileName =
  */
 writeFile :: FileName -> String -> Either IOError ();
 public writeFile !fileName !contents = ioTry "writeFile" $ jWriteFile (fileNameToJFile fileName) contents;
+
+/**
+ * Writes the specified contents into the file specified by the file name in UTF-8 format. 
+ * If the file already exists, it will be overwritten with by the new contents.
+ * 
+ * @arg fileName the path of the file to be written.
+ * @arg contents the contents to be written.
+ * @return either a {@code {@link Left@} ioError@} indicating that the operation has failed, or a {@code {@link Right@} ()@} indicating success. 
+ */
+writeFileUTF8 :: FileName -> String -> Either IOError ();
+public writeFileUTF8 !fileName !contents = ioTry "writeFile" $ jWriteFileUTF8 (fileNameToJFile fileName) contents;
 
 /**
  * Writes the specified binary contents into the file specified by the file name.
