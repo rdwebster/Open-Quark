@@ -38,8 +38,11 @@
 
 package org.openquark.cal.internal.runtime.lecc;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -48,6 +51,8 @@ import org.openquark.cal.compiler.ModuleName;
 import org.openquark.cal.compiler.QualifiedName;
 import org.openquark.cal.internal.runtime.ExecutionContextImpl;
 import org.openquark.cal.internal.runtime.RuntimeEnvironment;
+import org.openquark.cal.runtime.CancelNotifier;
+import org.openquark.cal.runtime.Cleanable;
 import org.openquark.cal.runtime.ExecutionContextProperties;
 
 
@@ -98,7 +103,17 @@ public final class RTExecutionContext extends ExecutionContextImpl {
      * The cancel flag will be ignored while this flag is set.
      */
     private boolean cancelOverrideFlag = false;
-
+    
+    /**
+     * Enable/disable notification of cancellation based on a runtime property.
+     */
+    private static final boolean ENABLE_CANCEL_NOTIFICATION = "true".equalsIgnoreCase(System.getProperty("org.openquark.cal.enable_cancel_notification"));
+    
+    /**
+     * Registered listeners for cancellation events.
+     */
+    private final Set<Cleanable> cancelListeners = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<Cleanable, Boolean>()));
+    
     /**
      * Constructs an instance of this class with the specified properties.
      * @param properties the properties to be associated with the execution context.
@@ -113,6 +128,17 @@ public final class RTExecutionContext extends ExecutionContextImpl {
      */
     public void requestQuit () {
         continueAction = ACTION_QUIT;
+        
+        // Notify any registered cancellation listeners of the intention to cancel.
+        // TODO: should we copy the set of listeners just to be safe?
+        for (Cleanable cleanable : cancelListeners) {
+            try {
+                cleanable.cleanup();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -283,6 +309,23 @@ public final class RTExecutionContext extends ExecutionContextImpl {
      */
     public void clearRuntimeEnvironment() {
         setRuntimeEnvironment(null);
+    }
+
+    @Override
+    public CancelNotifier getCancelNotifier() {
+        return new CancelNotifier() {
+            @Override
+            public void registerCancelListener(Cleanable listener) {
+                if (ENABLE_CANCEL_NOTIFICATION) {
+                    cancelListeners.add(listener);
+                }
+            }
+
+            @Override
+            public void unregisterCancelListener(Cleanable listener) {
+                cancelListeners.remove(listener);
+            }
+        };
     }
 }
 

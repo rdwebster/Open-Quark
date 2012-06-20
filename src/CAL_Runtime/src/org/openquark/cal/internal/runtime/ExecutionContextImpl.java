@@ -51,6 +51,7 @@ import java.util.regex.Pattern;
 import org.openquark.cal.foreignsupport.module.Prelude.UnitValue;
 import org.openquark.cal.runtime.CalFunction;
 import org.openquark.cal.runtime.CalValue;
+import org.openquark.cal.runtime.CancelNotifier;
 import org.openquark.cal.runtime.Cleanable;
 import org.openquark.cal.runtime.DebugSupport;
 import org.openquark.cal.runtime.ExecutionContext;
@@ -448,7 +449,12 @@ public abstract class ExecutionContextImpl extends ExecutionContext {
             cleanables.clear();
         }
     }
-              
+
+    /**
+     * Returns a cancel notification service for this execution context.
+     */
+    public abstract CancelNotifier getCancelNotifier();
+    
     /**
      * @return an unmodifiable Set<String> containing the qualified
      * names of functions for which tracing has been specifically enabled.

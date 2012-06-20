@@ -63,31 +63,27 @@ module Cal.Data.DataGems;
 
 import Cal.Core.Prelude using
     typeClass = Inputable, Ord, Outputable, Typeable;
-    typeConstructor = Boolean, Byte, Decimal, Double, Int, Long, JObject, Maybe, String, TypeRep;
+    typeConstructor = Boolean, Byte, Decimal, Double, Int, JObject, Long, Maybe, String;
     dataConstructor = False, True, Nothing, Just;
-    function = 
-        compare, eager, error, field1, field2, field3, field4, fromJust, fst, input, 
-        isEmpty, maybeApply, not, output, seq, snd, strictTuple2, strictTuple3, 
-        strictTuple4, strictTuple5, strictTuple6, strictTuple7, upFromTo,
-        typeArguments, typeOf, undefined;
+    function =
+        compare, eager, error, field1, field2, field3, field4, fst, input, isEmpty, maybeApply, output, seq, snd, strictTuple2,
+        strictTuple3, strictTuple4, strictTuple5, strictTuple6, strictTuple7, upFromTo;
     ;
 import Cal.Core.Dynamic using
     typeConstructor = Dynamic;
-    function = toDynamic, fromDynamic;
+    function = toDynamic;
     ;
 import Cal.Collections.List using
-    function = drop, head, length, map, replicate, strictList, take, zipWith;
-    ;      
-import Cal.Core.String using
-    function = fromList;
-    ; 
+    function = head, map, strictList, zipWith;
+    ;
+
 import Cal.Utilities.Format;    
 import Cal.Utilities.RelativeTime;
 import Cal.Utilities.Time using
     typeConstructor = Time;
     ;
 import Cal.Utilities.ValueType using
-    typeConstructor = ValueType, JValueType;
+    typeConstructor = JValueType, ValueType;
     ;
 import Cal.Collections.Map using
     typeConstructor = Map;
@@ -101,8 +97,9 @@ import Cal.Data.DatabaseMetadata using
 import Cal.Data.SqlType using
     typeConstructor = JSqlType, SqlType;
     ;
-import Cal.Core.Debug using
-    function = show;
+
+import Cal.Core.System using
+    typeConstructor = CancelNotifier;
     ;
 
 
@@ -560,8 +557,10 @@ public tableDescription !includeConstraintInfo !connection !tableRef =
  * @arg updateSQL   a SQL statement for the update operation
  * @return          the number of rows affected by the update operation
  */
-foreign unsafe import jvm "method executeUpdate" 
-    public executeUpdate :: JDBCConnection -> String -> Int;
+executeUpdate :: JDBCConnection -> String -> Int;
+public executeUpdate !connection !updateSQL = jExecuteUpdate connection updateSQL System.cancelNotifier;
+
+foreign unsafe import jvm "method executeUpdate" jExecuteUpdate :: JDBCConnection -> String -> CancelNotifier -> Int;
 
 /**
  * Adds a batch of operations to the database connection.
@@ -579,10 +578,10 @@ foreign unsafe import jvm "method addBatch"
  */
 executeBatch :: JDBCConnection -> Array Int;
 public executeBatch !connection = 
-    jIntArrayToIntArray $ jExecuteBatch connection;
+    jIntArrayToIntArray $ jExecuteBatch connection System.cancelNotifier;
 
 foreign unsafe import jvm "method executeBatch" 
-    private jExecuteBatch :: JDBCConnection -> JIntArray;
+    private jExecuteBatch :: JDBCConnection -> CancelNotifier -> JIntArray;
                        
 /**
  * Commit the changes made through the database connection. 
@@ -634,9 +633,9 @@ foreign unsafe import jvm "method addBatch"
  * @arg preparedStmt  a prepared statement
  * @return            the number of rows affected by the update operation
  */
-foreign unsafe import jvm "method executeUpdate"
-    public preparedStatementExecuteUpdate :: JDBCPreparedStatement -> Int;
-
+preparedStatementExecuteUpdate :: JDBCPreparedStatement -> Int;
+public preparedStatementExecuteUpdate !preparedStmt = preparedStatement_executeUpdate preparedStmt System.cancelNotifier;
+    
 /**
  * Retrieves the SQL from a prepared statement.
  * @arg preparedStmt  a prepared statement
@@ -653,7 +652,8 @@ foreign unsafe import jvm "method getSQLStatement"
 foreign unsafe import jvm "method getTotalExecutionTime"
     public preparedStatementGetTotalExecTime :: JDBCPreparedStatement -> Long;
 
-foreign unsafe import jvm "method executeBatch" private preparedStatement_executeBatch :: JDBCPreparedStatement -> JObject /* Array Int */;
+foreign unsafe import jvm "method executeUpdate" private preparedStatement_executeUpdate :: JDBCPreparedStatement -> CancelNotifier -> Int;
+foreign unsafe import jvm "method executeBatch" private preparedStatement_executeBatch :: JDBCPreparedStatement -> CancelNotifier -> JObject /* Array Int */;
 foreign unsafe import jvm "method setBoolean" private preparedStatement_setBoolean :: JDBCPreparedStatement -> Int -> Boolean -> JDBCPreparedStatement;
 foreign unsafe import jvm "method setInt" private preparedStatement_setInt :: JDBCPreparedStatement -> Int -> Int -> JDBCPreparedStatement;
 foreign unsafe import jvm "method setDouble" private preparedStatement_setDouble :: JDBCPreparedStatement -> Int -> Double -> JDBCPreparedStatement;
@@ -669,7 +669,7 @@ foreign unsafe import jvm "method setNull" private preparedStatement_setNull :: 
  */
 preparedStatementExecuteBatch :: JDBCPreparedStatement -> Array Int;
 public preparedStatementExecuteBatch !stmt =
-    Array.inputPrimitive $ preparedStatement_executeBatch stmt;
+    Array.inputPrimitive $ preparedStatement_executeBatch stmt System.cancelNotifier;
 
 /**
  * Binds a {@link Boolean@} value to the given prepared statement
@@ -782,8 +782,10 @@ public bindNullToPreparedStatement !stmt !parameterIndex !valueType =
 * @arg sql         the SQL SELECT statement to be executed
 * @return          the results of the database query
 */
-foreign unsafe import jvm "method queryFromSQLString"
-    public jdbcQueryToResultSet :: JDBCConnection -> String -> ResultSet;
+jdbcQueryToResultSet :: JDBCConnection -> String -> ResultSet;
+public jdbcQueryToResultSet !connection !sql = jQueryToResultSet connection sql System.cancelNotifier;
+
+foreign unsafe import jvm "method queryFromSQLString" jQueryToResultSet :: JDBCConnection -> String -> CancelNotifier -> ResultSet;
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -236,6 +236,24 @@ public registerCleanableFunction cleanupFn value =
 foreign unsafe import jvm "method registerCleanable"
     private jRegisterCleanableFunction :: ExecutionContext -> CalFunction -> ();
 
+
+/**
+ * A service for registering/unregistering listeners for CAL cancellation events.
+ */
+data foreign unsafe import jvm public "org.openquark.cal.runtime.CancelNotifier"
+    public CancelNotifier deriving Inputable, Outputable;
+
+/** Retrieve the Cancel notification service from the current execution context. */
+cancelNotifier :: CancelNotifier;
+public cancelNotifier = jGetCancelNotifier executionContext;
+
+foreign unsafe import jvm "method getCancelNotifier"
+    private jGetCancelNotifier :: ExecutionContext -> CancelNotifier;
+
+/** A trivial implementation of the CancelNotifier which never fires cancel events. */
+foreign unsafe import jvm "static field org.openquark.cal.runtime.CancelNotifier.NON_FIRING_NOTIFIER" public nonFiringCancelNotifier :: CancelNotifier;
+
+
 /**
  * If true, the CAL run-time supports concurrent reduction of CAL programs on a single 
  * execution context. Note that the runtime is thread-safe even when this flag is false in the sense

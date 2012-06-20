@@ -50,6 +50,8 @@ import java.sql.Types;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
+import org.openquark.cal.runtime.CancelNotifier;
+import org.openquark.cal.runtime.Cleanable;
 import org.openquark.util.database.SqlType;
 import org.openquark.util.datadictionary.ValueType;
 import org.openquark.util.time.Time;
@@ -227,13 +229,34 @@ public class JDBC {
             /**
              * @see org.openquark.cal.foreignsupport.module.DataGems.JDBCPreparedStatement#executeBatch()
              */
-            public int[] executeBatch() throws DatabaseException {
+            public int[] executeBatch(CancelNotifier cancelNotifier) throws DatabaseException {
                 long startTime = System.currentTimeMillis();
                 try {
-                    //long freeMem = Runtime.getRuntime().freeMemory();
-                    //logger.info("Executing batch... " + freeMem + " bytes free");
-                    logger.info("Executing batch");
-                    return statement.executeBatch();
+                    // Listen for CAL cancellation events while executing the SQL.
+                    // If an cancellation occurs, then cancel the statement.
+                    Cleanable cancelListener = new Cleanable() {
+                        @Override
+                        public void cleanup() {
+                            try {
+                                System.out.println("Cancelling prepared SQL batch.");
+                                statement.cancel();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    };
+                    
+                    cancelNotifier.registerCancelListener(cancelListener);
+                    
+                    try {
+                        //long freeMem = Runtime.getRuntime().freeMemory();
+                        //logger.info("Executing batch... " + freeMem + " bytes free");
+                        logger.info("Executing batch");
+                        return statement.executeBatch();
+                    }
+                    finally {
+                        cancelNotifier.unregisterCancelListener(cancelListener);
+                    }
                 } catch (SQLException sqle) {
                     throw new DatabaseException(sqle);
                 } finally {
@@ -246,11 +269,32 @@ public class JDBC {
             /**
              * @see org.openquark.cal.foreignsupport.module.DataGems.JDBCPreparedStatement#executeUpdate()
              */
-            public int executeUpdate() throws DatabaseException {
+            public int executeUpdate(CancelNotifier cancelNotifier) throws DatabaseException {
                 long startTime = System.currentTimeMillis();
                 try {
-                    logger.info("Executing update");
-                    return statement.executeUpdate();
+                    // Listen for CAL cancellation events while executing the SQL.
+                    // If an cancellation occurs, then cancel the statement.
+                    Cleanable cancelListener = new Cleanable() {
+                        @Override
+                        public void cleanup() {
+                            try {
+                                System.out.println("Cancelling prepared SQL update.");
+                                statement.cancel();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    };
+                    
+                    cancelNotifier.registerCancelListener(cancelListener);
+                    
+                    try {
+                        logger.info("Executing update");
+                        return statement.executeUpdate();
+                    }
+                    finally {
+                        cancelNotifier.unregisterCancelListener(cancelListener);
+                    }
                 } catch (SQLException sqle) {
                     throw new DatabaseException(sqle);
                 } finally {
@@ -1221,7 +1265,7 @@ public class JDBC {
          * @return the result set
          * @throws DatabaseException
          */
-        public QueryResult queryFromSQLString(final String sqlQuery) throws DatabaseException {
+        public QueryResult queryFromSQLString(final String sqlQuery, final CancelNotifier cancelNotifier) throws DatabaseException {
             try {
                 final Statement stmt = getJdbcConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
@@ -1252,8 +1296,30 @@ public class JDBC {
                         try {
                             logger.info("Executing SQL:\n" + sqlQuery);
                             
-                            // Execute the SQL.
-                            boolean isResultSet = stmt.execute(sqlQuery);
+                            // Listen for CAL cancellation events while executing the SQL.
+                            // If an cancellation occurs, then cancel the statement.
+                            Cleanable cancelListener = new Cleanable() {
+                                @Override
+                                public void cleanup() {
+                                    try {
+                                        System.out.println("Cancelling SQL query execution:  " + sqlQuery);
+                                        stmt.cancel();
+                                    } catch (SQLException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            };
+                            
+                            cancelNotifier.registerCancelListener(cancelListener);
+                            
+                            boolean isResultSet;
+                            try {
+                                // Execute the SQL.
+                                isResultSet = stmt.execute(sqlQuery);
+                            }
+                            finally {
+                                cancelNotifier.unregisterCancelListener(cancelListener);
+                            }
                             
                             // The SQL may contain multiple statements.
                             // Use the ResultSet corresponding to the first SELECT statement.
@@ -1311,12 +1377,34 @@ public class JDBC {
          * @return           the number of rows affected
          * @throws DatabaseException
          */
-        public int executeUpdate(String updateSQL) throws DatabaseException {
+        public int executeUpdate(final String updateSQL, final CancelNotifier cancelNotifier) throws DatabaseException {
             long start = System.currentTimeMillis();
             try {
                 logger.info("Executing update SQL: " + updateSQL);
-                Statement stmt = getJdbcStatement();
-                return stmt.executeUpdate(updateSQL);
+                final Statement stmt = getJdbcStatement();
+                
+                // Listen for CAL cancellation events while executing the SQL.
+                // If an cancellation occurs, then cancel the statement.
+                Cleanable cancelListener = new Cleanable() {
+                    @Override
+                    public void cleanup() {
+                        try {
+                            System.out.println("Cancelling SQL execution:  " + updateSQL);
+                            stmt.cancel();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                
+                cancelNotifier.registerCancelListener(cancelListener);
+                
+                try {
+                    return stmt.executeUpdate(updateSQL);
+                }
+                finally {
+                    cancelNotifier.unregisterCancelListener(cancelListener);
+                }
             } catch (SQLException e) {
                 throw new DatabaseException(e);
             } finally {
@@ -1345,14 +1433,36 @@ public class JDBC {
          * Executes all queries that are batched but not yet executed.
          * @return int[]
          */
-        public int[] executeBatch() throws DatabaseException {
+        public int[] executeBatch(final CancelNotifier cancelNotifier) throws DatabaseException {
             long startTime = System.currentTimeMillis();
             try {
                 //long freeMem = Runtime.getRuntime().freeMemory();
                 //logger.info("Executing batch... " + freeMem + " bytes free");
                 logger.info("Executing batch");
-                Statement stmt = getJdbcStatement();
-                return stmt.executeBatch();
+                final Statement stmt = getJdbcStatement();
+                
+                // Listen for CAL cancellation events while executing the SQL.
+                // If an cancellation occurs, then cancel the statement.
+                Cleanable cancelListener = new Cleanable() {
+                    @Override
+                    public void cleanup() {
+                        try {
+                            System.out.println("Cancelling SQL batch execution.");
+                            stmt.cancel();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                
+                cancelNotifier.registerCancelListener(cancelListener);
+                
+                try {
+                    return stmt.executeBatch();
+                }
+                finally {
+                    cancelNotifier.unregisterCancelListener(cancelListener);
+                }
             } catch (SQLException e) {
                 throw new DatabaseException(e);
             }
