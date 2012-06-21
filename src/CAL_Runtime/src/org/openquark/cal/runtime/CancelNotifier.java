@@ -31,10 +31,15 @@
 
 package org.openquark.cal.runtime;
 
+import java.sql.SQLException;
+import java.util.concurrent.Callable;
+
+import org.openquark.cal.internal.runtime.lecc.RTValue;
+
 /**
  * An interface which allow cancel listeners to be registered and unregistered.
  */
-public interface CancelNotifier {
+public abstract class CancelNotifier {
 
     /** An instance of the CancelNotifier which never fires cancellation events. */
     public static final CancelNotifier NON_FIRING_NOTIFIER = new CancelNotifier() {
@@ -49,10 +54,49 @@ public interface CancelNotifier {
     /**
      * Registers a listener for cancellation events.
      */
-    void registerCancelListener(Cleanable listener);
+    public abstract void registerCancelListener(Cleanable listener);
     
     /**
      * Unregisters a listener for cancellation events.
      */
-    void unregisterCancelListener(Cleanable listener);
+    public abstract void unregisterCancelListener(Cleanable listener);
+    
+    /**
+     * Runs the specified callable while listening for cancellation notifications.
+     * @throws Exception 
+     */
+    public <V> V runCancellable(final Callable<V> callable, final Runnable cleanup) throws Exception {
+        
+        final boolean[] cancelFlag = new boolean[] {false};
+        
+        // Listen for CAL cancellation events while executing the SQL.
+        // If an cancellation occurs, then invoke the cancel code.
+        Cleanable cancelListener = new Cleanable() {
+            @Override
+            public void cleanup() {
+                try {
+                    cancelFlag[0] = true;
+                    cleanup.run();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        
+        registerCancelListener(cancelListener);
+        
+        try {
+            // Run the callable code.
+            return callable.call();
+        }
+        catch (Exception e) {
+            if (cancelFlag[0]) {
+                throw RTValue.INTERRUPT_EXCEPTION;
+            }
+            else throw e;
+        }
+        finally {
+            unregisterCancelListener(cancelListener);
+        }
+    }
 }
