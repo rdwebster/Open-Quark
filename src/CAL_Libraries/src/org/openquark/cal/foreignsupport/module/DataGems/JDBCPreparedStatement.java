@@ -72,6 +72,15 @@ public interface JDBCPreparedStatement {
     public JDBCPreparedStatement setInt(int parameterIndex, int x) throws DatabaseException;
     
     /**
+     * Binds an long integer value to the prepared statement at the specified index.
+     * @param parameterIndex
+     * @param x
+     * @return JDBCPreparedStatement
+     * @throws DatabaseException
+     */
+    public JDBCPreparedStatement setLong(int parameterIndex, long x) throws DatabaseException;
+    
+    /**
      * Binds a double value to the prepared statement at the specified index.
      * @param parameterIndex
      * @param x

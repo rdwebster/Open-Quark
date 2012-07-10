@@ -656,6 +656,7 @@ foreign unsafe import jvm "method executeUpdate" private preparedStatement_execu
 foreign unsafe import jvm "method executeBatch" private preparedStatement_executeBatch :: JDBCPreparedStatement -> CancelNotifier -> JObject /* Array Int */;
 foreign unsafe import jvm "method setBoolean" private preparedStatement_setBoolean :: JDBCPreparedStatement -> Int -> Boolean -> JDBCPreparedStatement;
 foreign unsafe import jvm "method setInt" private preparedStatement_setInt :: JDBCPreparedStatement -> Int -> Int -> JDBCPreparedStatement;
+foreign unsafe import jvm "method setLong" private preparedStatement_setLong :: JDBCPreparedStatement -> Int -> Long -> JDBCPreparedStatement;
 foreign unsafe import jvm "method setDouble" private preparedStatement_setDouble :: JDBCPreparedStatement -> Int -> Double -> JDBCPreparedStatement;
 foreign unsafe import jvm "method setString" private preparedStatement_setString :: JDBCPreparedStatement -> Int -> String -> JDBCPreparedStatement;
 foreign unsafe import jvm "method setTime" private preparedStatement_setTime :: JDBCPreparedStatement -> Int -> Time -> JDBCPreparedStatement;
@@ -703,6 +704,23 @@ public bindIntToPreparedStatement !stmt !parameterIndex !value =
     case value of
     Just intValue -> preparedStatement_setInt stmt parameterIndex intValue;
     Nothing       -> preparedStatement_setNull stmt parameterIndex $ input $ output ValueType.IntType;
+    ;
+
+/**
+ * Binds an {@link Long@} value to the given prepared statement
+ * @arg stmt
+ *      Binds the value to this statement.
+ * @arg parameterIndex
+ *      Binds the value at this index.
+ * @arg value
+ *      Binds this value and {@link dataConstructor = Nothing@} means null.
+ * @return The modified statement.
+ */
+bindLongToPreparedStatement :: JDBCPreparedStatement -> Int -> Maybe Long -> JDBCPreparedStatement;
+public bindLongToPreparedStatement !stmt !parameterIndex !value =
+    case value of
+    Just longValue -> preparedStatement_setLong stmt parameterIndex longValue;
+    Nothing        -> preparedStatement_setNull stmt parameterIndex $ input $ output ValueType.IntType;
     ;
 
 /**

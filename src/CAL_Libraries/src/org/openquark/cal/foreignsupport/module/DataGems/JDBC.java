@@ -137,6 +137,18 @@ public class JDBC {
             }
             
             /**
+             * @see org.openquark.cal.foreignsupport.module.DataGems.JDBCPreparedStatement#setLong(int, long)
+             */
+            public JDBCPreparedStatement setLong(int parameterIndex, long x) throws DatabaseException {
+                try {
+                    statement.setLong(parameterIndex, x);
+                    return this;
+                } catch (SQLException sqle) {
+                    throw new DatabaseException(sqle);
+                }
+            }
+            
+            /**
              * @see org.openquark.cal.foreignsupport.module.DataGems.JDBCPreparedStatement#setDouble(int, double)
              */
             public JDBCPreparedStatement setDouble(int parameterIndex, double x) throws DatabaseException {
