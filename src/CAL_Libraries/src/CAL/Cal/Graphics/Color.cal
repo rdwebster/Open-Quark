@@ -44,9 +44,9 @@
 
 module Cal.Graphics.Color;
 import Cal.Core.Prelude using
-    typeClass = Eq, Inputable, Outputable;
-    typeConstructor = Boolean, Int, JObject, String;
-    function = input, intToString, output;
+    typeClass = Eq, Inputable, Ord, Outputable;
+    typeConstructor = Boolean, Int, JObject, Ordering, String;
+    function = induceComparator, input, intToString, output;
     ;
       
 import Cal.Core.String;        
@@ -84,6 +84,7 @@ foreign unsafe import jvm "method getRed" private getRedFromColour :: Color -> I
 foreign unsafe import jvm "method getGreen" private getGreenFromColour :: Color -> Int;
 foreign unsafe import jvm "method getBlue" private getBlueFromColour :: Color -> Int;
 foreign unsafe import jvm "method getAlpha" private getAlphaFromColour :: Color -> Int;
+foreign unsafe import jvm "method getRGB" private getRGBFromColour :: Color -> Int;
 
 /**
  * Constructs a {@link typeConstructor = Color@} value from its constituent RGB values in the range (0 - 255).
@@ -144,6 +145,16 @@ public rgbaToColor !rgba =
     (red, green, blue, alpha) -> makeTranslucentColor red green blue alpha;
     ;    
 
+
+/** Allow Colors to be ordered. */
+instance Ord Color where
+    compare = compareColor;
+    ;
+
+compareColor :: Color -> Color -> Ordering;
+compareColor = induceComparator getRGBFromColour;
+
+
 instance Show Color where
     show = showColor;
     ;
@@ -160,7 +171,7 @@ public showColor !color =
         in
             "[r=" ++ rStr ++ ",g=" ++ gStr ++ ",b=" ++ bStr ++ ",a=" ++ aStr ++ "]";
     ;
-    
+
 instance Inputable Color where
     input = inputColourFromJObject;
     ;
