@@ -3,3 +3,5 @@
 
 # ignore CAL .cmi files
 *.cmi
+
+src/CAL_Platform/src/lecc_runtime
