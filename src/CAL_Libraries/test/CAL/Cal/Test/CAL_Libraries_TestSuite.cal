@@ -66,19 +66,21 @@ import Cal.Test.IO.File_Tests;
 import Cal.Test.Data.SqlParser_Tests;
 import Cal.Test.Utilities.ExpressionLexer_Tests;
 
+import Cal.Core.Debug;
+
 public testModule =
-    assert RelativeTime.testModule
-    && assert RangeTests.testRanges
-    && assert Range.testRangeModule
-    && assert Parser_Tests.testAll
-    && assert Summary.testSummaryModule
-    && assert Accumulate_Tests.test_Accumulate
-    && assert SqlParser_Tests.unitTests
-    && assert XmlBuilder_Tests.unitTests
-    && assert Encoding_Tests.unitTests
-    && assert XmlParserEngine_Tests.unitTests
-    && assert XmlCharacterClasses_Tests.unitTests
-    && assert DirectedGraph_Tests.testModule
-    && assert ExpressionLexer_Tests.unitTests
+       (Debug.trace "Testing RelativeTime...\n" $ assert RelativeTime.testModule)
+    && (Debug.trace "Testing RangeTests...\n" $ assert RangeTests.testRanges)
+    && (Debug.trace "Testing Range...\n" $ assert Range.testRangeModule)
+    && (Debug.trace "Testing Parser_Tests...\n" $ assert Parser_Tests.testAll)
+    && (Debug.trace "Testing Summary...\n" $ assert Summary.testSummaryModule)
+    && (Debug.trace "Testing Accumulate_Tests...\n" $ assert Accumulate_Tests.test_Accumulate)
+    && (Debug.trace "Testing SqlParser_Tests...\n" $ assert SqlParser_Tests.unitTests)
+    && (Debug.trace "Testing XmlBuilder_Tests...\n" $ assert XmlBuilder_Tests.unitTests)
+    && (Debug.trace "Testing Encoding_Tests...\n" $ assert Encoding_Tests.unitTests)
+    && (Debug.trace "Testing XmlParserEngine_Tests...\n" $ assert XmlParserEngine_Tests.unitTests)
+    && (Debug.trace "Testing XmlCharacterClasses_Tests...\n" $ assert XmlCharacterClasses_Tests.unitTests)
+    && (Debug.trace "Testing DirectedGraph_Tests...\n" $ assert DirectedGraph_Tests.testModule)
+    && (Debug.trace "Testing ExpressionLexer_Tests...\n" $ assert ExpressionLexer_Tests.unitTests)
     || error "CAL_Libraries_TestSuite failed";
    
