@@ -748,7 +748,18 @@ final class SCJavaDefn {
 
         // If the primitiveness of the called function result type is not the same
         // as the primitiveness of the desired unboxed type we can't do a direct call.
-        verifyUnboxType(unboxedType, calledReturnType);
+        //
+        // MKD 2012-09-19: 
+        //   Catch the CodeGenerationException if the unboxed types do not match and return
+        //   null to signify that we can't build an unboxed call. This is triggered by the 
+        //   following code:
+        //
+        //   String.length (Prelude.max "abc" "def");
+        //
+        try { verifyUnboxType(unboxedType, calledReturnType); }
+        catch (CodeGenerationException exception) {
+        	return null;
+        }
 
         //  Get information about the arguments of the called function.
         boolean[] calledArgStrictness = mf.getParameterStrictness();
