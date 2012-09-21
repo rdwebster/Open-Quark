@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Utilities.XmlBuilder module from Java code.
  *  
- * Creation date: Wed Oct 17 14:04:57 PDT 2007
+ * Creation date: Fri Sep 21 16:03:51 PDT 2012
  * --!>
  *  
  */
@@ -414,6 +414,31 @@ public final class CAL_XmlBuilder {
 			QualifiedName.make(CAL_XmlBuilder.MODULE_NAME, "elementAttributes");
 
 		/**
+		 * Returns the text from any child CData sections of an XML element.
+		 * Any child nodes that are not CData sections will be ignored.
+		 * If there are no child CData sections, then an empty string will be returned.
+		 * If there are multiple child CData sections, then their text will be concatenated.
+		 * An error is thrown if the node is not an XML element.
+		 * Note that this does not include text from child Text nodes.
+		 * @param xmlElement (CAL type: <code>Cal.Utilities.XmlBuilder.XmlNode</code>)
+		 * @return (CAL type: <code>Cal.Core.Prelude.String</code>) 
+		 */
+		public static final SourceModel.Expr elementChildCDataText(SourceModel.Expr xmlElement) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.elementChildCDataText), xmlElement});
+		}
+
+		/**
+		 * Name binding for function: elementChildCDataText.
+		 * @see #elementChildCDataText(org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName elementChildCDataText = 
+			QualifiedName.make(
+				CAL_XmlBuilder.MODULE_NAME, 
+				"elementChildCDataText");
+
+		/**
 		 * Returns the fist child elements with a specified name (if any) for an XML element.
 		 * Any child nodes that are not elements will be ignored.
 		 * An error is thrown if the node is not an XML element.
@@ -511,6 +536,7 @@ public final class CAL_XmlBuilder {
 		 * If there are no child text nodes, then an empty string will be returned.
 		 * If there are multiple child text nodes, then their text will be concatenated.
 		 * An error is thrown if the node is not an XML element.
+		 * Note that this does not include text from CData sections.
 		 * @param xmlElement (CAL type: <code>Cal.Utilities.XmlBuilder.XmlNode</code>)
 		 * @return (CAL type: <code>Cal.Core.Prelude.String</code>) 
 		 */
@@ -532,25 +558,25 @@ public final class CAL_XmlBuilder {
 		 * An error is thrown if the element is not present.
 		 * An error is thrown if the node is not an XML element.
 		 * @param xmlElement (CAL type: <code>Cal.Utilities.XmlBuilder.XmlNode</code>)
-		 * @param attrName (CAL type: <code>Cal.Core.Prelude.String</code>)
+		 * @param childElementName (CAL type: <code>Cal.Core.Prelude.String</code>)
 		 * @return (CAL type: <code>Cal.Utilities.XmlBuilder.XmlElementInputable a => a</code>) 
 		 */
-		public static final SourceModel.Expr elementChildValue(SourceModel.Expr xmlElement, SourceModel.Expr attrName) {
+		public static final SourceModel.Expr elementChildValue(SourceModel.Expr xmlElement, SourceModel.Expr childElementName) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.elementChildValue), xmlElement, attrName});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.elementChildValue), xmlElement, childElementName});
 		}
 
 		/**
 		 * @see #elementChildValue(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
 		 * @param xmlElement
-		 * @param attrName
+		 * @param childElementName
 		 * @return the SourceModel.Expr representing an application of elementChildValue
 		 */
-		public static final SourceModel.Expr elementChildValue(SourceModel.Expr xmlElement, java.lang.String attrName) {
+		public static final SourceModel.Expr elementChildValue(SourceModel.Expr xmlElement, java.lang.String childElementName) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.elementChildValue), xmlElement, SourceModel.Expr.makeStringValue(attrName)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.elementChildValue), xmlElement, SourceModel.Expr.makeStringValue(childElementName)});
 		}
 
 		/**
@@ -594,6 +620,37 @@ public final class CAL_XmlBuilder {
 			QualifiedName.make(
 				CAL_XmlBuilder.MODULE_NAME, 
 				"elementChildValueMaybe");
+
+		/**
+		 * Returns the deserialized values from any child elements with the specified name.
+		 * @param xmlElement (CAL type: <code>Cal.Utilities.XmlBuilder.XmlNode</code>)
+		 * @param childElementName (CAL type: <code>Cal.Core.Prelude.String</code>)
+		 * @return (CAL type: <code>Cal.Utilities.XmlBuilder.XmlElementInputable a => [a]</code>) 
+		 */
+		public static final SourceModel.Expr elementChildValues(SourceModel.Expr xmlElement, SourceModel.Expr childElementName) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.elementChildValues), xmlElement, childElementName});
+		}
+
+		/**
+		 * @see #elementChildValues(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 * @param xmlElement
+		 * @param childElementName
+		 * @return the SourceModel.Expr representing an application of elementChildValues
+		 */
+		public static final SourceModel.Expr elementChildValues(SourceModel.Expr xmlElement, java.lang.String childElementName) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.elementChildValues), xmlElement, SourceModel.Expr.makeStringValue(childElementName)});
+		}
+
+		/**
+		 * Name binding for function: elementChildValues.
+		 * @see #elementChildValues(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName elementChildValues = 
+			QualifiedName.make(CAL_XmlBuilder.MODULE_NAME, "elementChildValues");
 
 		/**
 		 * Returns the child nodes (not necessarily elements) for an XML element.
@@ -889,6 +946,26 @@ public final class CAL_XmlBuilder {
 				"inputFromXmlAttributeInputable");
 
 		/**
+		 * Helper for implementing fromXml from types that are both XmlAttributeInputable and XmlElementInputable.
+		 * @param either (CAL type: <code>Cal.Core.Prelude.Either Cal.Utilities.XmlBuilder.XmlAttribute Cal.Utilities.XmlBuilder.XmlNode</code>)
+		 * @return (CAL type: <code>(Cal.Utilities.XmlBuilder.XmlAttributeInputable a, Cal.Utilities.XmlBuilder.XmlElementInputable a) => a</code>) 
+		 */
+		public static final SourceModel.Expr inputFromXmlAttributeOrElement(SourceModel.Expr either) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.inputFromXmlAttributeOrElement), either});
+		}
+
+		/**
+		 * Name binding for function: inputFromXmlAttributeOrElement.
+		 * @see #inputFromXmlAttributeOrElement(org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName inputFromXmlAttributeOrElement = 
+			QualifiedName.make(
+				CAL_XmlBuilder.MODULE_NAME, 
+				"inputFromXmlAttributeOrElement");
+
+		/**
 		 * Helper for implementing fromXml from XmlAttributeOutputable types
 		 * @param either (CAL type: <code>Cal.Core.Prelude.Either Cal.Utilities.XmlBuilder.XmlAttribute Cal.Utilities.XmlBuilder.XmlNode</code>)
 		 * @return (CAL type: <code>Cal.Utilities.XmlBuilder.XmlElementInputable a => a</code>) 
@@ -907,6 +984,24 @@ public final class CAL_XmlBuilder {
 			QualifiedName.make(
 				CAL_XmlBuilder.MODULE_NAME, 
 				"inputFromXmlElementInputable");
+
+		/**
+		 * Returns whether the XML node is a CData Section.
+		 * @param node (CAL type: <code>Cal.Utilities.XmlBuilder.XmlNode</code>)
+		 * @return (CAL type: <code>Cal.Core.Prelude.Boolean</code>) 
+		 */
+		public static final SourceModel.Expr isCDataSection(SourceModel.Expr node) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.isCDataSection), node});
+		}
+
+		/**
+		 * Name binding for function: isCDataSection.
+		 * @see #isCDataSection(org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName isCDataSection = 
+			QualifiedName.make(CAL_XmlBuilder.MODULE_NAME, "isCDataSection");
 
 		/**
 		 * Returns whether the XML node is TEXT.
@@ -1578,8 +1673,8 @@ public final class CAL_XmlBuilder {
 				"setDocumentNotations");
 
 		/**
-		 * Returns the text of an XML text node.
-		 * An error is thrown if the node is not an XML text node.
+		 * Returns the text of an XML text node or CData section.
+		 * An error is thrown if the node is not an XML text node or CData section.
 		 * @param textNode (CAL type: <code>Cal.Utilities.XmlBuilder.XmlNode</code>)
 		 * @return (CAL type: <code>Cal.Core.Prelude.String</code>) 
 		 */
@@ -1754,6 +1849,6 @@ public final class CAL_XmlBuilder {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = -174283828;
+	public static final int javaDocHash = 263102451;
 
 }

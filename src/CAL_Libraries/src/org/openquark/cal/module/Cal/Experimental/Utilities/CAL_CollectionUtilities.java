@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Experimental.Utilities.CollectionUtilities module from Java code.
  *  
- * Creation date: Wed Oct 10 09:00:44 PDT 2007
+ * Creation date: Fri Sep 21 16:02:56 PDT 2012
  * --!>
  *  
  */
@@ -230,6 +230,36 @@ public final class CAL_CollectionUtilities {
 			QualifiedName.make(
 				CAL_CollectionUtilities.MODULE_NAME, 
 				"filterCorrespondingList");
+
+		/**
+		 * Finds the first element in the first array for which the predicate function
+		 * returns <code>Cal.Core.Prelude.True</code>, if any, and returns the corresponding element in the
+		 * second array.
+		 * @param matchFn (CAL type: <code>a -> Cal.Core.Prelude.Boolean</code>)
+		 *          a predicate function that will return <code>Cal.Core.Prelude.True</code> when an
+		 * element of the desired form is tested.
+		 * @param array1 (CAL type: <code>Cal.Collections.Array.Array a</code>)
+		 *          the array in which to search.
+		 * @param array2 (CAL type: <code>Cal.Collections.Array.Array b</code>)
+		 *          the array from which to return an element.
+		 * @return (CAL type: <code>Cal.Core.Prelude.Maybe b</code>) 
+		 *          <code>Cal.Core.Prelude.Just element</code> if <code>matchFn element</code> returns
+		 * <code>Cal.Core.Prelude.True</code> and <code>Cal.Core.Prelude.Nothing</code> otherwise.
+		 */
+		public static final SourceModel.Expr findInCorrespondingArray(SourceModel.Expr matchFn, SourceModel.Expr array1, SourceModel.Expr array2) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.findInCorrespondingArray), matchFn, array1, array2});
+		}
+
+		/**
+		 * Name binding for function: findInCorrespondingArray.
+		 * @see #findInCorrespondingArray(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName findInCorrespondingArray = 
+			QualifiedName.make(
+				CAL_CollectionUtilities.MODULE_NAME, 
+				"findInCorrespondingArray");
 
 		/**
 		 * Finds the first element in the first list for which the predicate function
@@ -799,6 +829,6 @@ public final class CAL_CollectionUtilities {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = -2054897757;
+	public static final int javaDocHash = -697892984;
 
 }

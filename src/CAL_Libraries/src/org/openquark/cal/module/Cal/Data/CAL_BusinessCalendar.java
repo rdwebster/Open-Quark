@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Data.BusinessCalendar module from Java code.
  *  
- * Creation date: Tue Aug 28 15:58:42 PDT 2007
+ * Creation date: Fri Sep 21 16:03:09 PDT 2012
  * --!>
  *  
  */
@@ -269,6 +269,69 @@ public final class CAL_BusinessCalendar {
 		 */
 		public static final int DayOfWeekPeriod_ordinal = 7;
 
+		/**
+		 * Binding for DataConstructor: Cal.Data.BusinessCalendar.HourPeriod.
+		 * @return the SourceModule.Expr representing an application of Cal.Data.BusinessCalendar.HourPeriod
+		 */
+		public static final SourceModel.Expr HourPeriod() {
+			return SourceModel.Expr.DataCons.make(DataConstructors.HourPeriod);
+		}
+
+		/**
+		 * Name binding for DataConstructor: Cal.Data.BusinessCalendar.HourPeriod.
+		 * @see #HourPeriod()
+		 */
+		public static final QualifiedName HourPeriod = 
+			QualifiedName.make(CAL_BusinessCalendar.MODULE_NAME, "HourPeriod");
+
+		/**
+		 * Ordinal of DataConstructor Cal.Data.BusinessCalendar.HourPeriod.
+		 * @see #HourPeriod()
+		 */
+		public static final int HourPeriod_ordinal = 8;
+
+		/**
+		 * Binding for DataConstructor: Cal.Data.BusinessCalendar.MinutePeriod.
+		 * @return the SourceModule.Expr representing an application of Cal.Data.BusinessCalendar.MinutePeriod
+		 */
+		public static final SourceModel.Expr MinutePeriod() {
+			return SourceModel.Expr.DataCons.make(DataConstructors.MinutePeriod);
+		}
+
+		/**
+		 * Name binding for DataConstructor: Cal.Data.BusinessCalendar.MinutePeriod.
+		 * @see #MinutePeriod()
+		 */
+		public static final QualifiedName MinutePeriod = 
+			QualifiedName.make(CAL_BusinessCalendar.MODULE_NAME, "MinutePeriod");
+
+		/**
+		 * Ordinal of DataConstructor Cal.Data.BusinessCalendar.MinutePeriod.
+		 * @see #MinutePeriod()
+		 */
+		public static final int MinutePeriod_ordinal = 9;
+
+		/**
+		 * Binding for DataConstructor: Cal.Data.BusinessCalendar.SecondPeriod.
+		 * @return the SourceModule.Expr representing an application of Cal.Data.BusinessCalendar.SecondPeriod
+		 */
+		public static final SourceModel.Expr SecondPeriod() {
+			return SourceModel.Expr.DataCons.make(DataConstructors.SecondPeriod);
+		}
+
+		/**
+		 * Name binding for DataConstructor: Cal.Data.BusinessCalendar.SecondPeriod.
+		 * @see #SecondPeriod()
+		 */
+		public static final QualifiedName SecondPeriod = 
+			QualifiedName.make(CAL_BusinessCalendar.MODULE_NAME, "SecondPeriod");
+
+		/**
+		 * Ordinal of DataConstructor Cal.Data.BusinessCalendar.SecondPeriod.
+		 * @see #SecondPeriod()
+		 */
+		public static final int SecondPeriod_ordinal = 10;
+
 	}
 	/**
 	 * This inner class (Functions) contains constants
@@ -410,18 +473,19 @@ public final class CAL_BusinessCalendar {
 		 * <code>Cal.Data.BusinessCalendar.PeriodType</code>s.
 		 * @param businessCalendar (CAL type: <code>Cal.Data.BusinessCalendar.BusinessCalendar</code>)
 		 * @param time (CAL type: <code>Cal.Utilities.Time.Time</code>)
+		 * @param timeZone (CAL type: <code>Cal.Utilities.TimeZone.TimeZone</code>)
 		 * @param periodTypes (CAL type: <code>[Cal.Data.BusinessCalendar.PeriodType]</code>)
 		 * @return (CAL type: <code>Cal.Data.BusinessCalendar.Period</code>) 
 		 */
-		public static final SourceModel.Expr getPeriodFromTime(SourceModel.Expr businessCalendar, SourceModel.Expr time, SourceModel.Expr periodTypes) {
+		public static final SourceModel.Expr getPeriodFromTime(SourceModel.Expr businessCalendar, SourceModel.Expr time, SourceModel.Expr timeZone, SourceModel.Expr periodTypes) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.getPeriodFromTime), businessCalendar, time, periodTypes});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.getPeriodFromTime), businessCalendar, time, timeZone, periodTypes});
 		}
 
 		/**
 		 * Name binding for function: getPeriodFromTime.
-		 * @see #getPeriodFromTime(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 * @see #getPeriodFromTime(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
 		 */
 		public static final QualifiedName getPeriodFromTime = 
 			QualifiedName.make(
@@ -437,17 +501,18 @@ public final class CAL_BusinessCalendar {
 		 * will not be bounded on either end.
 		 * @param businessCalendar (CAL type: <code>Cal.Data.BusinessCalendar.BusinessCalendar</code>)
 		 * @param period (CAL type: <code>Cal.Data.BusinessCalendar.Period</code>)
+		 * @param timeZone (CAL type: <code>Cal.Utilities.TimeZone.TimeZone</code>)
 		 * @return (CAL type: <code>Cal.Utilities.Range.Range Cal.Utilities.Time.Time</code>) 
 		 */
-		public static final SourceModel.Expr getPeriodTimeRange(SourceModel.Expr businessCalendar, SourceModel.Expr period) {
+		public static final SourceModel.Expr getPeriodTimeRange(SourceModel.Expr businessCalendar, SourceModel.Expr period, SourceModel.Expr timeZone) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.getPeriodTimeRange), businessCalendar, period});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.getPeriodTimeRange), businessCalendar, period, timeZone});
 		}
 
 		/**
 		 * Name binding for function: getPeriodTimeRange.
-		 * @see #getPeriodTimeRange(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 * @see #getPeriodTimeRange(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
 		 */
 		public static final QualifiedName getPeriodTimeRange = 
 			QualifiedName.make(
@@ -508,18 +573,19 @@ public final class CAL_BusinessCalendar {
 		 * value of a given <code>Cal.Data.BusinessCalendar.PeriodType</code> for the specified time.
 		 * @param businessCalendar (CAL type: <code>Cal.Data.BusinessCalendar.BusinessCalendar</code>)
 		 * @param time (CAL type: <code>Cal.Utilities.Time.Time</code>)
+		 * @param timeZone (CAL type: <code>Cal.Utilities.TimeZone.TimeZone</code>)
 		 * @param periodType (CAL type: <code>Cal.Data.BusinessCalendar.PeriodType</code>)
 		 * @return (CAL type: <code>Cal.Core.Prelude.Int</code>) 
 		 */
-		public static final SourceModel.Expr getPeriodValueFromTime(SourceModel.Expr businessCalendar, SourceModel.Expr time, SourceModel.Expr periodType) {
+		public static final SourceModel.Expr getPeriodValueFromTime(SourceModel.Expr businessCalendar, SourceModel.Expr time, SourceModel.Expr timeZone, SourceModel.Expr periodType) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.getPeriodValueFromTime), businessCalendar, time, periodType});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.getPeriodValueFromTime), businessCalendar, time, timeZone, periodType});
 		}
 
 		/**
 		 * Name binding for function: getPeriodValueFromTime.
-		 * @see #getPeriodValueFromTime(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 * @see #getPeriodValueFromTime(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
 		 */
 		public static final QualifiedName getPeriodValueFromTime = 
 			QualifiedName.make(
@@ -711,9 +777,9 @@ public final class CAL_BusinessCalendar {
 		 *          a function to get the range of valid values for a specified period, given the parent period
 		 * @param periodDisplayNameFn (CAL type: <code>Cal.Data.BusinessCalendar.Period -> Cal.Data.BusinessCalendar.PeriodType -> Cal.Core.Prelude.Int -> Cal.Core.Prelude.String</code>)
 		 *          a function to get the display name for a period value
-		 * @param periodTimeRangeFn (CAL type: <code>Cal.Data.BusinessCalendar.Period -> Cal.Utilities.Range.Range Cal.Utilities.Time.Time</code>)
+		 * @param periodTimeRangeFn (CAL type: <code>Cal.Data.BusinessCalendar.Period -> Cal.Utilities.TimeZone.TimeZone -> Cal.Utilities.Range.Range Cal.Utilities.Time.Time</code>)
 		 *          a function to get the start and end time for for a specified period
-		 * @param periodValueFromTimeFn (CAL type: <code>Cal.Utilities.Time.Time -> Cal.Data.BusinessCalendar.PeriodType -> Cal.Core.Prelude.Int</code>)
+		 * @param periodValueFromTimeFn (CAL type: <code>Cal.Utilities.Time.Time -> Cal.Utilities.TimeZone.TimeZone -> Cal.Data.BusinessCalendar.PeriodType -> Cal.Core.Prelude.Int</code>)
 		 *          a function to get the value of the specified period for a time value
 		 * @param timePartExprFn (CAL type: <code>Cal.Data.DictionaryQuery.Expr -> Cal.Data.BusinessCalendar.PeriodType -> Cal.Data.DictionaryQuery.Expr</code>)
 		 *          a function to build a database expression to extract the appropriate time part from a time value
@@ -966,6 +1032,6 @@ public final class CAL_BusinessCalendar {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = 2050478502;
+	public static final int javaDocHash = -2128506414;
 
 }

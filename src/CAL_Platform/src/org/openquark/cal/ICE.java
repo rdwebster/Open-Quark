@@ -1676,7 +1676,7 @@ public class ICE implements Runnable {
         File root = null;
         while (root == null) {
             if (location.indexOf(File.separator + "src" + File.separator) != -1) {
-                root = new File(location.substring(0,location.indexOf(File.separator + "src" + File.separator) + 5));
+                root = new File(location.substring(0,location.lastIndexOf(File.separator + "src" + File.separator) + 5));
             } else 
             if (location.indexOf(File.separator + "test" + File.separator) != -1) {
                 root = new File(location.substring(0,location.indexOf(File.separator + "test" + File.separator) + 6));

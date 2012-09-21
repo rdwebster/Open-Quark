@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.IO.File module from Java code.
  *  
- * Creation date: Tue Oct 23 09:50:00 PDT 2007
+ * Creation date: Fri Sep 21 16:03:33 PDT 2012
  * --!>
  *  
  */
@@ -1240,6 +1240,27 @@ public final class CAL_File {
 			QualifiedName.make(CAL_File.MODULE_NAME, "renameFileOrDirectory");
 
 		/**
+		 * Sets the last modification time of the specified file or directory.
+		 * @param fileName (CAL type: <code>Cal.IO.File.FileName</code>)
+		 *          the file whose last modification time is to be returned.
+		 * @param modificationTime (CAL type: <code>Cal.Utilities.Time.Time</code>)
+		 *          the new modification time of the specified file or directory.
+		 * @return (CAL type: <code>()</code>) 
+		 */
+		public static final SourceModel.Expr setModificationTime(SourceModel.Expr fileName, SourceModel.Expr modificationTime) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.setModificationTime), fileName, modificationTime});
+		}
+
+		/**
+		 * Name binding for function: setModificationTime.
+		 * @see #setModificationTime(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName setModificationTime = 
+			QualifiedName.make(CAL_File.MODULE_NAME, "setModificationTime");
+
+		/**
 		 * Writes the specified contents into the file specified by the file name. If the
 		 * file already exists, it will be overwritten with by the new contents.
 		 * @param fileName (CAL type: <code>Cal.IO.File.FileName</code>)
@@ -1302,6 +1323,6 @@ public final class CAL_File {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = -2063738510;
+	public static final int javaDocHash = -2054781754;
 
 }

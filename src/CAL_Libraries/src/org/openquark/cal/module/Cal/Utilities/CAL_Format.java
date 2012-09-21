@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Utilities.Format module from Java code.
  *  
- * Creation date: Fri Sep 21 15:49:26 PDT 2007
+ * Creation date: Fri Sep 21 16:00:42 PDT 2012
  * --!>
  *  
  */
@@ -74,6 +74,42 @@ public final class CAL_Format {
 			QualifiedName.make(CAL_Format.MODULE_NAME, "formatInColumns");
 
 		/**
+		 * Displays the contents of a list of records in a table.
+		 * The record field names are used to build headings.
+		 * Otherwise, this works like <code>Cal.Utilities.Format.formatTableWithLines</code>.
+		 * @param maxNRows (CAL type: <code>Cal.Core.Prelude.Int</code>)
+		 *          the maximum number of rows to be displayed in the table;  0 for unlimited
+		 * @param rows (CAL type: <code>Cal.Core.Debug.Show r => [{r}]</code>)
+		 *          a list records for the cells of the table;  each record forms one table row.
+		 * @return (CAL type: <code>Cal.Core.Prelude.String</code>) 
+		 *          a string representing the specified cells formatted in a table.
+		 */
+		public static final SourceModel.Expr formatRecordsAsTable(SourceModel.Expr maxNRows, SourceModel.Expr rows) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.formatRecordsAsTable), maxNRows, rows});
+		}
+
+		/**
+		 * @see #formatRecordsAsTable(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 * @param maxNRows
+		 * @param rows
+		 * @return the SourceModel.Expr representing an application of formatRecordsAsTable
+		 */
+		public static final SourceModel.Expr formatRecordsAsTable(int maxNRows, SourceModel.Expr rows) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.formatRecordsAsTable), SourceModel.Expr.makeIntValue(maxNRows), rows});
+		}
+
+		/**
+		 * Name binding for function: formatRecordsAsTable.
+		 * @see #formatRecordsAsTable(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName formatRecordsAsTable = 
+			QualifiedName.make(CAL_Format.MODULE_NAME, "formatRecordsAsTable");
+
+		/**
 		 * Returns a string which can be used to display the specified rows of values in a nice table.
 		 * It is assumed that each row has the same number of values.
 		 * @param columnGap (CAL type: <code>Cal.Core.Prelude.Int</code>)
@@ -107,6 +143,49 @@ public final class CAL_Format {
 		 */
 		public static final QualifiedName formatTable = 
 			QualifiedName.make(CAL_Format.MODULE_NAME, "formatTable");
+
+		/**
+		 * Returns a string which can be used to display the specified rows of values in a nice table.
+		 * The table will be generated with "lines" around the table and headings and between the columns.
+		 * The headings will be displayed at the top of the table.
+		 * It is assumed that the heading row and each data row has the same number of values.
+		 * The table will be truncated to the specified number of data rows.
+		 * If the results need to be truncated then a '...' will be included at the end of each column.
+		 * If maxNRows is less than one, then the full table will be formatted.
+		 * @param maxNRows (CAL type: <code>Cal.Core.Prelude.Int</code>)
+		 *          the maximum number of rows to be displayed in the table;  0 for unlimited
+		 * @param headings (CAL type: <code>[Cal.Core.Prelude.String]</code>)
+		 *          the column headings for the table
+		 * @param rows (CAL type: <code>[[Cal.Core.Prelude.String]]</code>)
+		 *          a list of the rows of cells to form the table.
+		 * @return (CAL type: <code>Cal.Core.Prelude.String</code>) 
+		 *          a string representing the specified cells formatted in a table.
+		 */
+		public static final SourceModel.Expr formatTableWithLines(SourceModel.Expr maxNRows, SourceModel.Expr headings, SourceModel.Expr rows) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.formatTableWithLines), maxNRows, headings, rows});
+		}
+
+		/**
+		 * @see #formatTableWithLines(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 * @param maxNRows
+		 * @param headings
+		 * @param rows
+		 * @return the SourceModel.Expr representing an application of formatTableWithLines
+		 */
+		public static final SourceModel.Expr formatTableWithLines(int maxNRows, SourceModel.Expr headings, SourceModel.Expr rows) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.formatTableWithLines), SourceModel.Expr.makeIntValue(maxNRows), headings, rows});
+		}
+
+		/**
+		 * Name binding for function: formatTableWithLines.
+		 * @see #formatTableWithLines(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName formatTableWithLines = 
+			QualifiedName.make(CAL_Format.MODULE_NAME, "formatTableWithLines");
 
 		/**
 		 * Returns a string which can be used to display the specified rows of values in a nice table.
@@ -155,6 +234,6 @@ public final class CAL_Format {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = 27720316;
+	public static final int javaDocHash = -1165005947;
 
 }

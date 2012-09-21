@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Data.Sql module from Java code.
  *  
- * Creation date: Fri Jan 22 15:13:44 PST 2010
+ * Creation date: Fri Sep 21 16:03:15 PDT 2012
  * --!>
  *  
  */
@@ -442,6 +442,27 @@ public final class CAL_Sql {
 		public static final int OpNotEq_ordinal = 11;
 
 		/**
+		 * Binding for DataConstructor: Cal.Data.Sql.OpNullSafeEq.
+		 * @return the SourceModule.Expr representing an application of Cal.Data.Sql.OpNullSafeEq
+		 */
+		public static final SourceModel.Expr OpNullSafeEq() {
+			return SourceModel.Expr.DataCons.make(DataConstructors.OpNullSafeEq);
+		}
+
+		/**
+		 * Name binding for DataConstructor: Cal.Data.Sql.OpNullSafeEq.
+		 * @see #OpNullSafeEq()
+		 */
+		public static final QualifiedName OpNullSafeEq = 
+			QualifiedName.make(CAL_Sql.MODULE_NAME, "OpNullSafeEq");
+
+		/**
+		 * Ordinal of DataConstructor Cal.Data.Sql.OpNullSafeEq.
+		 * @see #OpNullSafeEq()
+		 */
+		public static final int OpNullSafeEq_ordinal = 12;
+
+		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.OpAnd.
 		 * @return the SourceModule.Expr representing an application of Cal.Data.Sql.OpAnd
 		 */
@@ -460,7 +481,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.OpAnd.
 		 * @see #OpAnd()
 		 */
-		public static final int OpAnd_ordinal = 12;
+		public static final int OpAnd_ordinal = 13;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.OpOr.
@@ -481,7 +502,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.OpOr.
 		 * @see #OpOr()
 		 */
-		public static final int OpOr_ordinal = 13;
+		public static final int OpOr_ordinal = 14;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.OpLike.
@@ -502,7 +523,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.OpLike.
 		 * @see #OpLike()
 		 */
-		public static final int OpLike_ordinal = 14;
+		public static final int OpLike_ordinal = 15;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.OpIn.
@@ -523,7 +544,28 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.OpIn.
 		 * @see #OpIn()
 		 */
-		public static final int OpIn_ordinal = 15;
+		public static final int OpIn_ordinal = 16;
+
+		/**
+		 * Binding for DataConstructor: Cal.Data.Sql.OpNotIn.
+		 * @return the SourceModule.Expr representing an application of Cal.Data.Sql.OpNotIn
+		 */
+		public static final SourceModel.Expr OpNotIn() {
+			return SourceModel.Expr.DataCons.make(DataConstructors.OpNotIn);
+		}
+
+		/**
+		 * Name binding for DataConstructor: Cal.Data.Sql.OpNotIn.
+		 * @see #OpNotIn()
+		 */
+		public static final QualifiedName OpNotIn = 
+			QualifiedName.make(CAL_Sql.MODULE_NAME, "OpNotIn");
+
+		/**
+		 * Ordinal of DataConstructor Cal.Data.Sql.OpNotIn.
+		 * @see #OpNotIn()
+		 */
+		public static final int OpNotIn_ordinal = 17;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.OpCat.
@@ -544,7 +586,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.OpCat.
 		 * @see #OpCat()
 		 */
-		public static final int OpCat_ordinal = 16;
+		public static final int OpCat_ordinal = 18;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.OpPlus.
@@ -565,7 +607,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.OpPlus.
 		 * @see #OpPlus()
 		 */
-		public static final int OpPlus_ordinal = 17;
+		public static final int OpPlus_ordinal = 19;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.OpMinus.
@@ -586,7 +628,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.OpMinus.
 		 * @see #OpMinus()
 		 */
-		public static final int OpMinus_ordinal = 18;
+		public static final int OpMinus_ordinal = 20;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.OpMul.
@@ -607,7 +649,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.OpMul.
 		 * @see #OpMul()
 		 */
-		public static final int OpMul_ordinal = 19;
+		public static final int OpMul_ordinal = 21;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.OpDiv.
@@ -628,7 +670,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.OpDiv.
 		 * @see #OpDiv()
 		 */
-		public static final int OpDiv_ordinal = 20;
+		public static final int OpDiv_ordinal = 22;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.OpMod.
@@ -649,7 +691,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.OpMod.
 		 * @see #OpMod()
 		 */
-		public static final int OpMod_ordinal = 21;
+		public static final int OpMod_ordinal = 23;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.OpBitAnd.
@@ -670,7 +712,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.OpBitAnd.
 		 * @see #OpBitAnd()
 		 */
-		public static final int OpBitAnd_ordinal = 22;
+		public static final int OpBitAnd_ordinal = 24;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.OpBitOr.
@@ -691,7 +733,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.OpBitOr.
 		 * @see #OpBitOr()
 		 */
-		public static final int OpBitOr_ordinal = 23;
+		public static final int OpBitOr_ordinal = 25;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.OpBitXor.
@@ -712,7 +754,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.OpBitXor.
 		 * @see #OpBitXor()
 		 */
-		public static final int OpBitXor_ordinal = 24;
+		public static final int OpBitXor_ordinal = 26;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.OpBetween.
@@ -733,7 +775,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.OpBetween.
 		 * @see #OpBetween()
 		 */
-		public static final int OpBetween_ordinal = 25;
+		public static final int OpBetween_ordinal = 27;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.OpCase_Simple.
@@ -755,7 +797,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.OpCase_Simple.
 		 * @see #OpCase_Simple()
 		 */
-		public static final int OpCase_Simple_ordinal = 26;
+		public static final int OpCase_Simple_ordinal = 28;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.OpCase_Searched.
@@ -777,7 +819,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.OpCase_Searched.
 		 * @see #OpCase_Searched()
 		 */
-		public static final int OpCase_Searched_ordinal = 27;
+		public static final int OpCase_Searched_ordinal = 29;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.ConvertToStringFunction.
@@ -800,7 +842,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.ConvertToStringFunction.
 		 * @see #ConvertToStringFunction()
 		 */
-		public static final int ConvertToStringFunction_ordinal = 28;
+		public static final int ConvertToStringFunction_ordinal = 30;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.ConvertToIntFunction.
@@ -823,7 +865,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.ConvertToIntFunction.
 		 * @see #ConvertToIntFunction()
 		 */
-		public static final int ConvertToIntFunction_ordinal = 29;
+		public static final int ConvertToIntFunction_ordinal = 31;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.ConvertToDoubleFunction.
@@ -846,7 +888,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.ConvertToDoubleFunction.
 		 * @see #ConvertToDoubleFunction()
 		 */
-		public static final int ConvertToDoubleFunction_ordinal = 30;
+		public static final int ConvertToDoubleFunction_ordinal = 32;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.ConvertToTimeFunction.
@@ -869,7 +911,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.ConvertToTimeFunction.
 		 * @see #ConvertToTimeFunction()
 		 */
-		public static final int ConvertToTimeFunction_ordinal = 31;
+		public static final int ConvertToTimeFunction_ordinal = 33;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.AbsFunction.
@@ -890,7 +932,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.AbsFunction.
 		 * @see #AbsFunction()
 		 */
-		public static final int AbsFunction_ordinal = 32;
+		public static final int AbsFunction_ordinal = 34;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.AcosFunction.
@@ -911,7 +953,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.AcosFunction.
 		 * @see #AcosFunction()
 		 */
-		public static final int AcosFunction_ordinal = 33;
+		public static final int AcosFunction_ordinal = 35;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.AsinFucntion.
@@ -932,7 +974,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.AsinFucntion.
 		 * @see #AsinFucntion()
 		 */
-		public static final int AsinFucntion_ordinal = 34;
+		public static final int AsinFucntion_ordinal = 36;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.AtanFunction.
@@ -953,7 +995,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.AtanFunction.
 		 * @see #AtanFunction()
 		 */
-		public static final int AtanFunction_ordinal = 35;
+		public static final int AtanFunction_ordinal = 37;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.Atan2Function.
@@ -975,7 +1017,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.Atan2Function.
 		 * @see #Atan2Function()
 		 */
-		public static final int Atan2Function_ordinal = 36;
+		public static final int Atan2Function_ordinal = 38;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.CeilingFunction.
@@ -997,7 +1039,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.CeilingFunction.
 		 * @see #CeilingFunction()
 		 */
-		public static final int CeilingFunction_ordinal = 37;
+		public static final int CeilingFunction_ordinal = 39;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.CosFunction.
@@ -1018,7 +1060,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.CosFunction.
 		 * @see #CosFunction()
 		 */
-		public static final int CosFunction_ordinal = 38;
+		public static final int CosFunction_ordinal = 40;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.CotFunction.
@@ -1039,7 +1081,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.CotFunction.
 		 * @see #CotFunction()
 		 */
-		public static final int CotFunction_ordinal = 39;
+		public static final int CotFunction_ordinal = 41;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.DegreesFunction.
@@ -1061,7 +1103,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.DegreesFunction.
 		 * @see #DegreesFunction()
 		 */
-		public static final int DegreesFunction_ordinal = 40;
+		public static final int DegreesFunction_ordinal = 42;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.ExpFunction.
@@ -1082,7 +1124,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.ExpFunction.
 		 * @see #ExpFunction()
 		 */
-		public static final int ExpFunction_ordinal = 41;
+		public static final int ExpFunction_ordinal = 43;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.FloorFunction.
@@ -1104,7 +1146,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.FloorFunction.
 		 * @see #FloorFunction()
 		 */
-		public static final int FloorFunction_ordinal = 42;
+		public static final int FloorFunction_ordinal = 44;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.LogFunction.
@@ -1125,7 +1167,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.LogFunction.
 		 * @see #LogFunction()
 		 */
-		public static final int LogFunction_ordinal = 43;
+		public static final int LogFunction_ordinal = 45;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.Log10Function.
@@ -1147,7 +1189,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.Log10Function.
 		 * @see #Log10Function()
 		 */
-		public static final int Log10Function_ordinal = 44;
+		public static final int Log10Function_ordinal = 46;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.ModFunction.
@@ -1168,7 +1210,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.ModFunction.
 		 * @see #ModFunction()
 		 */
-		public static final int ModFunction_ordinal = 45;
+		public static final int ModFunction_ordinal = 47;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.PiFunction.
@@ -1189,7 +1231,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.PiFunction.
 		 * @see #PiFunction()
 		 */
-		public static final int PiFunction_ordinal = 46;
+		public static final int PiFunction_ordinal = 48;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.PowerFunction.
@@ -1211,7 +1253,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.PowerFunction.
 		 * @see #PowerFunction()
 		 */
-		public static final int PowerFunction_ordinal = 47;
+		public static final int PowerFunction_ordinal = 49;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.RadiansFunction.
@@ -1233,7 +1275,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.RadiansFunction.
 		 * @see #RadiansFunction()
 		 */
-		public static final int RadiansFunction_ordinal = 48;
+		public static final int RadiansFunction_ordinal = 50;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.RandFunction.
@@ -1254,7 +1296,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.RandFunction.
 		 * @see #RandFunction()
 		 */
-		public static final int RandFunction_ordinal = 49;
+		public static final int RandFunction_ordinal = 51;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.RoundFunction.
@@ -1276,7 +1318,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.RoundFunction.
 		 * @see #RoundFunction()
 		 */
-		public static final int RoundFunction_ordinal = 50;
+		public static final int RoundFunction_ordinal = 52;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.SignFunction.
@@ -1297,7 +1339,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.SignFunction.
 		 * @see #SignFunction()
 		 */
-		public static final int SignFunction_ordinal = 51;
+		public static final int SignFunction_ordinal = 53;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.SinFunction.
@@ -1318,7 +1360,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.SinFunction.
 		 * @see #SinFunction()
 		 */
-		public static final int SinFunction_ordinal = 52;
+		public static final int SinFunction_ordinal = 54;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.SqrtFunction.
@@ -1339,7 +1381,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.SqrtFunction.
 		 * @see #SqrtFunction()
 		 */
-		public static final int SqrtFunction_ordinal = 53;
+		public static final int SqrtFunction_ordinal = 55;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.TanFunction.
@@ -1360,7 +1402,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.TanFunction.
 		 * @see #TanFunction()
 		 */
-		public static final int TanFunction_ordinal = 54;
+		public static final int TanFunction_ordinal = 56;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.TruncateFunction.
@@ -1383,7 +1425,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.TruncateFunction.
 		 * @see #TruncateFunction()
 		 */
-		public static final int TruncateFunction_ordinal = 55;
+		public static final int TruncateFunction_ordinal = 57;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.AsciiFunction.
@@ -1405,7 +1447,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.AsciiFunction.
 		 * @see #AsciiFunction()
 		 */
-		public static final int AsciiFunction_ordinal = 56;
+		public static final int AsciiFunction_ordinal = 58;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.CharFunction.
@@ -1426,7 +1468,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.CharFunction.
 		 * @see #CharFunction()
 		 */
-		public static final int CharFunction_ordinal = 57;
+		public static final int CharFunction_ordinal = 59;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.DifferenceFunction.
@@ -1449,7 +1491,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.DifferenceFunction.
 		 * @see #DifferenceFunction()
 		 */
-		public static final int DifferenceFunction_ordinal = 58;
+		public static final int DifferenceFunction_ordinal = 60;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.InsertFunction.
@@ -1471,7 +1513,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.InsertFunction.
 		 * @see #InsertFunction()
 		 */
-		public static final int InsertFunction_ordinal = 59;
+		public static final int InsertFunction_ordinal = 61;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.LcaseFunction.
@@ -1493,7 +1535,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.LcaseFunction.
 		 * @see #LcaseFunction()
 		 */
-		public static final int LcaseFunction_ordinal = 60;
+		public static final int LcaseFunction_ordinal = 62;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.LeftFunction.
@@ -1514,7 +1556,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.LeftFunction.
 		 * @see #LeftFunction()
 		 */
-		public static final int LeftFunction_ordinal = 61;
+		public static final int LeftFunction_ordinal = 63;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.LengthFunction.
@@ -1536,7 +1578,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.LengthFunction.
 		 * @see #LengthFunction()
 		 */
-		public static final int LengthFunction_ordinal = 62;
+		public static final int LengthFunction_ordinal = 64;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.LocateFunction.
@@ -1558,7 +1600,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.LocateFunction.
 		 * @see #LocateFunction()
 		 */
-		public static final int LocateFunction_ordinal = 63;
+		public static final int LocateFunction_ordinal = 65;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.LtrimFunction.
@@ -1580,7 +1622,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.LtrimFunction.
 		 * @see #LtrimFunction()
 		 */
-		public static final int LtrimFunction_ordinal = 64;
+		public static final int LtrimFunction_ordinal = 66;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.RepeatFunction.
@@ -1602,7 +1644,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.RepeatFunction.
 		 * @see #RepeatFunction()
 		 */
-		public static final int RepeatFunction_ordinal = 65;
+		public static final int RepeatFunction_ordinal = 67;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.ReplaceFunction.
@@ -1624,7 +1666,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.ReplaceFunction.
 		 * @see #ReplaceFunction()
 		 */
-		public static final int ReplaceFunction_ordinal = 66;
+		public static final int ReplaceFunction_ordinal = 68;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.RightFunction.
@@ -1646,7 +1688,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.RightFunction.
 		 * @see #RightFunction()
 		 */
-		public static final int RightFunction_ordinal = 67;
+		public static final int RightFunction_ordinal = 69;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.RtrimFunction.
@@ -1668,7 +1710,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.RtrimFunction.
 		 * @see #RtrimFunction()
 		 */
-		public static final int RtrimFunction_ordinal = 68;
+		public static final int RtrimFunction_ordinal = 70;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.SoundexFunction.
@@ -1690,7 +1732,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.SoundexFunction.
 		 * @see #SoundexFunction()
 		 */
-		public static final int SoundexFunction_ordinal = 69;
+		public static final int SoundexFunction_ordinal = 71;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.SpaceFunction.
@@ -1712,7 +1754,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.SpaceFunction.
 		 * @see #SpaceFunction()
 		 */
-		public static final int SpaceFunction_ordinal = 70;
+		public static final int SpaceFunction_ordinal = 72;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.SubstringFunction.
@@ -1735,7 +1777,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.SubstringFunction.
 		 * @see #SubstringFunction()
 		 */
-		public static final int SubstringFunction_ordinal = 71;
+		public static final int SubstringFunction_ordinal = 73;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.UcaseFunction.
@@ -1757,7 +1799,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.UcaseFunction.
 		 * @see #UcaseFunction()
 		 */
-		public static final int UcaseFunction_ordinal = 72;
+		public static final int UcaseFunction_ordinal = 74;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.DatabaseFunction.
@@ -1780,7 +1822,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.DatabaseFunction.
 		 * @see #DatabaseFunction()
 		 */
-		public static final int DatabaseFunction_ordinal = 73;
+		public static final int DatabaseFunction_ordinal = 75;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.UserFunction.
@@ -1801,7 +1843,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.UserFunction.
 		 * @see #UserFunction()
 		 */
-		public static final int UserFunction_ordinal = 74;
+		public static final int UserFunction_ordinal = 76;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.IfNullFunction.
@@ -1823,7 +1865,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.IfNullFunction.
 		 * @see #IfNullFunction()
 		 */
-		public static final int IfNullFunction_ordinal = 75;
+		public static final int IfNullFunction_ordinal = 77;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.NullIfFunction.
@@ -1845,7 +1887,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.NullIfFunction.
 		 * @see #NullIfFunction()
 		 */
-		public static final int NullIfFunction_ordinal = 76;
+		public static final int NullIfFunction_ordinal = 78;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.DayNameFunction.
@@ -1867,7 +1909,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.DayNameFunction.
 		 * @see #DayNameFunction()
 		 */
-		public static final int DayNameFunction_ordinal = 77;
+		public static final int DayNameFunction_ordinal = 79;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.DayOfWeekFunction.
@@ -1890,7 +1932,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.DayOfWeekFunction.
 		 * @see #DayOfWeekFunction()
 		 */
-		public static final int DayOfWeekFunction_ordinal = 78;
+		public static final int DayOfWeekFunction_ordinal = 80;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.DayOfMonthFunction.
@@ -1913,7 +1955,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.DayOfMonthFunction.
 		 * @see #DayOfMonthFunction()
 		 */
-		public static final int DayOfMonthFunction_ordinal = 79;
+		public static final int DayOfMonthFunction_ordinal = 81;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.DayOfYearFunction.
@@ -1936,7 +1978,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.DayOfYearFunction.
 		 * @see #DayOfYearFunction()
 		 */
-		public static final int DayOfYearFunction_ordinal = 80;
+		public static final int DayOfYearFunction_ordinal = 82;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.HourFunction.
@@ -1957,7 +1999,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.HourFunction.
 		 * @see #HourFunction()
 		 */
-		public static final int HourFunction_ordinal = 81;
+		public static final int HourFunction_ordinal = 83;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.MinuteFunction.
@@ -1979,7 +2021,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.MinuteFunction.
 		 * @see #MinuteFunction()
 		 */
-		public static final int MinuteFunction_ordinal = 82;
+		public static final int MinuteFunction_ordinal = 84;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.MonthFunction.
@@ -2001,7 +2043,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.MonthFunction.
 		 * @see #MonthFunction()
 		 */
-		public static final int MonthFunction_ordinal = 83;
+		public static final int MonthFunction_ordinal = 85;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.MonthNameFunction.
@@ -2024,7 +2066,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.MonthNameFunction.
 		 * @see #MonthNameFunction()
 		 */
-		public static final int MonthNameFunction_ordinal = 84;
+		public static final int MonthNameFunction_ordinal = 86;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.NowFunction.
@@ -2045,7 +2087,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.NowFunction.
 		 * @see #NowFunction()
 		 */
-		public static final int NowFunction_ordinal = 85;
+		public static final int NowFunction_ordinal = 87;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.QuarterFunction.
@@ -2067,7 +2109,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.QuarterFunction.
 		 * @see #QuarterFunction()
 		 */
-		public static final int QuarterFunction_ordinal = 86;
+		public static final int QuarterFunction_ordinal = 88;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.SecondFunction.
@@ -2089,7 +2131,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.SecondFunction.
 		 * @see #SecondFunction()
 		 */
-		public static final int SecondFunction_ordinal = 87;
+		public static final int SecondFunction_ordinal = 89;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.WeekFunction.
@@ -2110,7 +2152,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.WeekFunction.
 		 * @see #WeekFunction()
 		 */
-		public static final int WeekFunction_ordinal = 88;
+		public static final int WeekFunction_ordinal = 90;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.YearFunction.
@@ -2131,7 +2173,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.YearFunction.
 		 * @see #YearFunction()
 		 */
-		public static final int YearFunction_ordinal = 89;
+		public static final int YearFunction_ordinal = 91;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.DateTimeAddFunction.
@@ -2155,7 +2197,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.DateTimeAddFunction.
 		 * @see #DateTimeAddFunction(org.openquark.cal.compiler.SourceModel.Expr)
 		 */
-		public static final int DateTimeAddFunction_ordinal = 90;
+		public static final int DateTimeAddFunction_ordinal = 92;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.DateTimeDiffFunction.
@@ -2179,7 +2221,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.DateTimeDiffFunction.
 		 * @see #DateTimeDiffFunction(org.openquark.cal.compiler.SourceModel.Expr)
 		 */
-		public static final int DateTimeDiffFunction_ordinal = 91;
+		public static final int DateTimeDiffFunction_ordinal = 93;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.AggrCount.
@@ -2200,7 +2242,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.AggrCount.
 		 * @see #AggrCount()
 		 */
-		public static final int AggrCount_ordinal = 92;
+		public static final int AggrCount_ordinal = 94;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.AggrSum.
@@ -2221,7 +2263,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.AggrSum.
 		 * @see #AggrSum()
 		 */
-		public static final int AggrSum_ordinal = 93;
+		public static final int AggrSum_ordinal = 95;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.AggrAvg.
@@ -2242,7 +2284,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.AggrAvg.
 		 * @see #AggrAvg()
 		 */
-		public static final int AggrAvg_ordinal = 94;
+		public static final int AggrAvg_ordinal = 96;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.AggrMin.
@@ -2263,7 +2305,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.AggrMin.
 		 * @see #AggrMin()
 		 */
-		public static final int AggrMin_ordinal = 95;
+		public static final int AggrMin_ordinal = 97;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.AggrMax.
@@ -2284,7 +2326,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.AggrMax.
 		 * @see #AggrMax()
 		 */
-		public static final int AggrMax_ordinal = 96;
+		public static final int AggrMax_ordinal = 98;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.AggrDistinctCount.
@@ -2307,7 +2349,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.AggrDistinctCount.
 		 * @see #AggrDistinctCount()
 		 */
-		public static final int AggrDistinctCount_ordinal = 97;
+		public static final int AggrDistinctCount_ordinal = 99;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.AggrDistinctSum.
@@ -2329,7 +2371,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.AggrDistinctSum.
 		 * @see #AggrDistinctSum()
 		 */
-		public static final int AggrDistinctSum_ordinal = 98;
+		public static final int AggrDistinctSum_ordinal = 100;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.AggrDistinctAvg.
@@ -2351,7 +2393,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.AggrDistinctAvg.
 		 * @see #AggrDistinctAvg()
 		 */
-		public static final int AggrDistinctAvg_ordinal = 99;
+		public static final int AggrDistinctAvg_ordinal = 101;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.AggrCountAll.
@@ -2372,7 +2414,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.AggrCountAll.
 		 * @see #AggrCountAll()
 		 */
-		public static final int AggrCountAll_ordinal = 100;
+		public static final int AggrCountAll_ordinal = 102;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.AggrStdDev.
@@ -2393,7 +2435,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.AggrStdDev.
 		 * @see #AggrStdDev()
 		 */
-		public static final int AggrStdDev_ordinal = 101;
+		public static final int AggrStdDev_ordinal = 103;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.AggrStdDevP.
@@ -2414,7 +2456,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.AggrStdDevP.
 		 * @see #AggrStdDevP()
 		 */
-		public static final int AggrStdDevP_ordinal = 102;
+		public static final int AggrStdDevP_ordinal = 104;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.AggrVar.
@@ -2435,7 +2477,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.AggrVar.
 		 * @see #AggrVar()
 		 */
-		public static final int AggrVar_ordinal = 103;
+		public static final int AggrVar_ordinal = 105;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.AggrVarP.
@@ -2456,7 +2498,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.AggrVarP.
 		 * @see #AggrVarP()
 		 */
-		public static final int AggrVarP_ordinal = 104;
+		public static final int AggrVarP_ordinal = 106;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.AggrOther.
@@ -2491,7 +2533,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.AggrOther.
 		 * @see #AggrOther(org.openquark.cal.compiler.SourceModel.Expr)
 		 */
-		public static final int AggrOther_ordinal = 105;
+		public static final int AggrOther_ordinal = 107;
 
 		/**
 		 * Binding for DataConstructor: Cal.Data.Sql.FunctionOther.
@@ -2526,7 +2568,7 @@ public final class CAL_Sql {
 		 * Ordinal of DataConstructor Cal.Data.Sql.FunctionOther.
 		 * @see #FunctionOther(org.openquark.cal.compiler.SourceModel.Expr)
 		 */
-		public static final int FunctionOther_ordinal = 106;
+		public static final int FunctionOther_ordinal = 108;
 
 		/*
 		 * DataConstructors for the Cal.Data.Sql.JoinNode data type.
@@ -3447,6 +3489,25 @@ public final class CAL_Sql {
 		 */
 		public static final QualifiedName booleanParameter = 
 			QualifiedName.make(CAL_Sql.MODULE_NAME, "booleanParameter");
+
+		/**
+		 * Combines the text for a number of individual statements into a single text document for a compound statement.
+		 * @param sqlBuilder (CAL type: <code>Cal.Data.Sql.SqlBuilder</code>)
+		 * @param componentDocs (CAL type: <code>[Cal.Utilities.PrettyPrinter.Document]</code>)
+		 * @return (CAL type: <code>Cal.Utilities.PrettyPrinter.Document</code>) 
+		 */
+		public static final SourceModel.Expr buildCompoundStatement(SourceModel.Expr sqlBuilder, SourceModel.Expr componentDocs) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.buildCompoundStatement), sqlBuilder, componentDocs});
+		}
+
+		/**
+		 * Name binding for function: buildCompoundStatement.
+		 * @see #buildCompoundStatement(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName buildCompoundStatement = 
+			QualifiedName.make(CAL_Sql.MODULE_NAME, "buildCompoundStatement");
 
 		/**
 		 * Constructs a single join tree based on the list of join info items.
@@ -5795,6 +5856,37 @@ public final class CAL_Sql {
 			QualifiedName.make(CAL_Sql.MODULE_NAME, "logExpr");
 
 		/**
+		 * Helper binding method for function: longField. 
+		 * @param table
+		 * @param fieldName
+		 * @return the SourceModule.expr representing an application of longField
+		 */
+		public static final SourceModel.Expr longField(SourceModel.Expr table, SourceModel.Expr fieldName) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.longField), table, fieldName});
+		}
+
+		/**
+		 * @see #longField(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 * @param table
+		 * @param fieldName
+		 * @return the SourceModel.Expr representing an application of longField
+		 */
+		public static final SourceModel.Expr longField(SourceModel.Expr table, java.lang.String fieldName) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.longField), table, SourceModel.Expr.makeStringValue(fieldName)});
+		}
+
+		/**
+		 * Name binding for function: longField.
+		 * @see #longField(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName longField = 
+			QualifiedName.make(CAL_Sql.MODULE_NAME, "longField");
+
+		/**
 		 * Constructs a database expression to test whether the first operand is less than or equal to the second.
 		 * @param expr1 (CAL type: <code>Cal.Core.Prelude.Ord a => Cal.Data.Sql.TypedExpr a</code>)
 		 *          a database expression for the first operand
@@ -5855,6 +5947,43 @@ public final class CAL_Sql {
 		 */
 		public static final QualifiedName ltrimExpr = 
 			QualifiedName.make(CAL_Sql.MODULE_NAME, "ltrimExpr");
+
+		/**
+		 * A statement to add an index to an existing table.
+		 * @param tableRef (CAL type: <code>Cal.Data.DatabaseMetadata.TableReference</code>)
+		 * @param unique (CAL type: <code>Cal.Core.Prelude.Boolean</code>)
+		 * @param indexName (CAL type: <code>Cal.Core.Prelude.Maybe Cal.Core.Prelude.String</code>)
+		 * @param indexColumnNames (CAL type: <code>[Cal.Core.Prelude.String]</code>)
+		 * @return (CAL type: <code>Cal.Data.Sql.Statement</code>) 
+		 */
+		public static final SourceModel.Expr makeAlterTableAddIndexStatement(SourceModel.Expr tableRef, SourceModel.Expr unique, SourceModel.Expr indexName, SourceModel.Expr indexColumnNames) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.makeAlterTableAddIndexStatement), tableRef, unique, indexName, indexColumnNames});
+		}
+
+		/**
+		 * @see #makeAlterTableAddIndexStatement(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 * @param tableRef
+		 * @param unique
+		 * @param indexName
+		 * @param indexColumnNames
+		 * @return the SourceModel.Expr representing an application of makeAlterTableAddIndexStatement
+		 */
+		public static final SourceModel.Expr makeAlterTableAddIndexStatement(SourceModel.Expr tableRef, boolean unique, SourceModel.Expr indexName, SourceModel.Expr indexColumnNames) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.makeAlterTableAddIndexStatement), tableRef, SourceModel.Expr.makeBooleanValue(unique), indexName, indexColumnNames});
+		}
+
+		/**
+		 * Name binding for function: makeAlterTableAddIndexStatement.
+		 * @see #makeAlterTableAddIndexStatement(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName makeAlterTableAddIndexStatement = 
+			QualifiedName.make(
+				CAL_Sql.MODULE_NAME, 
+				"makeAlterTableAddIndexStatement");
 
 		/**
 		 * Helper binding method for function: makeCommitStatement. 
@@ -5926,26 +6055,26 @@ public final class CAL_Sql {
 
 		/**
 		 * Helper binding method for function: makeCreateTableStatement. 
-		 * @param arg_1
-		 * @param arg_2
+		 * @param tableDesc
+		 * @param skipIfTableExists
 		 * @return the SourceModule.expr representing an application of makeCreateTableStatement
 		 */
-		public static final SourceModel.Expr makeCreateTableStatement(SourceModel.Expr arg_1, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr makeCreateTableStatement(SourceModel.Expr tableDesc, SourceModel.Expr skipIfTableExists) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.makeCreateTableStatement), arg_1, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.makeCreateTableStatement), tableDesc, skipIfTableExists});
 		}
 
 		/**
 		 * @see #makeCreateTableStatement(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
-		 * @param arg_2
+		 * @param tableDesc
+		 * @param skipIfTableExists
 		 * @return the SourceModel.Expr representing an application of makeCreateTableStatement
 		 */
-		public static final SourceModel.Expr makeCreateTableStatement(SourceModel.Expr arg_1, boolean arg_2) {
+		public static final SourceModel.Expr makeCreateTableStatement(SourceModel.Expr tableDesc, boolean skipIfTableExists) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.makeCreateTableStatement), arg_1, SourceModel.Expr.makeBooleanValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.makeCreateTableStatement), tableDesc, SourceModel.Expr.makeBooleanValue(skipIfTableExists)});
 		}
 
 		/**
@@ -5954,6 +6083,39 @@ public final class CAL_Sql {
 		 */
 		public static final QualifiedName makeCreateTableStatement = 
 			QualifiedName.make(CAL_Sql.MODULE_NAME, "makeCreateTableStatement");
+
+		/**
+		 * Helper binding method for function: makeCreateTemporaryTableStatement. 
+		 * @param tableDesc
+		 * @param skipIfTableExists
+		 * @return the SourceModule.expr representing an application of makeCreateTemporaryTableStatement
+		 */
+		public static final SourceModel.Expr makeCreateTemporaryTableStatement(SourceModel.Expr tableDesc, SourceModel.Expr skipIfTableExists) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.makeCreateTemporaryTableStatement), tableDesc, skipIfTableExists});
+		}
+
+		/**
+		 * @see #makeCreateTemporaryTableStatement(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 * @param tableDesc
+		 * @param skipIfTableExists
+		 * @return the SourceModel.Expr representing an application of makeCreateTemporaryTableStatement
+		 */
+		public static final SourceModel.Expr makeCreateTemporaryTableStatement(SourceModel.Expr tableDesc, boolean skipIfTableExists) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.makeCreateTemporaryTableStatement), tableDesc, SourceModel.Expr.makeBooleanValue(skipIfTableExists)});
+		}
+
+		/**
+		 * Name binding for function: makeCreateTemporaryTableStatement.
+		 * @see #makeCreateTemporaryTableStatement(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName makeCreateTemporaryTableStatement = 
+			QualifiedName.make(
+				CAL_Sql.MODULE_NAME, 
+				"makeCreateTemporaryTableStatement");
 
 		/**
 		 * Helper binding method for function: makeCreateViewStatement. 
@@ -6040,26 +6202,26 @@ public final class CAL_Sql {
 
 		/**
 		 * Helper binding method for function: makeDropTableStatement. 
-		 * @param arg_1
-		 * @param arg_2
+		 * @param tableRef
+		 * @param onlyIfTableExists
 		 * @return the SourceModule.expr representing an application of makeDropTableStatement
 		 */
-		public static final SourceModel.Expr makeDropTableStatement(SourceModel.Expr arg_1, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr makeDropTableStatement(SourceModel.Expr tableRef, SourceModel.Expr onlyIfTableExists) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.makeDropTableStatement), arg_1, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.makeDropTableStatement), tableRef, onlyIfTableExists});
 		}
 
 		/**
 		 * @see #makeDropTableStatement(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
-		 * @param arg_2
+		 * @param tableRef
+		 * @param onlyIfTableExists
 		 * @return the SourceModel.Expr representing an application of makeDropTableStatement
 		 */
-		public static final SourceModel.Expr makeDropTableStatement(SourceModel.Expr arg_1, boolean arg_2) {
+		public static final SourceModel.Expr makeDropTableStatement(SourceModel.Expr tableRef, boolean onlyIfTableExists) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.makeDropTableStatement), arg_1, SourceModel.Expr.makeBooleanValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.makeDropTableStatement), tableRef, SourceModel.Expr.makeBooleanValue(onlyIfTableExists)});
 		}
 
 		/**
@@ -6068,6 +6230,39 @@ public final class CAL_Sql {
 		 */
 		public static final QualifiedName makeDropTableStatement = 
 			QualifiedName.make(CAL_Sql.MODULE_NAME, "makeDropTableStatement");
+
+		/**
+		 * Helper binding method for function: makeDropTemporaryTableStatement. 
+		 * @param tableRef
+		 * @param onlyIfTableExists
+		 * @return the SourceModule.expr representing an application of makeDropTemporaryTableStatement
+		 */
+		public static final SourceModel.Expr makeDropTemporaryTableStatement(SourceModel.Expr tableRef, SourceModel.Expr onlyIfTableExists) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.makeDropTemporaryTableStatement), tableRef, onlyIfTableExists});
+		}
+
+		/**
+		 * @see #makeDropTemporaryTableStatement(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 * @param tableRef
+		 * @param onlyIfTableExists
+		 * @return the SourceModel.Expr representing an application of makeDropTemporaryTableStatement
+		 */
+		public static final SourceModel.Expr makeDropTemporaryTableStatement(SourceModel.Expr tableRef, boolean onlyIfTableExists) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.makeDropTemporaryTableStatement), tableRef, SourceModel.Expr.makeBooleanValue(onlyIfTableExists)});
+		}
+
+		/**
+		 * Name binding for function: makeDropTemporaryTableStatement.
+		 * @see #makeDropTemporaryTableStatement(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName makeDropTemporaryTableStatement = 
+			QualifiedName.make(
+				CAL_Sql.MODULE_NAME, 
+				"makeDropTemporaryTableStatement");
 
 		/**
 		 * Helper binding method for function: makeDropViewStatement. 
@@ -6099,6 +6294,56 @@ public final class CAL_Sql {
 		 */
 		public static final QualifiedName makeDropViewStatement = 
 			QualifiedName.make(CAL_Sql.MODULE_NAME, "makeDropViewStatement");
+
+		/**
+		 * Creates a statement using the SQL statement text specified.
+		 * This could be useful in a compound statement to insert database-specific statements.
+		 * This must be used carefully as the statement cannot be analyzed or tailored based on the SqlBuilder being used.
+		 * @param statementText (CAL type: <code>Cal.Core.Prelude.String</code>)
+		 * @return (CAL type: <code>Cal.Data.Sql.Statement</code>) 
+		 */
+		public static final SourceModel.Expr makeFreehandSqlStatement(SourceModel.Expr statementText) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.makeFreehandSqlStatement), statementText});
+		}
+
+		/**
+		 * @see #makeFreehandSqlStatement(org.openquark.cal.compiler.SourceModel.Expr)
+		 * @param statementText
+		 * @return the SourceModel.Expr representing an application of makeFreehandSqlStatement
+		 */
+		public static final SourceModel.Expr makeFreehandSqlStatement(java.lang.String statementText) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.makeFreehandSqlStatement), SourceModel.Expr.makeStringValue(statementText)});
+		}
+
+		/**
+		 * Name binding for function: makeFreehandSqlStatement.
+		 * @see #makeFreehandSqlStatement(org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName makeFreehandSqlStatement = 
+			QualifiedName.make(CAL_Sql.MODULE_NAME, "makeFreehandSqlStatement");
+
+		/**
+		 * Add grouping needed to make the query a valid Group By query.
+		 * Additional groupings will be added for fields which are used outside of aggregation functions and not already grouped on.
+		 * @param query (CAL type: <code>Cal.Data.Sql.Query</code>)
+		 * @return (CAL type: <code>Cal.Data.Sql.Query</code>) 
+		 */
+		public static final SourceModel.Expr makeGroupingQuery(SourceModel.Expr query) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.makeGroupingQuery), query});
+		}
+
+		/**
+		 * Name binding for function: makeGroupingQuery.
+		 * @see #makeGroupingQuery(org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName makeGroupingQuery = 
+			QualifiedName.make(CAL_Sql.MODULE_NAME, "makeGroupingQuery");
 
 		/**
 		 * Helper binding method for function: makeInsertQueryValuesByColumnStatement. 
@@ -6166,10 +6411,10 @@ public final class CAL_Sql {
 				"makeInsertValuesByColumnStatement");
 
 		/**
-		 * Helper binding method for function: makeInsertValuesStatement. 
-		 * @param tableRef
-		 * @param rowValues
-		 * @return the SourceModule.expr representing an application of makeInsertValuesStatement
+		 * Construct an Insert statement to insert one row of values.
+		 * @param tableRef (CAL type: <code>Cal.Data.DatabaseMetadata.TableReference</code>)
+		 * @param rowValues (CAL type: <code>[Cal.Data.Sql.Expr]</code>)
+		 * @return (CAL type: <code>Cal.Data.Sql.Statement</code>) 
 		 */
 		public static final SourceModel.Expr makeInsertValuesStatement(SourceModel.Expr tableRef, SourceModel.Expr rowValues) {
 			return 
@@ -6305,6 +6550,49 @@ public final class CAL_Sql {
 		 */
 		public static final QualifiedName makeJoinSet2 = 
 			QualifiedName.make(CAL_Sql.MODULE_NAME, "makeJoinSet2");
+
+		/**
+		 * Build an INSERT statement which will insert a number of rows of data.
+		 * @param tableRef (CAL type: <code>Cal.Data.DatabaseMetadata.TableReference</code>)
+		 * @param destColumns (CAL type: <code>[Cal.Core.Prelude.String]</code>)
+		 * @param rowsOfValues (CAL type: <code>[[Cal.Data.Sql.Expr]]</code>)
+		 * @return (CAL type: <code>Cal.Data.Sql.Statement</code>) 
+		 */
+		public static final SourceModel.Expr makeMultiRowInsertValuesByColumnStatement(SourceModel.Expr tableRef, SourceModel.Expr destColumns, SourceModel.Expr rowsOfValues) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.makeMultiRowInsertValuesByColumnStatement), tableRef, destColumns, rowsOfValues});
+		}
+
+		/**
+		 * Name binding for function: makeMultiRowInsertValuesByColumnStatement.
+		 * @see #makeMultiRowInsertValuesByColumnStatement(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName makeMultiRowInsertValuesByColumnStatement = 
+			QualifiedName.make(
+				CAL_Sql.MODULE_NAME, 
+				"makeMultiRowInsertValuesByColumnStatement");
+
+		/**
+		 * Build an INSERT statement which will insert a number of rows of data.
+		 * @param tableRef (CAL type: <code>Cal.Data.DatabaseMetadata.TableReference</code>)
+		 * @param rowsOfValues (CAL type: <code>[[Cal.Data.Sql.Expr]]</code>)
+		 * @return (CAL type: <code>Cal.Data.Sql.Statement</code>) 
+		 */
+		public static final SourceModel.Expr makeMultiRowInsertValuesStatement(SourceModel.Expr tableRef, SourceModel.Expr rowsOfValues) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.makeMultiRowInsertValuesStatement), tableRef, rowsOfValues});
+		}
+
+		/**
+		 * Name binding for function: makeMultiRowInsertValuesStatement.
+		 * @see #makeMultiRowInsertValuesStatement(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName makeMultiRowInsertValuesStatement = 
+			QualifiedName.make(
+				CAL_Sql.MODULE_NAME, 
+				"makeMultiRowInsertValuesStatement");
 
 		/**
 		 * Constructs a subquery table using the specified query text and alias.
@@ -6466,7 +6754,7 @@ public final class CAL_Sql {
 		/**
 		 * Constructs a SqlBuilder using the functions provided in a record.
 		 * The advantage of this approach is that a SqlBuilder can easily override selected functions from the record of another SqlBuilder.
-		 * @param sqlBuilderFns (CAL type: <code>{addParens :: Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document, booleanToSql :: Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildCommitStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Utilities.PrettyPrinter.Document, buildCreateDatabaseStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.DatabaseReference -> Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildCreateTableStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.TableDescription -> Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildCreateViewStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.TableReference -> Cal.Data.Sql.Query -> Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildDeleteRowsStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Data.DatabaseMetadata.TableReference -> Cal.Data.Sql.TypedExpr Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildDropDatabaseStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.DatabaseReference -> Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildDropTableStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.TableReference -> Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildDropViewStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.TableReference -> Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildFieldDescription :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.FieldDescription -> Cal.Utilities.PrettyPrinter.Document, buildFieldType :: Cal.Data.SqlType.SqlType -> Cal.Utilities.PrettyPrinter.Document, buildFromClause :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> [Cal.Data.Sql.JoinNode] -> Cal.Utilities.PrettyPrinter.Document, buildGroupByClause :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> [Cal.Data.Sql.Expr] -> Cal.Utilities.PrettyPrinter.Document, buildHavingClause :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Core.Prelude.Maybe Cal.Data.Sql.Expr -> Cal.Utilities.PrettyPrinter.Document, buildInsertQueryValuesStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.TableReference -> Cal.Core.Prelude.Maybe [Cal.Core.Prelude.String] -> Cal.Data.Sql.Query -> Cal.Utilities.PrettyPrinter.Document, buildInsertValuesStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.TableReference -> Cal.Core.Prelude.Maybe [Cal.Core.Prelude.String] -> [Cal.Data.Sql.Expr] -> Cal.Utilities.PrettyPrinter.Document, buildOrderByClause :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> [(Cal.Data.Sql.Expr, Cal.Core.Prelude.Boolean)] -> Cal.Utilities.PrettyPrinter.Document, buildSelectClause :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> [Cal.Data.Sql.QueryOption] -> [(Cal.Data.Sql.Expr, Cal.Core.Prelude.String)] -> Cal.Utilities.PrettyPrinter.Document, buildTableAndAliasText :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Data.Sql.QueryTable -> Cal.Utilities.PrettyPrinter.Document, buildUpdateValuesStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Data.DatabaseMetadata.TableReference -> [Cal.Core.Prelude.String] -> [Cal.Data.Sql.Expr] -> Cal.Data.Sql.TypedExpr Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildWhereClause :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Core.Prelude.Maybe Cal.Data.Sql.Expr -> [Cal.Data.Sql.JoinNode] -> Cal.Utilities.PrettyPrinter.Document, constructQuery :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document, constructUnionQuery :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document -> Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, doubleToSql :: Cal.Core.Prelude.Double -> Cal.Utilities.PrettyPrinter.Document, functionName :: Cal.Data.Sql.DbFunction -> Cal.Core.Prelude.String, functionToSql :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Data.Sql.DbFunction -> [Cal.Data.Sql.Expr] -> Cal.Utilities.PrettyPrinter.Document, intToSql :: Cal.Core.Prelude.Int -> Cal.Utilities.PrettyPrinter.Document, listToSql :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> [Cal.Data.Sql.Expr] -> Cal.Utilities.PrettyPrinter.Document, makeSafeName :: Cal.Core.Prelude.String -> Cal.Core.Prelude.String, nullToSql :: Cal.Utilities.PrettyPrinter.Document, operatorText :: Cal.Data.Sql.DbFunction -> Cal.Core.Prelude.String, parameterToSql :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.Parameter -> Cal.Utilities.PrettyPrinter.Document, prepareQuery :: Cal.Data.Sql.SqlBuilderState -> Cal.Data.Sql.Query -> Cal.Data.Sql.Query, quoteIdentifier :: Cal.Core.Prelude.String -> Cal.Utilities.PrettyPrinter.Document, stringToSql :: Cal.Core.Prelude.String -> Cal.Utilities.PrettyPrinter.Document, timeIntervalToSql :: Cal.Data.Sql.TimeInterval -> Cal.Utilities.PrettyPrinter.Document, timeToSql :: Cal.Utilities.Time.Time -> Cal.Utilities.TimeZone.TimeZone -> Cal.Utilities.PrettyPrinter.Document}</code>)
+		 * @param sqlBuilderFns (CAL type: <code>{addParens :: Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document, booleanToSql :: Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildAlterTableAddIndexStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.TableReference -> Cal.Core.Prelude.Boolean -> Cal.Core.Prelude.Maybe Cal.Core.Prelude.String -> [Cal.Core.Prelude.String] -> Cal.Utilities.PrettyPrinter.Document, buildCommitStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Utilities.PrettyPrinter.Document, buildCompoundStatement :: [Cal.Utilities.PrettyPrinter.Document] -> Cal.Utilities.PrettyPrinter.Document, buildCreateDatabaseStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.DatabaseReference -> Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildCreateTableStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.TableDescription -> Cal.Core.Prelude.Boolean -> Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildCreateViewStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.TableReference -> Cal.Data.Sql.Query -> Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildDeleteRowsStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Data.DatabaseMetadata.TableReference -> Cal.Data.Sql.TypedExpr Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildDropDatabaseStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.DatabaseReference -> Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildDropTableStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.TableReference -> Cal.Core.Prelude.Boolean -> Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildDropViewStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.TableReference -> Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildFieldDescription :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.FieldDescription -> Cal.Utilities.PrettyPrinter.Document, buildFieldType :: Cal.Data.SqlType.SqlType -> Cal.Utilities.PrettyPrinter.Document, buildFromClause :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> [Cal.Data.Sql.JoinNode] -> Cal.Utilities.PrettyPrinter.Document, buildGroupByClause :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> [Cal.Data.Sql.Expr] -> [(Cal.Data.Sql.Expr, Cal.Core.Prelude.String)] -> Cal.Utilities.PrettyPrinter.Document, buildHavingClause :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Core.Prelude.Maybe Cal.Data.Sql.Expr -> Cal.Utilities.PrettyPrinter.Document, buildInsertQueryValuesStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.TableReference -> Cal.Core.Prelude.Maybe [Cal.Core.Prelude.String] -> Cal.Data.Sql.Query -> Cal.Utilities.PrettyPrinter.Document, buildInsertValuesStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.TableReference -> Cal.Core.Prelude.Maybe [Cal.Core.Prelude.String] -> [[Cal.Data.Sql.Expr]] -> Cal.Utilities.PrettyPrinter.Document, buildOrderByClause :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> [(Cal.Data.Sql.Expr, Cal.Core.Prelude.Boolean)] -> [(Cal.Data.Sql.Expr, Cal.Core.Prelude.String)] -> Cal.Utilities.PrettyPrinter.Document, buildSelectClause :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> [Cal.Data.Sql.QueryOption] -> [(Cal.Data.Sql.Expr, Cal.Core.Prelude.String)] -> Cal.Utilities.PrettyPrinter.Document, buildTableAndAliasText :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Data.Sql.QueryTable -> Cal.Utilities.PrettyPrinter.Document, buildUpdateValuesStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Data.DatabaseMetadata.TableReference -> [Cal.Core.Prelude.String] -> [Cal.Data.Sql.Expr] -> Cal.Data.Sql.TypedExpr Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildWhereClause :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Core.Prelude.Maybe Cal.Data.Sql.Expr -> [Cal.Data.Sql.JoinNode] -> Cal.Utilities.PrettyPrinter.Document, constructQuery :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> [Cal.Data.Sql.QueryOption] -> Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document, constructUnionQuery :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document -> Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, doubleToSql :: Cal.Core.Prelude.Double -> Cal.Utilities.PrettyPrinter.Document, functionName :: Cal.Data.Sql.DbFunction -> Cal.Core.Prelude.String, functionToSql :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Data.Sql.DbFunction -> [Cal.Data.Sql.Expr] -> Cal.Utilities.PrettyPrinter.Document, intToSql :: Cal.Core.Prelude.Int -> Cal.Utilities.PrettyPrinter.Document, listToSql :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> [Cal.Data.Sql.Expr] -> Cal.Utilities.PrettyPrinter.Document, makeSafeName :: Cal.Core.Prelude.String -> Cal.Core.Prelude.String, nullToSql :: Cal.Utilities.PrettyPrinter.Document, operatorText :: Cal.Data.Sql.DbFunction -> Cal.Core.Prelude.String, parameterToSql :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.Parameter -> Cal.Utilities.PrettyPrinter.Document, prepareQuery :: Cal.Data.Sql.SqlBuilderState -> Cal.Data.Sql.Query -> Cal.Data.Sql.Query, quoteIdentifier :: Cal.Core.Prelude.String -> Cal.Utilities.PrettyPrinter.Document, stringToSql :: Cal.Core.Prelude.String -> Cal.Utilities.PrettyPrinter.Document, timeIntervalToSql :: Cal.Data.Sql.TimeInterval -> Cal.Utilities.PrettyPrinter.Document, timeToSql :: Cal.Utilities.Time.Time -> Cal.Utilities.TimeZone.TimeZone -> Cal.Utilities.PrettyPrinter.Document}</code>)
 		 * @return (CAL type: <code>Cal.Data.Sql.SqlBuilder</code>) 
 		 */
 		public static final SourceModel.Expr makeSqlBuilder(SourceModel.Expr sqlBuilderFns) {
@@ -6943,6 +7231,30 @@ public final class CAL_Sql {
 		 */
 		public static final QualifiedName nullIfExpr = 
 			QualifiedName.make(CAL_Sql.MODULE_NAME, "nullIfExpr");
+
+		/**
+		 * Constructs a database expression which test two operand expressions for null-safe equality.
+		 * Unlike the regular equals operator, this will compare 2 Null values as equal, and will return False
+		 * (instead of Null) for a comparison with Null against a non-null value.
+		 * @param expr1 (CAL type: <code>Cal.Core.Prelude.Eq a => Cal.Data.Sql.TypedExpr a</code>)
+		 *          a database expression for the first operand
+		 * @param expr2 (CAL type: <code>Cal.Core.Prelude.Eq a => Cal.Data.Sql.TypedExpr a</code>)
+		 *          a database expression for the second operand
+		 * @return (CAL type: <code>Cal.Data.Sql.TypedExpr Cal.Core.Prelude.Boolean</code>) 
+		 *          a Boolean database expression to test the operand expressions for null-safe equality
+		 */
+		public static final SourceModel.Expr nullSafeEqExpr(SourceModel.Expr expr1, SourceModel.Expr expr2) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.nullSafeEqExpr), expr1, expr2});
+		}
+
+		/**
+		 * Name binding for function: nullSafeEqExpr.
+		 * @see #nullSafeEqExpr(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName nullSafeEqExpr = 
+			QualifiedName.make(CAL_Sql.MODULE_NAME, "nullSafeEqExpr");
 
 		/**
 		 * A database expression for a null value of some data type.
@@ -7476,6 +7788,26 @@ public final class CAL_Sql {
 		 */
 		public static final QualifiedName rangeToRestrictionExpr = 
 			QualifiedName.make(CAL_Sql.MODULE_NAME, "rangeToRestrictionExpr");
+
+		/**
+		 * Removes any constant expressions from the grouping and ordering lists.
+		 * @param query (CAL type: <code>Cal.Data.Sql.Query</code>)
+		 * @return (CAL type: <code>Cal.Data.Sql.Query</code>) 
+		 */
+		public static final SourceModel.Expr removeConstantGroupingAndOrdering(SourceModel.Expr query) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.removeConstantGroupingAndOrdering), query});
+		}
+
+		/**
+		 * Name binding for function: removeConstantGroupingAndOrdering.
+		 * @see #removeConstantGroupingAndOrdering(org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName removeConstantGroupingAndOrdering = 
+			QualifiedName.make(
+				CAL_Sql.MODULE_NAME, 
+				"removeConstantGroupingAndOrdering");
 
 		/**
 		 * Removes the option of the same type as the specified one (even if the exact
@@ -8797,6 +9129,6 @@ public final class CAL_Sql {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = 1231102455;
+	public static final int javaDocHash = 960827435;
 
 }

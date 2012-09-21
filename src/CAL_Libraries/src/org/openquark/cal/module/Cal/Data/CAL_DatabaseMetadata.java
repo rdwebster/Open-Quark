@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Data.DatabaseMetadata module from Java code.
  *  
- * Creation date: Wed Aug 08 13:58:30 PDT 2007
+ * Creation date: Fri Sep 21 16:03:58 PDT 2012
  * --!>
  *  
  */
@@ -91,6 +91,12 @@ public final class CAL_DatabaseMetadata {
 			QualifiedName.make(
 				CAL_DatabaseMetadata.MODULE_NAME, 
 				"TableDescription");
+
+		/**
+		 * A table index on a specified list of fields.
+		 */
+		public static final QualifiedName TableIndex = 
+			QualifiedName.make(CAL_DatabaseMetadata.MODULE_NAME, "TableIndex");
 
 		/**
 		 * This type constructor allows the developer to uniquely identify a table
@@ -238,6 +244,34 @@ public final class CAL_DatabaseMetadata {
 		 * @see #ForeignKeyConstraint(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
 		 */
 		public static final int ForeignKeyConstraint_ordinal = 2;
+
+		/*
+		 * DataConstructors for the Cal.Data.DatabaseMetadata.TableIndex data type.
+		 */
+
+		/**
+		 * Binding for DataConstructor: Cal.Data.DatabaseMetadata.TableIndex.
+		 * @param indexFieldNames
+		 * @return the SourceModule.Expr representing an application of Cal.Data.DatabaseMetadata.TableIndex
+		 */
+		public static final SourceModel.Expr TableIndex(SourceModel.Expr indexFieldNames) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.DataCons.make(DataConstructors.TableIndex), indexFieldNames});
+		}
+
+		/**
+		 * Name binding for DataConstructor: Cal.Data.DatabaseMetadata.TableIndex.
+		 * @see #TableIndex(org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName TableIndex = 
+			QualifiedName.make(CAL_DatabaseMetadata.MODULE_NAME, "TableIndex");
+
+		/**
+		 * Ordinal of DataConstructor Cal.Data.DatabaseMetadata.TableIndex.
+		 * @see #TableIndex(org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final int TableIndex_ordinal = 0;
 
 	}
 	/**
@@ -418,6 +452,26 @@ public final class CAL_DatabaseMetadata {
 			QualifiedName.make(
 				CAL_DatabaseMetadata.MODULE_NAME, 
 				"getTableFields");
+
+		/**
+		 * Returns the table indexes applied to the given table.
+		 * @param td (CAL type: <code>Cal.Data.DatabaseMetadata.TableDescription</code>)
+		 * @return (CAL type: <code>[Cal.Data.DatabaseMetadata.TableIndex]</code>) 
+		 */
+		public static final SourceModel.Expr getTableIndexes(SourceModel.Expr td) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.getTableIndexes), td});
+		}
+
+		/**
+		 * Name binding for function: getTableIndexes.
+		 * @see #getTableIndexes(org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName getTableIndexes = 
+			QualifiedName.make(
+				CAL_DatabaseMetadata.MODULE_NAME, 
+				"getTableIndexes");
 
 		/**
 		 * A convenience function for returning the key fields in the given table
@@ -742,6 +796,29 @@ public final class CAL_DatabaseMetadata {
 				"makeTableDescription");
 
 		/**
+		 * Construct a table definition which may include non-unique indexes.
+		 * @param tableRef (CAL type: <code>Cal.Data.DatabaseMetadata.TableReference</code>)
+		 * @param fields (CAL type: <code>[Cal.Data.DatabaseMetadata.FieldDescription]</code>)
+		 * @param constraints (CAL type: <code>[Cal.Data.DatabaseMetadata.TableConstraint]</code>)
+		 * @param indexes (CAL type: <code>[Cal.Data.DatabaseMetadata.TableIndex]</code>)
+		 * @return (CAL type: <code>Cal.Data.DatabaseMetadata.TableDescription</code>) 
+		 */
+		public static final SourceModel.Expr makeTableDescriptionWithIndexes(SourceModel.Expr tableRef, SourceModel.Expr fields, SourceModel.Expr constraints, SourceModel.Expr indexes) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.makeTableDescriptionWithIndexes), tableRef, fields, constraints, indexes});
+		}
+
+		/**
+		 * Name binding for function: makeTableDescriptionWithIndexes.
+		 * @see #makeTableDescriptionWithIndexes(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName makeTableDescriptionWithIndexes = 
+			QualifiedName.make(
+				CAL_DatabaseMetadata.MODULE_NAME, 
+				"makeTableDescriptionWithIndexes");
+
+		/**
 		 * Makes a new table reference
 		 * @param tableName (CAL type: <code>Cal.Core.Prelude.String</code>)
 		 * @return (CAL type: <code>Cal.Data.DatabaseMetadata.TableReference</code>) 
@@ -777,6 +854,6 @@ public final class CAL_DatabaseMetadata {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = 317113984;
+	public static final int javaDocHash = -1318950061;
 
 }

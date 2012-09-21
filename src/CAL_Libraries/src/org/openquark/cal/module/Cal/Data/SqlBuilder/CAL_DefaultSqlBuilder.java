@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Data.SqlBuilder.DefaultSqlBuilder module from Java code.
  *  
- * Creation date: Sat Jan 23 14:26:47 PST 2010
+ * Creation date: Fri Sep 21 16:02:48 PDT 2012
  * --!>
  *  
  */
@@ -37,6 +37,92 @@ public final class CAL_DefaultSqlBuilder {
 	 * and methods related to binding to CAL functions in the Cal.Data.SqlBuilder.DefaultSqlBuilder module.
 	 */
 	public static final class Functions {
+		/**
+		 * Builds the SQL statement for a CREATE TABLE statement with optional text fragments inserted at various locations.
+		 * @param preStatementNameText (CAL type: <code>Cal.Core.Prelude.Maybe Cal.Utilities.PrettyPrinter.Document</code>)
+		 * @param preTableNameText (CAL type: <code>Cal.Core.Prelude.Maybe Cal.Utilities.PrettyPrinter.Document</code>)
+		 * @param postTableNameText (CAL type: <code>Cal.Core.Prelude.Maybe Cal.Utilities.PrettyPrinter.Document</code>)
+		 * @param builder (CAL type: <code>Cal.Data.Sql.SqlBuilder</code>)
+		 * @param tableDesc (CAL type: <code>Cal.Data.DatabaseMetadata.TableDescription</code>)
+		 * @param isTemporary (CAL type: <code>Cal.Core.Prelude.Boolean</code>)
+		 * @param skipIfTableExists (CAL type: <code>Cal.Core.Prelude.Boolean</code>)
+		 * @return (CAL type: <code>Cal.Utilities.PrettyPrinter.Document</code>) 
+		 */
+		public static final SourceModel.Expr buildCreateTableStatement(SourceModel.Expr preStatementNameText, SourceModel.Expr preTableNameText, SourceModel.Expr postTableNameText, SourceModel.Expr builder, SourceModel.Expr tableDesc, SourceModel.Expr isTemporary, SourceModel.Expr skipIfTableExists) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.buildCreateTableStatement), preStatementNameText, preTableNameText, postTableNameText, builder, tableDesc, isTemporary, skipIfTableExists});
+		}
+
+		/**
+		 * @see #buildCreateTableStatement(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 * @param preStatementNameText
+		 * @param preTableNameText
+		 * @param postTableNameText
+		 * @param builder
+		 * @param tableDesc
+		 * @param isTemporary
+		 * @param skipIfTableExists
+		 * @return the SourceModel.Expr representing an application of buildCreateTableStatement
+		 */
+		public static final SourceModel.Expr buildCreateTableStatement(SourceModel.Expr preStatementNameText, SourceModel.Expr preTableNameText, SourceModel.Expr postTableNameText, SourceModel.Expr builder, SourceModel.Expr tableDesc, boolean isTemporary, boolean skipIfTableExists) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.buildCreateTableStatement), preStatementNameText, preTableNameText, postTableNameText, builder, tableDesc, SourceModel.Expr.makeBooleanValue(isTemporary), SourceModel.Expr.makeBooleanValue(skipIfTableExists)});
+		}
+
+		/**
+		 * Name binding for function: buildCreateTableStatement.
+		 * @see #buildCreateTableStatement(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName buildCreateTableStatement = 
+			QualifiedName.make(
+				CAL_DefaultSqlBuilder.MODULE_NAME, 
+				"buildCreateTableStatement");
+
+		/**
+		 * Builds the SQL statement for a CREATE VIEW statement with optional text fragments inserted at various locations.
+		 * @param preStatementNameText (CAL type: <code>Cal.Core.Prelude.Maybe Cal.Utilities.PrettyPrinter.Document</code>)
+		 * @param preViewNameText (CAL type: <code>Cal.Core.Prelude.Maybe Cal.Utilities.PrettyPrinter.Document</code>)
+		 * @param postViewNameText (CAL type: <code>Cal.Core.Prelude.Maybe Cal.Utilities.PrettyPrinter.Document</code>)
+		 * @param builder (CAL type: <code>Cal.Data.Sql.SqlBuilder</code>)
+		 * @param viewRef (CAL type: <code>Cal.Data.DatabaseMetadata.TableReference</code>)
+		 * @param viewDefinition (CAL type: <code>Cal.Data.Sql.Query</code>)
+		 * @param skipIfViewExists (CAL type: <code>Cal.Core.Prelude.Boolean</code>)
+		 * @return (CAL type: <code>Cal.Utilities.PrettyPrinter.Document</code>) 
+		 */
+		public static final SourceModel.Expr buildCreateViewStatement(SourceModel.Expr preStatementNameText, SourceModel.Expr preViewNameText, SourceModel.Expr postViewNameText, SourceModel.Expr builder, SourceModel.Expr viewRef, SourceModel.Expr viewDefinition, SourceModel.Expr skipIfViewExists) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.buildCreateViewStatement), preStatementNameText, preViewNameText, postViewNameText, builder, viewRef, viewDefinition, skipIfViewExists});
+		}
+
+		/**
+		 * @see #buildCreateViewStatement(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 * @param preStatementNameText
+		 * @param preViewNameText
+		 * @param postViewNameText
+		 * @param builder
+		 * @param viewRef
+		 * @param viewDefinition
+		 * @param skipIfViewExists
+		 * @return the SourceModel.Expr representing an application of buildCreateViewStatement
+		 */
+		public static final SourceModel.Expr buildCreateViewStatement(SourceModel.Expr preStatementNameText, SourceModel.Expr preViewNameText, SourceModel.Expr postViewNameText, SourceModel.Expr builder, SourceModel.Expr viewRef, SourceModel.Expr viewDefinition, boolean skipIfViewExists) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.buildCreateViewStatement), preStatementNameText, preViewNameText, postViewNameText, builder, viewRef, viewDefinition, SourceModel.Expr.makeBooleanValue(skipIfViewExists)});
+		}
+
+		/**
+		 * Name binding for function: buildCreateViewStatement.
+		 * @see #buildCreateViewStatement(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName buildCreateViewStatement = 
+			QualifiedName.make(
+				CAL_DefaultSqlBuilder.MODULE_NAME, 
+				"buildCreateViewStatement");
+
 		/**
 		 * Helper binding method for function: buildTableAndAliasTextHelper. 
 		 * @param includeAsKeywordWithAlias
@@ -75,6 +161,36 @@ public final class CAL_DefaultSqlBuilder {
 				"buildTableAndAliasTextHelper");
 
 		/**
+		 * Builds the overall SQL statement with optional text included at the start and/or end.
+		 * @param preQueryText (CAL type: <code>Cal.Core.Prelude.Maybe Cal.Utilities.PrettyPrinter.Document</code>)
+		 * @param postQueryText (CAL type: <code>Cal.Core.Prelude.Maybe Cal.Utilities.PrettyPrinter.Document</code>)
+		 * @param builder (CAL type: <code>Cal.Data.Sql.SqlBuilder</code>)
+		 * @param builderState (CAL type: <code>Cal.Data.Sql.SqlBuilderState</code>)
+		 * @param queryOptions (CAL type: <code>[Cal.Data.Sql.QueryOption]</code>)
+		 * @param selectBody (CAL type: <code>Cal.Utilities.PrettyPrinter.Document</code>)
+		 * @param fromBody (CAL type: <code>Cal.Utilities.PrettyPrinter.Document</code>)
+		 * @param whereBody (CAL type: <code>Cal.Utilities.PrettyPrinter.Document</code>)
+		 * @param groupByBody (CAL type: <code>Cal.Utilities.PrettyPrinter.Document</code>)
+		 * @param havingBody (CAL type: <code>Cal.Utilities.PrettyPrinter.Document</code>)
+		 * @param orderByBody (CAL type: <code>Cal.Utilities.PrettyPrinter.Document</code>)
+		 * @return (CAL type: <code>Cal.Utilities.PrettyPrinter.Document</code>) 
+		 */
+		public static final SourceModel.Expr constructQuery(SourceModel.Expr preQueryText, SourceModel.Expr postQueryText, SourceModel.Expr builder, SourceModel.Expr builderState, SourceModel.Expr queryOptions, SourceModel.Expr selectBody, SourceModel.Expr fromBody, SourceModel.Expr whereBody, SourceModel.Expr groupByBody, SourceModel.Expr havingBody, SourceModel.Expr orderByBody) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.constructQuery), preQueryText, postQueryText, builder, builderState, queryOptions, selectBody, fromBody, whereBody, groupByBody, havingBody, orderByBody});
+		}
+
+		/**
+		 * Name binding for function: constructQuery.
+		 * @see #constructQuery(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName constructQuery = 
+			QualifiedName.make(
+				CAL_DefaultSqlBuilder.MODULE_NAME, 
+				"constructQuery");
+
+		/**
 		 * A default SQL builder which attempts to construct SQL using elements common to most popular databases.
 		 * @return (CAL type: <code>Cal.Data.Sql.SqlBuilder</code>) 
 		 */
@@ -95,7 +211,7 @@ public final class CAL_DefaultSqlBuilder {
 		 * Functions for the default SQL builder.
 		 * Other SqlBuilders can be made by replacing the functions in this record with functions which provide database-specific functionality.
 		 * The new record of functions can then be passed to sqlBuilderFromFunctions to construct the SqlBuilder.
-		 * @return (CAL type: <code>{addParens :: Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document, booleanToSql :: Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildCommitStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Utilities.PrettyPrinter.Document, buildCreateDatabaseStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.DatabaseReference -> Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildCreateTableStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.TableDescription -> Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildCreateViewStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.TableReference -> Cal.Data.Sql.Query -> Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildDeleteRowsStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Data.DatabaseMetadata.TableReference -> Cal.Data.Sql.TypedExpr Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildDropDatabaseStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.DatabaseReference -> Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildDropTableStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.TableReference -> Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildDropViewStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.TableReference -> Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildFieldDescription :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.FieldDescription -> Cal.Utilities.PrettyPrinter.Document, buildFieldType :: Cal.Data.SqlType.SqlType -> Cal.Utilities.PrettyPrinter.Document, buildFromClause :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> [Cal.Data.Sql.JoinNode] -> Cal.Utilities.PrettyPrinter.Document, buildGroupByClause :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> [Cal.Data.Sql.Expr] -> Cal.Utilities.PrettyPrinter.Document, buildHavingClause :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Core.Prelude.Maybe Cal.Data.Sql.Expr -> Cal.Utilities.PrettyPrinter.Document, buildInsertQueryValuesStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.TableReference -> Cal.Core.Prelude.Maybe [Cal.Core.Prelude.String] -> Cal.Data.Sql.Query -> Cal.Utilities.PrettyPrinter.Document, buildInsertValuesStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.TableReference -> Cal.Core.Prelude.Maybe [Cal.Core.Prelude.String] -> [Cal.Data.Sql.Expr] -> Cal.Utilities.PrettyPrinter.Document, buildOrderByClause :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> [(Cal.Data.Sql.Expr, Cal.Core.Prelude.Boolean)] -> Cal.Utilities.PrettyPrinter.Document, buildSelectClause :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> [Cal.Data.Sql.QueryOption] -> [(Cal.Data.Sql.Expr, Cal.Core.Prelude.String)] -> Cal.Utilities.PrettyPrinter.Document, buildTableAndAliasText :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Data.Sql.QueryTable -> Cal.Utilities.PrettyPrinter.Document, buildUpdateValuesStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Data.DatabaseMetadata.TableReference -> [Cal.Core.Prelude.String] -> [Cal.Data.Sql.Expr] -> Cal.Data.Sql.TypedExpr Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildWhereClause :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Core.Prelude.Maybe Cal.Data.Sql.Expr -> [Cal.Data.Sql.JoinNode] -> Cal.Utilities.PrettyPrinter.Document, constructQuery :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document, constructUnionQuery :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document -> Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, doubleToSql :: Cal.Core.Prelude.Double -> Cal.Utilities.PrettyPrinter.Document, functionName :: Cal.Data.Sql.DbFunction -> Cal.Core.Prelude.String, functionToSql :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Data.Sql.DbFunction -> [Cal.Data.Sql.Expr] -> Cal.Utilities.PrettyPrinter.Document, intToSql :: Cal.Core.Prelude.Int -> Cal.Utilities.PrettyPrinter.Document, listToSql :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> [Cal.Data.Sql.Expr] -> Cal.Utilities.PrettyPrinter.Document, makeSafeName :: Cal.Core.Prelude.String -> Cal.Core.Prelude.String, nullToSql :: Cal.Utilities.PrettyPrinter.Document, operatorText :: Cal.Data.Sql.DbFunction -> Cal.Core.Prelude.String, parameterToSql :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.Parameter -> Cal.Utilities.PrettyPrinter.Document, prepareQuery :: Cal.Data.Sql.SqlBuilderState -> Cal.Data.Sql.Query -> Cal.Data.Sql.Query, quoteIdentifier :: Cal.Core.Prelude.String -> Cal.Utilities.PrettyPrinter.Document, stringToSql :: Cal.Core.Prelude.String -> Cal.Utilities.PrettyPrinter.Document, timeIntervalToSql :: Cal.Data.Sql.TimeInterval -> Cal.Utilities.PrettyPrinter.Document, timeToSql :: Cal.Utilities.Time.Time -> Cal.Utilities.TimeZone.TimeZone -> Cal.Utilities.PrettyPrinter.Document}</code>) 
+		 * @return (CAL type: <code>{addParens :: Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document, booleanToSql :: Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildAlterTableAddIndexStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.TableReference -> Cal.Core.Prelude.Boolean -> Cal.Core.Prelude.Maybe Cal.Core.Prelude.String -> [Cal.Core.Prelude.String] -> Cal.Utilities.PrettyPrinter.Document, buildCommitStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Utilities.PrettyPrinter.Document, buildCompoundStatement :: [Cal.Utilities.PrettyPrinter.Document] -> Cal.Utilities.PrettyPrinter.Document, buildCreateDatabaseStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.DatabaseReference -> Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildCreateTableStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.TableDescription -> Cal.Core.Prelude.Boolean -> Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildCreateViewStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.TableReference -> Cal.Data.Sql.Query -> Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildDeleteRowsStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Data.DatabaseMetadata.TableReference -> Cal.Data.Sql.TypedExpr Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildDropDatabaseStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.DatabaseReference -> Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildDropTableStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.TableReference -> Cal.Core.Prelude.Boolean -> Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildDropViewStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.TableReference -> Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildFieldDescription :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.FieldDescription -> Cal.Utilities.PrettyPrinter.Document, buildFieldType :: Cal.Data.SqlType.SqlType -> Cal.Utilities.PrettyPrinter.Document, buildFromClause :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> [Cal.Data.Sql.JoinNode] -> Cal.Utilities.PrettyPrinter.Document, buildGroupByClause :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> [Cal.Data.Sql.Expr] -> [(Cal.Data.Sql.Expr, Cal.Core.Prelude.String)] -> Cal.Utilities.PrettyPrinter.Document, buildHavingClause :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Core.Prelude.Maybe Cal.Data.Sql.Expr -> Cal.Utilities.PrettyPrinter.Document, buildInsertQueryValuesStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.TableReference -> Cal.Core.Prelude.Maybe [Cal.Core.Prelude.String] -> Cal.Data.Sql.Query -> Cal.Utilities.PrettyPrinter.Document, buildInsertValuesStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.DatabaseMetadata.TableReference -> Cal.Core.Prelude.Maybe [Cal.Core.Prelude.String] -> [[Cal.Data.Sql.Expr]] -> Cal.Utilities.PrettyPrinter.Document, buildOrderByClause :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> [(Cal.Data.Sql.Expr, Cal.Core.Prelude.Boolean)] -> [(Cal.Data.Sql.Expr, Cal.Core.Prelude.String)] -> Cal.Utilities.PrettyPrinter.Document, buildSelectClause :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> [Cal.Data.Sql.QueryOption] -> [(Cal.Data.Sql.Expr, Cal.Core.Prelude.String)] -> Cal.Utilities.PrettyPrinter.Document, buildTableAndAliasText :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Data.Sql.QueryTable -> Cal.Utilities.PrettyPrinter.Document, buildUpdateValuesStatement :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Data.DatabaseMetadata.TableReference -> [Cal.Core.Prelude.String] -> [Cal.Data.Sql.Expr] -> Cal.Data.Sql.TypedExpr Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, buildWhereClause :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Core.Prelude.Maybe Cal.Data.Sql.Expr -> [Cal.Data.Sql.JoinNode] -> Cal.Utilities.PrettyPrinter.Document, constructQuery :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> [Cal.Data.Sql.QueryOption] -> Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document, constructUnionQuery :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Utilities.PrettyPrinter.Document -> Cal.Utilities.PrettyPrinter.Document -> Cal.Core.Prelude.Boolean -> Cal.Utilities.PrettyPrinter.Document, doubleToSql :: Cal.Core.Prelude.Double -> Cal.Utilities.PrettyPrinter.Document, functionName :: Cal.Data.Sql.DbFunction -> Cal.Core.Prelude.String, functionToSql :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> Cal.Data.Sql.DbFunction -> [Cal.Data.Sql.Expr] -> Cal.Utilities.PrettyPrinter.Document, intToSql :: Cal.Core.Prelude.Int -> Cal.Utilities.PrettyPrinter.Document, listToSql :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.SqlBuilderState -> [Cal.Data.Sql.Expr] -> Cal.Utilities.PrettyPrinter.Document, makeSafeName :: Cal.Core.Prelude.String -> Cal.Core.Prelude.String, nullToSql :: Cal.Utilities.PrettyPrinter.Document, operatorText :: Cal.Data.Sql.DbFunction -> Cal.Core.Prelude.String, parameterToSql :: Cal.Data.Sql.SqlBuilder -> Cal.Data.Sql.Parameter -> Cal.Utilities.PrettyPrinter.Document, prepareQuery :: Cal.Data.Sql.SqlBuilderState -> Cal.Data.Sql.Query -> Cal.Data.Sql.Query, quoteIdentifier :: Cal.Core.Prelude.String -> Cal.Utilities.PrettyPrinter.Document, stringToSql :: Cal.Core.Prelude.String -> Cal.Utilities.PrettyPrinter.Document, timeIntervalToSql :: Cal.Data.Sql.TimeInterval -> Cal.Utilities.PrettyPrinter.Document, timeToSql :: Cal.Utilities.Time.Time -> Cal.Utilities.TimeZone.TimeZone -> Cal.Utilities.PrettyPrinter.Document}</code>) 
 		 */
 		public static final SourceModel.Expr defaultSqlBuilderFunctions() {
 			return 
@@ -110,6 +226,29 @@ public final class CAL_DefaultSqlBuilder {
 			QualifiedName.make(
 				CAL_DefaultSqlBuilder.MODULE_NAME, 
 				"defaultSqlBuilderFunctions");
+
+		/**
+		 * Helper binding method for function: default_buildMultiRowInsertValuesStatement. 
+		 * @param builder
+		 * @param tableRef
+		 * @param maybeDestColumns
+		 * @param rowsOfValues
+		 * @return the SourceModule.expr representing an application of default_buildMultiRowInsertValuesStatement
+		 */
+		public static final SourceModel.Expr default_buildMultiRowInsertValuesStatement(SourceModel.Expr builder, SourceModel.Expr tableRef, SourceModel.Expr maybeDestColumns, SourceModel.Expr rowsOfValues) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.default_buildMultiRowInsertValuesStatement), builder, tableRef, maybeDestColumns, rowsOfValues});
+		}
+
+		/**
+		 * Name binding for function: default_buildMultiRowInsertValuesStatement.
+		 * @see #default_buildMultiRowInsertValuesStatement(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName default_buildMultiRowInsertValuesStatement = 
+			QualifiedName.make(
+				CAL_DefaultSqlBuilder.MODULE_NAME, 
+				"default_buildMultiRowInsertValuesStatement");
 
 		/**
 		 * Returns whether the specified identifier needs to be quoted.
@@ -340,6 +479,6 @@ public final class CAL_DefaultSqlBuilder {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = 2087035338;
+	public static final int javaDocHash = 585031570;
 
 }

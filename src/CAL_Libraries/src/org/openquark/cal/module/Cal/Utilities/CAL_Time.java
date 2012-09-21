@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Utilities.Time module from Java code.
  *  
- * Creation date: Tue Jul 31 15:10:28 PDT 2007
+ * Creation date: Fri Sep 21 16:02:27 PDT 2012
  * --!>
  *  
  */
@@ -57,6 +57,10 @@ public final class CAL_Time {
 		 */
 		public static final QualifiedName Duration = 
 			QualifiedName.make(CAL_Time.MODULE_NAME, "Duration");
+
+		/** Name binding for TypeConsApp: JDate. */
+		public static final QualifiedName JDate = 
+			QualifiedName.make(CAL_Time.MODULE_NAME, "JDate");
 
 		/**
 		 * The type <code>Cal.Utilities.Time.Time</code> represents a point on the time dimension of our universe. The range of time that can be represented
@@ -510,6 +514,24 @@ public final class CAL_Time {
 			QualifiedName.make(CAL_Time.MODULE_NAME, "islamicCalendar");
 
 		/**
+		 * Convert a Java Date to the corresponding Time value.
+		 * @param date (CAL type: <code>Cal.Utilities.Time.JDate</code>)
+		 * @return (CAL type: <code>Cal.Utilities.Time.Time</code>) 
+		 */
+		public static final SourceModel.Expr jDateToTime(SourceModel.Expr date) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jDateToTime), date});
+		}
+
+		/**
+		 * Name binding for function: jDateToTime.
+		 * @see #jDateToTime(org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName jDateToTime = 
+			QualifiedName.make(CAL_Time.MODULE_NAME, "jDateToTime");
+
+		/**
 		 * The Japanese Emperor calendar. The months and days are equivalent to those in the Gregorian calendar,
 		 * but the years are counted from the beginning of the reign of the emperor.
 		 * @return (CAL type: <code>Cal.Utilities.Time.Calendar</code>) 
@@ -707,6 +729,64 @@ public final class CAL_Time {
 			QualifiedName.make(CAL_Time.MODULE_NAME, "nDaysSinceMonday");
 
 		/**
+		 * A <code>Cal.Utilities.Time.Duration</code> representing the specified number of hours.
+		 * @param nHours (CAL type: <code>Cal.Core.Prelude.Double</code>)
+		 * @return (CAL type: <code>Cal.Utilities.Time.Duration</code>) 
+		 */
+		public static final SourceModel.Expr nHoursDuration(SourceModel.Expr nHours) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.nHoursDuration), nHours});
+		}
+
+		/**
+		 * @see #nHoursDuration(org.openquark.cal.compiler.SourceModel.Expr)
+		 * @param nHours
+		 * @return the SourceModel.Expr representing an application of nHoursDuration
+		 */
+		public static final SourceModel.Expr nHoursDuration(double nHours) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.nHoursDuration), SourceModel.Expr.makeDoubleValue(nHours)});
+		}
+
+		/**
+		 * Name binding for function: nHoursDuration.
+		 * @see #nHoursDuration(org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName nHoursDuration = 
+			QualifiedName.make(CAL_Time.MODULE_NAME, "nHoursDuration");
+
+		/**
+		 * A <code>Cal.Utilities.Time.Duration</code> representing the specified number of minutes.
+		 * @param nMinutes (CAL type: <code>Cal.Core.Prelude.Double</code>)
+		 * @return (CAL type: <code>Cal.Utilities.Time.Duration</code>) 
+		 */
+		public static final SourceModel.Expr nMinutesDuration(SourceModel.Expr nMinutes) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.nMinutesDuration), nMinutes});
+		}
+
+		/**
+		 * @see #nMinutesDuration(org.openquark.cal.compiler.SourceModel.Expr)
+		 * @param nMinutes
+		 * @return the SourceModel.Expr representing an application of nMinutesDuration
+		 */
+		public static final SourceModel.Expr nMinutesDuration(double nMinutes) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.nMinutesDuration), SourceModel.Expr.makeDoubleValue(nMinutes)});
+		}
+
+		/**
+		 * Name binding for function: nMinutesDuration.
+		 * @see #nMinutesDuration(org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName nMinutesDuration = 
+			QualifiedName.make(CAL_Time.MODULE_NAME, "nMinutesDuration");
+
+		/**
 		 * Converts an integer number of seconds to a <code>Cal.Utilities.Time.Duration</code>.
 		 * @param nSeconds (CAL type: <code>Cal.Core.Prelude.Long</code>)
 		 *          An integer number of seconds
@@ -845,6 +925,58 @@ public final class CAL_Time {
 			QualifiedName.make(CAL_Time.MODULE_NAME, "serializeTimeValue");
 
 		/**
+		 * Show a Time value using the specified time zone.
+		 * The time zone may be optionally included in the string output as well.
+		 * @param timeZone (CAL type: <code>Cal.Utilities.TimeZone.TimeZone</code>)
+		 * @param includeTimeZone (CAL type: <code>Cal.Core.Prelude.Boolean</code>)
+		 * @param time (CAL type: <code>Cal.Utilities.Time.Time</code>)
+		 * @return (CAL type: <code>Cal.Core.Prelude.String</code>) 
+		 */
+		public static final SourceModel.Expr showTime(SourceModel.Expr timeZone, SourceModel.Expr includeTimeZone, SourceModel.Expr time) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showTime), timeZone, includeTimeZone, time});
+		}
+
+		/**
+		 * @see #showTime(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 * @param timeZone
+		 * @param includeTimeZone
+		 * @param time
+		 * @return the SourceModel.Expr representing an application of showTime
+		 */
+		public static final SourceModel.Expr showTime(SourceModel.Expr timeZone, boolean includeTimeZone, SourceModel.Expr time) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showTime), timeZone, SourceModel.Expr.makeBooleanValue(includeTimeZone), time});
+		}
+
+		/**
+		 * Name binding for function: showTime.
+		 * @see #showTime(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName showTime = 
+			QualifiedName.make(CAL_Time.MODULE_NAME, "showTime");
+
+		/**
+		 * Show a Time value using the UTC time zone.
+		 * @param arg_1 (CAL type: <code>Cal.Utilities.Time.Time</code>)
+		 * @return (CAL type: <code>Cal.Core.Prelude.String</code>) 
+		 */
+		public static final SourceModel.Expr showTimeInUTC(SourceModel.Expr arg_1) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showTimeInUTC), arg_1});
+		}
+
+		/**
+		 * Name binding for function: showTimeInUTC.
+		 * @see #showTimeInUTC(org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName showTimeInUTC = 
+			QualifiedName.make(CAL_Time.MODULE_NAME, "showTimeInUTC");
+
+		/**
 		 * 
 		 * @param duration1 (CAL type: <code>Cal.Utilities.Time.Duration</code>)
 		 * @param duration2 (CAL type: <code>Cal.Utilities.Time.Duration</code>)
@@ -865,6 +997,26 @@ public final class CAL_Time {
 			QualifiedName.make(
 				CAL_Time.MODULE_NAME, 
 				"subtractDurationFromDuration");
+
+		/**
+		 * 
+		 * @param time (CAL type: <code>Cal.Utilities.Time.Time</code>)
+		 * @param duration (CAL type: <code>Cal.Utilities.Time.Duration</code>)
+		 * @return (CAL type: <code>Cal.Utilities.Time.Time</code>) 
+		 *          the <code>Cal.Utilities.Time.Time</code> that results from subtracting a <code>Cal.Utilities.Time.Duration</code> from a <code>Cal.Utilities.Time.Time</code>.
+		 */
+		public static final SourceModel.Expr subtractDurationFromTime(SourceModel.Expr time, SourceModel.Expr duration) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.subtractDurationFromTime), time, duration});
+		}
+
+		/**
+		 * Name binding for function: subtractDurationFromTime.
+		 * @see #subtractDurationFromTime(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName subtractDurationFromTime = 
+			QualifiedName.make(CAL_Time.MODULE_NAME, "subtractDurationFromTime");
 
 		/**
 		 * 
@@ -936,6 +1088,43 @@ public final class CAL_Time {
 			QualifiedName.make(CAL_Time.MODULE_NAME, "timeParts");
 
 		/**
+		 * Convert a Time value to the nearest Java Date value.
+		 * @param time (CAL type: <code>Cal.Utilities.Time.Time</code>)
+		 * @return (CAL type: <code>Cal.Utilities.Time.JDate</code>) 
+		 */
+		public static final SourceModel.Expr timeToJDate(SourceModel.Expr time) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.timeToJDate), time});
+		}
+
+		/**
+		 * Name binding for function: timeToJDate.
+		 * @see #timeToJDate(org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName timeToJDate = 
+			QualifiedName.make(CAL_Time.MODULE_NAME, "timeToJDate");
+
+		/**
+		 * Converts a Time to a number of ticks, as a <code>Cal.Core.Prelude.Long</code>.
+		 * @param time (CAL type: <code>Cal.Utilities.Time.Time</code>)
+		 * @return (CAL type: <code>Cal.Core.Prelude.Long</code>) 
+		 *          ticks
+		 */
+		public static final SourceModel.Expr timeToTicks(SourceModel.Expr time) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.timeToTicks), time});
+		}
+
+		/**
+		 * Name binding for function: timeToTicks.
+		 * @see #timeToTicks(org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName timeToTicks = 
+			QualifiedName.make(CAL_Time.MODULE_NAME, "timeToTicks");
+
+		/**
 		 * Returns a <code>Cal.Utilities.Time.Duration</code> of 0 ticks.
 		 * @return (CAL type: <code>Cal.Utilities.Time.Duration</code>) 
 		 */
@@ -955,6 +1144,6 @@ public final class CAL_Time {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = -227662948;
+	public static final int javaDocHash = 778624145;
 
 }

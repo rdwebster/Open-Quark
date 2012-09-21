@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Experimental.Graphics.Drawing module from Java code.
  *  
- * Creation date: Wed Oct 17 14:59:38 PDT 2007
+ * Creation date: Fri Sep 21 11:23:12 PDT 2012
  * --!>
  *  
  */
@@ -845,31 +845,31 @@ public final class CAL_Drawing {
 		/**
 		 * Helper binding method for function: jHitClip. 
 		 * @param graphics
-		 * @param arg_2
-		 * @param arg_3
-		 * @param arg_4
-		 * @param arg_5
+		 * @param x
+		 * @param y
+		 * @param width
+		 * @param height
 		 * @return the SourceModule.expr representing an application of jHitClip
 		 */
-		public static final SourceModel.Expr jHitClip(SourceModel.Expr graphics, SourceModel.Expr arg_2, SourceModel.Expr arg_3, SourceModel.Expr arg_4, SourceModel.Expr arg_5) {
+		public static final SourceModel.Expr jHitClip(SourceModel.Expr graphics, SourceModel.Expr x, SourceModel.Expr y, SourceModel.Expr width, SourceModel.Expr height) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jHitClip), graphics, arg_2, arg_3, arg_4, arg_5});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jHitClip), graphics, x, y, width, height});
 		}
 
 		/**
 		 * @see #jHitClip(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
 		 * @param graphics
-		 * @param arg_2
-		 * @param arg_3
-		 * @param arg_4
-		 * @param arg_5
+		 * @param x
+		 * @param y
+		 * @param width
+		 * @param height
 		 * @return the SourceModel.Expr representing an application of jHitClip
 		 */
-		public static final SourceModel.Expr jHitClip(SourceModel.Expr graphics, int arg_2, int arg_3, int arg_4, int arg_5) {
+		public static final SourceModel.Expr jHitClip(SourceModel.Expr graphics, int x, int y, int width, int height) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jHitClip), graphics, SourceModel.Expr.makeIntValue(arg_2), SourceModel.Expr.makeIntValue(arg_3), SourceModel.Expr.makeIntValue(arg_4), SourceModel.Expr.makeIntValue(arg_5)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jHitClip), graphics, SourceModel.Expr.makeIntValue(x), SourceModel.Expr.makeIntValue(y), SourceModel.Expr.makeIntValue(width), SourceModel.Expr.makeIntValue(height)});
 		}
 
 		/**
@@ -1218,6 +1218,6 @@ public final class CAL_Drawing {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = 1448324154;
+	public static final int javaDocHash = -1254323002;
 
 }

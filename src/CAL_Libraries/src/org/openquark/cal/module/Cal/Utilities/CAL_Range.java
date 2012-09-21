@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Utilities.Range module from Java code.
  *  
- * Creation date: Fri Mar 09 12:29:15 PST 2007
+ * Creation date: Fri Sep 21 16:02:40 PDT 2012
  * --!>
  *  
  */
@@ -694,6 +694,25 @@ public final class CAL_Range {
 			QualifiedName.make(CAL_Range.MODULE_NAME, "rightEndpoint");
 
 		/**
+		 * Shows the range using the specified function to show endpoint values.
+		 * @param showValue (CAL type: <code>a -> Cal.Core.Prelude.String</code>)
+		 * @param range (CAL type: <code>Cal.Utilities.Range.Range a</code>)
+		 * @return (CAL type: <code>Cal.Core.Prelude.String</code>) 
+		 */
+		public static final SourceModel.Expr showRangeWith(SourceModel.Expr showValue, SourceModel.Expr range) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showRangeWith), showValue, range});
+		}
+
+		/**
+		 * Name binding for function: showRangeWith.
+		 * @see #showRangeWith(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName showRangeWith = 
+			QualifiedName.make(CAL_Range.MODULE_NAME, "showRangeWith");
+
+		/**
 		 * Strips all redundant ranges from the specified list.
 		 * <p>
 		 * Complexity: time O(n), space O(n)
@@ -807,6 +826,6 @@ public final class CAL_Range {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = -831709652;
+	public static final int javaDocHash = -135589108;
 
 }
