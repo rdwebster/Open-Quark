@@ -1,0 +1,246 @@
+
+/*
+ * M4.cal
+ * Creation date: Sept. 21 2012.
+ * By: Michal Dobrogost
+ */
+
+/*
+ * This module contains test cases for CAL that were triggered by user reported bugs.
+ */
+
+////////////////////////////////////////////////
+module Cal.Test.General.M4;
+
+import Cal.Core.Prelude using
+    typeConstructor = Boolean, CalValue, Int, Integer, Maybe, String, Unit;
+    function = assert, const, eager, error, mod, not, seq, unsafeFromCalValue;
+    dataConstructor = False, Just, Nothing, True, Unit;
+    typeClass = Eq, Ord, Outputable;
+    ;
+
+import Cal.Core.String;
+
+import Cal.Core.Debug using
+    typeClass = Show;
+    ;
+
+/** Run all tests. */
+testModule :: Boolean;
+public testModule =
+       (assert $ testSourcePos == "<done>")
+    && (assert $ boolTest False False == "abc")
+    && (assert $ boolTest False True  == "def")
+    && (assert $ boolTest True False  == "abc")
+    && (assert $ boolTest True True   == "abc")
+    && (assert $ stringTest == 3)
+    && (assert $ plingSharedMore == "<done>")
+    && (assert $ plingShared == "<done>")
+    && (assert $ pling == "<done>")
+    && (assert $ noPling == "<done>");
+    
+///////////////////////////////////////////////////////////////////////////////
+// Test cancellation (ie. run test, cancel it with <enter>, then retry). 
+
+//test :: Boolean;
+//test = isEven (makeNat 100000000) True;
+//
+//isEven :: Nat -> Boolean -> Boolean;
+//isEven !x !accum =
+//    case x of
+//    Zero -> accum;
+//    OnePlus x ->
+//        isEven x (not accum);
+//    ;
+//
+//makeNat :: Int -> Nat;
+//makeNat !x =
+//    if x > 0 then
+//        OnePlus (makeNat (x-1))
+//    else
+//        Zero;
+//
+//data Nat
+//    = Zero
+//    | OnePlus x :: Nat
+//    ;
+
+//test :: Boolean;
+//test = isEven 100000000 True;
+//
+//isEven :: Integer -> Boolean -> Boolean;
+//isEven !x !accum =
+//    if x == 0 then
+//        accum
+//    else
+//        isEven (x-1) (not accum);
+    
+
+///////////////////////////////////////////////////////////////////////////////
+// Currently broken : `seq` confuses us about the type of r.
+
+//test :: [Boolean];
+//test = readList ["True", "False"];
+//
+//readList :: Read a => [String] -> [a];
+//readList xs =
+//    case xs of
+//    [] -> [];
+//    x : rest ->
+//        let
+//            r = read x;
+//        in
+//            r `seq` (r : readList rest);
+//    ;
+//
+//class Read a where
+//    read :: String -> a;
+//    ;
+//
+//instance Read Boolean where
+//    read = readBoolean;
+//    ;
+//
+//readBoolean :: String -> Boolean;
+//readBoolean !str =
+//    if str == "True" then
+//        True
+//    else if str == "False" then
+//        False
+//    else
+//        error ("readBoolean: can't read '" ++ str ++ "'.");
+
+///////////////////////////////////////////////////////////////////////////////
+
+testSourcePos :: String;
+testSourcePos = SourcePos "" 1 2 `seq` "<done>";
+
+data public SourcePos = 
+    /**
+     * Encapsulates a source position.
+     * 
+     * Note that {@code line@} and {@code column@} are plinged, so Parsec's forcePos is not
+     * required. 
+     * 
+     * @arg name the name of the source.
+     * @arg line the line number.
+     * @arg column the column number.
+     */
+    private SourcePos 
+        name    :: String 
+        line    :: !Int 
+        column  :: !Int
+    deriving Eq, Ord;     
+
+///////////////////////////////////////////////////////////////////////////////
+
+boolTest :: Boolean -> Boolean -> String;
+boolTest !flag1 !flag2 = 
+    let
+        condition :: Boolean;
+        condition = flag1 || Prelude.not flag2;
+    in
+        if condition then
+            "abc"
+        else
+            "def";
+
+///////////////////////////////////////////////////////////////////////////////
+// Currently broken
+// fix (1) make RTResultFunction more resiliant to null values.
+// fix (2) model nullCalValue as an RTData so that it returns null directly
+//         without needing to evaluate anything.
+
+//foreign unsafe import jvm "isNull" isNullCalValue :: CalValue -> Boolean;
+//foreign unsafe import jvm "null" nullCalValue :: CalValue;
+//
+//nullTest :: Maybe String;
+//public nullTest = 
+//    let
+//        val :: CalValue;
+//        val =  nullCalValue;
+//    in
+//        if isNullCalValue val then Nothing
+//        else Just $ unsafeFromCalValue val;
+
+///////////////////////////////////////////////////////////////////////////////
+
+stringTest :: Int;
+stringTest = 
+    String.length (Prelude.max "abc" "def");
+
+///////////////////////////////////////////////////////////////////////////////
+
+data PlingSharedMoreType =
+    PlingSharedMoreConst1
+         // A run-time error occurs when creating values of this type 
+         // if the field here is plinged.
+         shared :: !Prelude.CalValue
+         notShared1 :: !Prelude.CalValue
+    | PlingSharedMoreConst2
+         shared :: !Prelude.CalValue
+         notShared2 :: !Prelude.CalValue
+    | PlingSharedMoreConst3
+         shared :: !Prelude.CalValue
+    | PlingSharedMoreConst4
+         notShared3 :: !Prelude.CalValue
+    ;
+
+plingSharedMore :: String;
+plingSharedMore = 
+    (PlingSharedMoreConst1 $ Prelude.toCalValue "test")
+    `seq`
+    (PlingSharedMoreConst2 $ Prelude.toCalValue "test")
+    `seq`
+    (PlingSharedMoreConst3 $ Prelude.toCalValue "test")
+    `seq`
+    (PlingSharedMoreConst4 $ Prelude.toCalValue "test")
+    `seq`
+    "<done>";
+
+///////////////////////////////////////////////////////////////////////////////
+
+data PlingSharedType =
+    PlingSharedConst1
+         // A run-time error occurs when creating values of this type 
+         // if the field here is plinged.
+         shared :: !Prelude.CalValue
+    | PlingSharedConst2
+         shared :: !Prelude.CalValue    
+    ;
+
+plingShared :: String;
+plingShared = 
+    (PlingSharedConst1 $ Prelude.toCalValue "test")
+    `seq`
+    (PlingSharedConst2 $ Prelude.toCalValue "test")
+    `seq`
+    "<done>";
+
+///////////////////////////////////////////////////////////////////////////////
+
+data PlingType =
+    PlingConst
+         // A run-time error occurs when creating values of this type 
+         // if the field here is plinged.
+         plingField :: !Prelude.CalValue
+    ;
+         
+pling :: String;
+pling = 
+    (PlingConst $ Prelude.toCalValue "test")
+    `seq`
+    "<done>";
+
+///////////////////////////////////////////////////////////////////////////////
+
+data NoPlingType =
+    NoPlingConst
+        noPlingField :: Prelude.CalValue
+    ;
+
+noPling :: String;
+noPling = 
+    (NoPlingConst $ Prelude.toCalValue "test")
+    `seq`
+    "<done>";

@@ -49,6 +49,7 @@ import Cal.Core.Prelude using
 import Cal.Core.Char;    
 import Cal.Core.Dynamic;
 import Cal.Test.General.M2;
+import Cal.Test.General.M4;
 import Cal.Collections.List;
 import Cal.Core.String;
 import Cal.Test.Core.Debug_Tests;    
@@ -134,5 +135,6 @@ public testModule =
     && assert LegacyTuple.testLegacyTupleModule
     && assert LocalPatternMatch.testModule
     && assert DerivedInstance.testModule
+    && assert M4.testModule
     || error "CAL_Platorm_TestSuite failed.";
 

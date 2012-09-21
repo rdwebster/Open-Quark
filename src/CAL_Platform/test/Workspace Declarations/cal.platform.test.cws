@@ -74,6 +74,7 @@ StandardVault Cal.Test.General.LegacyTuple
 StandardVault Cal.Test.General.M1
 StandardVault Cal.Test.General.M2
 StandardVault Cal.Test.General.M3
+StandardVault Cal.Test.General.M4
 StandardVault Cal.Test.General.Nofib
 StandardVault Cal.Collections.Queue
 StandardVault Cal.Test.General.RecordTests
