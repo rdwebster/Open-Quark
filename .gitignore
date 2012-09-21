@@ -5,3 +5,4 @@
 *.cmi
 
 src/CAL_Platform/src/lecc_runtime
+src/CAL_Libraries/src/lecc_runtime
