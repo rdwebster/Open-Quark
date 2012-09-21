@@ -4848,8 +4848,9 @@ final class JavaDefinitionBuilder {
          *          this.members[1] = member1;
          *          ...
          *      };
+         * @throws CodeGenerationException 
          */
-        private void createConstructor_allArgs() {
+        private void createConstructor_allArgs() throws CodeGenerationException {
             int modifiers = Modifier.PUBLIC;
             int nArgs = dc.getArity();
             boolean addEC = LECCMachineConfiguration.passExecContextToDataConstructors();
@@ -4857,6 +4858,9 @@ final class JavaDefinitionBuilder {
                 nArgs++;
             }
 
+            // Get arg strictness.
+            boolean[] fieldStrictness = dc.getArgStrictness();
+            
             // Get arg types - all RTValues.
             JavaTypeName[] argTypes = new JavaTypeName[nArgs];
             Arrays.fill(argTypes, JavaTypeNames.RTVALUE);
@@ -4881,7 +4885,20 @@ final class JavaDefinitionBuilder {
             for (final FieldName fn : commonFields) {
                 int fieldIndex = dc.getFieldIndex(fn);
                 superClassConstructorArgValues[j] = argVars[fieldIndex];
-                superClassConstructorArgTypes[j] = argTypes[fieldIndex];
+                
+                // MKD 2012.09.18: 
+                //   Replaced "superClassConstructorArgTypes[j] = argTypes[fieldIndex];" with a lookup of
+                //   the actual super class type. The super class constructor argument type can be different
+                //   from RTValue (eg. CalValue).  This happens when we have a plinged CalValue field, ie:
+                //   
+                //   data PlingType = PlingConst plingField :: !CalValue;
+                //
+                if (fieldStrictness[fieldIndex]) {
+                	superClassConstructorArgTypes[j] = SCJavaDefn.typeExprToTypeName(fieldTypes[fieldIndex]);
+                } else {
+                	superClassConstructorArgTypes[j] = argTypes[fieldIndex];
+                }
+                
                 j++;
             }
 
@@ -4958,7 +4975,20 @@ final class JavaDefinitionBuilder {
             for (final FieldName fn : commonFields) {
                 int fieldIndex = dc.getFieldIndex(fn);
                 superClassConstructorArgValues[j] = argVars[fieldIndex];
-                superClassConstructorArgTypes[j] = argTypes[fieldIndex];
+                
+                // MKD 2012.09.18: 
+                //   Replaced "superClassConstructorArgTypes[j] = argTypes[fieldIndex];" with a lookup of
+                //   the actual super class type. The super class constructor argument type can be different
+                //   from RTValue (eg. CalValue).  This happens when we have a plinged CalValue field, ie:
+                //   
+                //   data PlingType = PlingConst plingField :: !CalValue;
+                //
+                if (fieldStrictness[fieldIndex]) {
+                	superClassConstructorArgTypes[j] = SCJavaDefn.typeExprToTypeName(fieldTypes[fieldIndex]);
+                } else {
+                	superClassConstructorArgTypes[j] = argTypes[fieldIndex];
+                }
+                
                 j++;
             }
 
