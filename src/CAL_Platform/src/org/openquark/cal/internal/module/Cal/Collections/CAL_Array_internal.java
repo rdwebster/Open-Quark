@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Collections.Array module from Java code.
  *  
- * Creation date: Fri Mar 16 13:11:57 PST 2007
+ * Creation date: Fri Sep 21 16:17:26 PDT 2012
  * --!>
  *  
  */
@@ -969,14 +969,14 @@ public final class CAL_Array_internal {
 
 		/**
 		 * Helper binding method for function: compareArray. 
-		 * @param array1
-		 * @param array2
+		 * @param arg_1
+		 * @param arg_2
 		 * @return the SourceModule.expr representing an application of compareArray
 		 */
-		public static final SourceModel.Expr compareArray(SourceModel.Expr array1, SourceModel.Expr array2) {
+		public static final SourceModel.Expr compareArray(SourceModel.Expr arg_1, SourceModel.Expr arg_2) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.compareArray), array1, array2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.compareArray), arg_1, arg_2});
 		}
 
 		/**
@@ -3078,6 +3078,6 @@ public final class CAL_Array_internal {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = 200354352;
+	public static final int javaDocHash = -604099718;
 
 }

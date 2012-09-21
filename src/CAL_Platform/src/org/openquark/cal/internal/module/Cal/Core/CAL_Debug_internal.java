@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Core.Debug module from Java code.
  *  
- * Creation date: Mon Oct 15 14:57:09 PDT 2007
+ * Creation date: Fri Sep 21 16:18:15 PDT 2012
  * --!>
  *  
  */
@@ -561,24 +561,24 @@ public final class CAL_Debug_internal {
 
 		/**
 		 * Used for derived Show instances for foreign types with implementation type byte.
-		 * @param arg_1 (CAL type: <code>Cal.Core.Prelude.Byte</code>)
+		 * @param b (CAL type: <code>Cal.Core.Prelude.Byte</code>)
 		 * @return (CAL type: <code>Cal.Core.Prelude.String</code>) 
 		 */
-		public static final SourceModel.Expr showByte(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr showByte(SourceModel.Expr b) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showByte), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showByte), b});
 		}
 
 		/**
 		 * @see #showByte(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param b
 		 * @return the SourceModel.Expr representing an application of showByte
 		 */
-		public static final SourceModel.Expr showByte(byte arg_1) {
+		public static final SourceModel.Expr showByte(byte b) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showByte), SourceModel.Expr.makeByteValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showByte), SourceModel.Expr.makeByteValue(b)});
 		}
 
 		/**
@@ -656,24 +656,24 @@ public final class CAL_Debug_internal {
 
 		/**
 		 * Used for derived Show instances for foreign types with implementation type double.
-		 * @param arg_1 (CAL type: <code>Cal.Core.Prelude.Double</code>)
+		 * @param d (CAL type: <code>Cal.Core.Prelude.Double</code>)
 		 * @return (CAL type: <code>Cal.Core.Prelude.String</code>) 
 		 */
-		public static final SourceModel.Expr showDouble(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr showDouble(SourceModel.Expr d) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showDouble), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showDouble), d});
 		}
 
 		/**
 		 * @see #showDouble(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param d
 		 * @return the SourceModel.Expr representing an application of showDouble
 		 */
-		public static final SourceModel.Expr showDouble(double arg_1) {
+		public static final SourceModel.Expr showDouble(double d) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showDouble), SourceModel.Expr.makeDoubleValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showDouble), SourceModel.Expr.makeDoubleValue(d)});
 		}
 
 		/**
@@ -703,24 +703,24 @@ public final class CAL_Debug_internal {
 
 		/**
 		 * Used for derived Show instances for foreign types with implementation type float.
-		 * @param arg_1 (CAL type: <code>Cal.Core.Prelude.Float</code>)
+		 * @param f (CAL type: <code>Cal.Core.Prelude.Float</code>)
 		 * @return (CAL type: <code>Cal.Core.Prelude.String</code>) 
 		 */
-		public static final SourceModel.Expr showFloat(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr showFloat(SourceModel.Expr f) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showFloat), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showFloat), f});
 		}
 
 		/**
 		 * @see #showFloat(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param f
 		 * @return the SourceModel.Expr representing an application of showFloat
 		 */
-		public static final SourceModel.Expr showFloat(float arg_1) {
+		public static final SourceModel.Expr showFloat(float f) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showFloat), SourceModel.Expr.makeFloatValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showFloat), SourceModel.Expr.makeFloatValue(f)});
 		}
 
 		/**
@@ -732,24 +732,24 @@ public final class CAL_Debug_internal {
 
 		/**
 		 * Used for derived Show instances for foreign types with implementation type boolean.
-		 * @param arg_1 (CAL type: <code>Cal.Core.Prelude.Boolean</code>)
+		 * @param b (CAL type: <code>Cal.Core.Prelude.Boolean</code>)
 		 * @return (CAL type: <code>Cal.Core.Prelude.String</code>) 
 		 */
-		public static final SourceModel.Expr showForeignBoolean(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr showForeignBoolean(SourceModel.Expr b) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showForeignBoolean), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showForeignBoolean), b});
 		}
 
 		/**
 		 * @see #showForeignBoolean(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param b
 		 * @return the SourceModel.Expr representing an application of showForeignBoolean
 		 */
-		public static final SourceModel.Expr showForeignBoolean(boolean arg_1) {
+		public static final SourceModel.Expr showForeignBoolean(boolean b) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showForeignBoolean), SourceModel.Expr.makeBooleanValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showForeignBoolean), SourceModel.Expr.makeBooleanValue(b)});
 		}
 
 		/**
@@ -763,24 +763,24 @@ public final class CAL_Debug_internal {
 
 		/**
 		 * Used for derived Show instances for foreign types with implementation type char.
-		 * @param arg_1 (CAL type: <code>Cal.Core.Prelude.Char</code>)
+		 * @param c (CAL type: <code>Cal.Core.Prelude.Char</code>)
 		 * @return (CAL type: <code>Cal.Core.Prelude.String</code>) 
 		 */
-		public static final SourceModel.Expr showForeignChar(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr showForeignChar(SourceModel.Expr c) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showForeignChar), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showForeignChar), c});
 		}
 
 		/**
 		 * @see #showForeignChar(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param c
 		 * @return the SourceModel.Expr representing an application of showForeignChar
 		 */
-		public static final SourceModel.Expr showForeignChar(char arg_1) {
+		public static final SourceModel.Expr showForeignChar(char c) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showForeignChar), SourceModel.Expr.makeCharValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showForeignChar), SourceModel.Expr.makeCharValue(c)});
 		}
 
 		/**
@@ -794,24 +794,24 @@ public final class CAL_Debug_internal {
 
 		/**
 		 * Used for derived Show instances for foreign types with implementation type int.
-		 * @param arg_1 (CAL type: <code>Cal.Core.Prelude.Int</code>)
+		 * @param i (CAL type: <code>Cal.Core.Prelude.Int</code>)
 		 * @return (CAL type: <code>Cal.Core.Prelude.String</code>) 
 		 */
-		public static final SourceModel.Expr showInt(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr showInt(SourceModel.Expr i) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showInt), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showInt), i});
 		}
 
 		/**
 		 * @see #showInt(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param i
 		 * @return the SourceModel.Expr representing an application of showInt
 		 */
-		public static final SourceModel.Expr showInt(int arg_1) {
+		public static final SourceModel.Expr showInt(int i) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showInt), SourceModel.Expr.makeIntValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showInt), SourceModel.Expr.makeIntValue(i)});
 		}
 
 		/**
@@ -939,13 +939,13 @@ public final class CAL_Debug_internal {
 		 * Used for derived Show instances for foreign types with an object implementation type.
 		 * note: we want to handle the null object values here without terminating in an error
 		 * and thus don't implement as java.lang.Object.toString().
-		 * @param arg_1 (CAL type: <code>Cal.Core.Prelude.JObject</code>)
+		 * @param obj (CAL type: <code>Cal.Core.Prelude.JObject</code>)
 		 * @return (CAL type: <code>Cal.Core.Prelude.String</code>) 
 		 */
-		public static final SourceModel.Expr showJObject(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr showJObject(SourceModel.Expr obj) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showJObject), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showJObject), obj});
 		}
 
 		/**
@@ -975,24 +975,24 @@ public final class CAL_Debug_internal {
 
 		/**
 		 * Used for derived Show instances for foreign types with implementation type long.
-		 * @param arg_1 (CAL type: <code>Cal.Core.Prelude.Long</code>)
+		 * @param i (CAL type: <code>Cal.Core.Prelude.Long</code>)
 		 * @return (CAL type: <code>Cal.Core.Prelude.String</code>) 
 		 */
-		public static final SourceModel.Expr showLong(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr showLong(SourceModel.Expr i) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showLong), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showLong), i});
 		}
 
 		/**
 		 * @see #showLong(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param i
 		 * @return the SourceModel.Expr representing an application of showLong
 		 */
-		public static final SourceModel.Expr showLong(long arg_1) {
+		public static final SourceModel.Expr showLong(long i) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showLong), SourceModel.Expr.makeLongValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showLong), SourceModel.Expr.makeLongValue(i)});
 		}
 
 		/**
@@ -1058,24 +1058,24 @@ public final class CAL_Debug_internal {
 
 		/**
 		 * Used for derived Show instances for foreign types with implementation type short.
-		 * @param arg_1 (CAL type: <code>Cal.Core.Prelude.Short</code>)
+		 * @param s (CAL type: <code>Cal.Core.Prelude.Short</code>)
 		 * @return (CAL type: <code>Cal.Core.Prelude.String</code>) 
 		 */
-		public static final SourceModel.Expr showShort(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr showShort(SourceModel.Expr s) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showShort), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showShort), s});
 		}
 
 		/**
 		 * @see #showShort(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param s
 		 * @return the SourceModel.Expr representing an application of showShort
 		 */
-		public static final SourceModel.Expr showShort(short arg_1) {
+		public static final SourceModel.Expr showShort(short s) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showShort), SourceModel.Expr.makeShortValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.showShort), SourceModel.Expr.makeShortValue(s)});
 		}
 
 		/**
@@ -1167,6 +1167,6 @@ public final class CAL_Debug_internal {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = 1441503181;
+	public static final int javaDocHash = 519583776;
 
 }

@@ -298,8 +298,8 @@ public class PrimOps extends Object {
         
         addOp (CAL_Prelude_internal.Functions.calValueToObject, PRIMOP_CAL_VALUE_TO_OBJECT, 1);
         addOp (CAL_Prelude_internal.Functions.objectToCalValue, PRIMOP_OBJECT_TO_CAL_VALUE, 1);
-        addOp (CAL_Prelude_internal.Functions.makeComparator, PRIMOP_MAKE_COMPARATOR, 1);
-        addOp (CAL_Prelude_internal.Functions.makeEquivalenceRelation, PRIMOP_MAKE_EQUIVALENCE_RELATION, 1);
+        addOp (CAL_Prelude.Functions.makeComparator, PRIMOP_MAKE_COMPARATOR, 1);
+        addOp (CAL_Prelude.Functions.makeEquivalenceRelation, PRIMOP_MAKE_EQUIVALENCE_RELATION, 1);
         addOp (CAL_Prelude.Functions.makeCalFunction, PRIMOP_MAKE_CAL_FUNCTION, 1);
                         
         addOp (CAL_Record_internal.Functions.fieldNamesPrimitive, PRIMOP_FIELD_NAMES, 1);

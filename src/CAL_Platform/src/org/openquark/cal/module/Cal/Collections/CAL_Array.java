@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Collections.Array module from Java code.
  *  
- * Creation date: Fri Mar 16 13:11:56 PST 2007
+ * Creation date: Fri Sep 21 16:17:21 PDT 2012
  * --!>
  *  
  */
@@ -504,6 +504,37 @@ public final class CAL_Array {
 		 */
 		public static final QualifiedName chop = 
 			QualifiedName.make(CAL_Array.MODULE_NAME, "chop");
+
+		/**
+		 * Compares two arrays lexicographically using a comparator function. 
+		 * The empty array is considered less that any non-empty array.
+		 * <p>
+		 * Note that <code>Cal.Collections.Array.compareBy Cal.Core.Prelude.compare == (compare :: Ord a =&gt; Array a -&gt; Array a -&gt; Ordering)</code>.
+		 * Thus <code>Cal.Collections.Array.compareBy</code> can be considered as a generalization of the class method <code>Cal.Core.Prelude.compare</code>
+		 * when comparing 2 arrays.
+		 * 
+		 * 
+		 * <dl><dt><b>See Also:</b>
+		 * <dd><b>Functions and Class Methods:</b> Cal.Core.Prelude.compare
+		 * </dl>
+		 * 
+		 * @param comparator (CAL type: <code>a -> a -> Cal.Core.Prelude.Ordering</code>)
+		 * @param array1 (CAL type: <code>Cal.Collections.Array.Array a</code>)
+		 * @param array2 (CAL type: <code>Cal.Collections.Array.Array a</code>)
+		 * @return (CAL type: <code>Cal.Core.Prelude.Ordering</code>) 
+		 */
+		public static final SourceModel.Expr compareBy(SourceModel.Expr comparator, SourceModel.Expr array1, SourceModel.Expr array2) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.compareBy), comparator, array1, array2});
+		}
+
+		/**
+		 * Name binding for function: compareBy.
+		 * @see #compareBy(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName compareBy = 
+			QualifiedName.make(CAL_Array.MODULE_NAME, "compareBy");
 
 		/**
 		 * Returns a compressed version of a byte array.
@@ -2905,6 +2936,6 @@ public final class CAL_Array {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = 1360671228;
+	public static final int javaDocHash = -1590712070;
 
 }

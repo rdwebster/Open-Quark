@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Utilities.Random module from Java code.
  *  
- * Creation date: Fri Mar 16 13:11:58 PST 2007
+ * Creation date: Fri Sep 21 16:17:32 PDT 2012
  * --!>
  *  
  */
@@ -50,24 +50,24 @@ public final class CAL_Random_internal {
 	public static final class Functions {
 		/**
 		 * foreign constructor java.util.Random
-		 * @param arg_1 (CAL type: <code>Cal.Core.Prelude.Long</code>)
+		 * @param seed (CAL type: <code>Cal.Core.Prelude.Long</code>)
 		 * @return (CAL type: <code>Cal.Utilities.Random.JRandom</code>) 
 		 */
-		public static final SourceModel.Expr random_new_Long(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr random_new_Long(SourceModel.Expr seed) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.random_new_Long), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.random_new_Long), seed});
 		}
 
 		/**
 		 * @see #random_new_Long(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param seed
 		 * @return the SourceModel.Expr representing an application of random_new_Long
 		 */
-		public static final SourceModel.Expr random_new_Long(long arg_1) {
+		public static final SourceModel.Expr random_new_Long(long seed) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.random_new_Long), SourceModel.Expr.makeLongValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.random_new_Long), SourceModel.Expr.makeLongValue(seed)});
 		}
 
 		/**
@@ -182,25 +182,25 @@ public final class CAL_Random_internal {
 		/**
 		 * foreign method java.util.Random.nextInt
 		 * @param jRandom (CAL type: <code>Cal.Utilities.Random.JRandom</code>)
-		 * @param arg_2 (CAL type: <code>Cal.Core.Prelude.Int</code>)
+		 * @param n (CAL type: <code>Cal.Core.Prelude.Int</code>)
 		 * @return (CAL type: <code>Cal.Core.Prelude.Int</code>) 
 		 */
-		public static final SourceModel.Expr random_nextInt_Int(SourceModel.Expr jRandom, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr random_nextInt_Int(SourceModel.Expr jRandom, SourceModel.Expr n) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.random_nextInt_Int), jRandom, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.random_nextInt_Int), jRandom, n});
 		}
 
 		/**
 		 * @see #random_nextInt_Int(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
 		 * @param jRandom
-		 * @param arg_2
+		 * @param n
 		 * @return the SourceModel.Expr representing an application of random_nextInt_Int
 		 */
-		public static final SourceModel.Expr random_nextInt_Int(SourceModel.Expr jRandom, int arg_2) {
+		public static final SourceModel.Expr random_nextInt_Int(SourceModel.Expr jRandom, int n) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.random_nextInt_Int), jRandom, SourceModel.Expr.makeIntValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.random_nextInt_Int), jRandom, SourceModel.Expr.makeIntValue(n)});
 		}
 
 		/**
@@ -237,6 +237,6 @@ public final class CAL_Random_internal {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = 1014536574;
+	public static final int javaDocHash = -1348359598;
 
 }

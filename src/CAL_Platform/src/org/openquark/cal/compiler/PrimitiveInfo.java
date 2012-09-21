@@ -174,8 +174,8 @@ final class PrimitiveInfo {
         
         addBuiltInFunction(CAL_Prelude_internal.Functions.objectToCalValue);
         addBuiltInFunction(CAL_Prelude_internal.Functions.calValueToObject);
-        addBuiltInFunction(CAL_Prelude_internal.Functions.makeComparator);
-        addBuiltInFunction(CAL_Prelude_internal.Functions.makeEquivalenceRelation);
+        addBuiltInFunction(CAL_Prelude.Functions.makeComparator);
+        addBuiltInFunction(CAL_Prelude.Functions.makeEquivalenceRelation);
         addBuiltInFunction(CAL_Prelude.Functions.makeCalFunction);
                
         addBuiltInFunction(CAL_Prelude_internal.Functions.equalsRecord);

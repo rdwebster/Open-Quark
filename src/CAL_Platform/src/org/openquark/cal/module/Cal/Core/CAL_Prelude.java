@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Core.Prelude module from Java code.
  *  
- * Creation date: Tue Oct 23 19:09:08 PDT 2007
+ * Creation date: Fri Sep 21 16:36:36 PDT 2012
  * --!>
  *  
  */
@@ -673,6 +673,18 @@ public final class CAL_Prelude {
 		 */
 		public static final QualifiedName JCollection = 
 			QualifiedName.make(CAL_Prelude.MODULE_NAME, "JCollection");
+
+		/**
+		 * <code>Cal.Core.Prelude.JComparator</code> is a foreign type corresponding to the Comparator Java interface which is used for ordering values.
+		 */
+		public static final QualifiedName JComparator = 
+			QualifiedName.make(CAL_Prelude.MODULE_NAME, "JComparator");
+
+		/**
+		 * <code>Cal.Core.Prelude.JEquivalenceRelation</code> is a foreign type corresponding to the EquivalenceRelation Java interface which defines an equivalence relation.
+		 */
+		public static final QualifiedName JEquivalenceRelation = 
+			QualifiedName.make(CAL_Prelude.MODULE_NAME, "JEquivalenceRelation");
 
 		/**
 		 * A CAL foreign type corresponding to the Java type <code>java.util.List</code>.
@@ -3381,6 +3393,44 @@ public final class CAL_Prelude {
 			QualifiedName.make(CAL_Prelude.MODULE_NAME, "makeCalFunction");
 
 		/**
+		 * Makes a comparator that uses the ordering function argument to implement the Java comparator's compare method.
+		 * @param arg_1 (CAL type: <code>a -> a -> Cal.Core.Prelude.Ordering</code>)
+		 * @return (CAL type: <code>Cal.Core.Prelude.JComparator</code>) 
+		 */
+		public static final SourceModel.Expr makeComparator(SourceModel.Expr arg_1) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.makeComparator), arg_1});
+		}
+
+		/**
+		 * Name binding for function: makeComparator.
+		 * @see #makeComparator(org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName makeComparator = 
+			QualifiedName.make(CAL_Prelude.MODULE_NAME, "makeComparator");
+
+		/**
+		 * Makes a Java EquivalenceRelation implementation which uses the specified CAL function to compare values.
+		 * @param arg_1 (CAL type: <code>a -> a -> Cal.Core.Prelude.Boolean</code>)
+		 * @return (CAL type: <code>Cal.Core.Prelude.JEquivalenceRelation</code>) 
+		 */
+		public static final SourceModel.Expr makeEquivalenceRelation(SourceModel.Expr arg_1) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.makeEquivalenceRelation), arg_1});
+		}
+
+		/**
+		 * Name binding for function: makeEquivalenceRelation.
+		 * @see #makeEquivalenceRelation(org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName makeEquivalenceRelation = 
+			QualifiedName.make(
+				CAL_Prelude.MODULE_NAME, 
+				"makeEquivalenceRelation");
+
+		/**
 		 * <code>makeQuery defaultResult f x</code> behaves as follows: if <code>x</code>'s type is the same as <code>f</code>'s
 		 * argument type, use <code>f</code> to interrogate <code>x</code>; otherwise return <code>defaultResult</code>.
 		 * <p>
@@ -5390,6 +5440,6 @@ public final class CAL_Prelude {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = -2012184564;
+	public static final int javaDocHash = -1027992625;
 
 }

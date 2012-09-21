@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Collections.Map module from Java code.
  *  
- * Creation date: Fri Mar 16 13:11:57 PST 2007
+ * Creation date: Fri Sep 21 16:17:15 PDT 2012
  * --!>
  *  
  */
@@ -561,6 +561,30 @@ public final class CAL_Map_internal {
 				"hedgeUnionWithKey");
 
 		/**
+		 * Helper binding method for function: hedgeUnionWithKeyMaybe. 
+		 * @param f
+		 * @param cmplo
+		 * @param cmphi
+		 * @param t1
+		 * @param t2
+		 * @return the SourceModule.expr representing an application of hedgeUnionWithKeyMaybe
+		 */
+		public static final SourceModel.Expr hedgeUnionWithKeyMaybe(SourceModel.Expr f, SourceModel.Expr cmplo, SourceModel.Expr cmphi, SourceModel.Expr t1, SourceModel.Expr t2) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.hedgeUnionWithKeyMaybe), f, cmplo, cmphi, t1, t2});
+		}
+
+		/**
+		 * Name binding for function: hedgeUnionWithKeyMaybe.
+		 * @see #hedgeUnionWithKeyMaybe(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName hedgeUnionWithKeyMaybe = 
+			QualifiedName.make(
+				CAL_Map_internal.MODULE_NAME, 
+				"hedgeUnionWithKeyMaybe");
+
+		/**
 		 * Helper binding method for function: inputMap. 
 		 * @param list
 		 * @return the SourceModule.expr representing an application of inputMap
@@ -718,6 +742,40 @@ public final class CAL_Map_internal {
 		 */
 		public static final QualifiedName mapAccumL = 
 			QualifiedName.make(CAL_Map_internal.MODULE_NAME, "mapAccumL");
+
+		/**
+		 * Helper binding method for function: mapArbitrary. 
+		 * @return the SourceModule.expr representing an application of mapArbitrary
+		 */
+		public static final SourceModel.Expr mapArbitrary() {
+			return SourceModel.Expr.Var.make(Functions.mapArbitrary);
+		}
+
+		/**
+		 * Name binding for function: mapArbitrary.
+		 * @see #mapArbitrary()
+		 */
+		public static final QualifiedName mapArbitrary = 
+			QualifiedName.make(CAL_Map_internal.MODULE_NAME, "mapArbitrary");
+
+		/**
+		 * Helper binding method for function: mapCoarbitrary. 
+		 * @param a
+		 * @param b
+		 * @return the SourceModule.expr representing an application of mapCoarbitrary
+		 */
+		public static final SourceModel.Expr mapCoarbitrary(SourceModel.Expr a, SourceModel.Expr b) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.mapCoarbitrary), a, b});
+		}
+
+		/**
+		 * Name binding for function: mapCoarbitrary.
+		 * @see #mapCoarbitrary(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName mapCoarbitrary = 
+			QualifiedName.make(CAL_Map_internal.MODULE_NAME, "mapCoarbitrary");
 
 		/**
 		 * Helper binding method for function: merge. 
@@ -991,6 +1049,6 @@ public final class CAL_Map_internal {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = -325626556;
+	public static final int javaDocHash = 976982345;
 
 }

@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Utilities.Locale module from Java code.
  *  
- * Creation date: Fri Mar 16 13:11:57 PST 2007
+ * Creation date: Fri Sep 21 16:17:44 PDT 2012
  * --!>
  *  
  */
@@ -434,25 +434,25 @@ public final class CAL_Locale_internal {
 		/**
 		 * Sets the decomposition mode of a collator. Not a pure function.
 		 * @param collator (CAL type: <code>Cal.Utilities.Locale.Collator</code>)
-		 * @param arg_2 (CAL type: <code>Cal.Core.Prelude.Int</code>)
+		 * @param decompositionMode (CAL type: <code>Cal.Core.Prelude.Int</code>)
 		 * @return (CAL type: <code>()</code>) 
 		 */
-		public static final SourceModel.Expr jSetDecomposition(SourceModel.Expr collator, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr jSetDecomposition(SourceModel.Expr collator, SourceModel.Expr decompositionMode) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jSetDecomposition), collator, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jSetDecomposition), collator, decompositionMode});
 		}
 
 		/**
 		 * @see #jSetDecomposition(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
 		 * @param collator
-		 * @param arg_2
+		 * @param decompositionMode
 		 * @return the SourceModel.Expr representing an application of jSetDecomposition
 		 */
-		public static final SourceModel.Expr jSetDecomposition(SourceModel.Expr collator, int arg_2) {
+		public static final SourceModel.Expr jSetDecomposition(SourceModel.Expr collator, int decompositionMode) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jSetDecomposition), collator, SourceModel.Expr.makeIntValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jSetDecomposition), collator, SourceModel.Expr.makeIntValue(decompositionMode)});
 		}
 
 		/**
@@ -467,25 +467,25 @@ public final class CAL_Locale_internal {
 		/**
 		 * Sets the strength of a collator. Not a pure function.
 		 * @param collator (CAL type: <code>Cal.Utilities.Locale.Collator</code>)
-		 * @param arg_2 (CAL type: <code>Cal.Core.Prelude.Int</code>)
+		 * @param newStrength (CAL type: <code>Cal.Core.Prelude.Int</code>)
 		 * @return (CAL type: <code>()</code>) 
 		 */
-		public static final SourceModel.Expr jSetStrength(SourceModel.Expr collator, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr jSetStrength(SourceModel.Expr collator, SourceModel.Expr newStrength) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jSetStrength), collator, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jSetStrength), collator, newStrength});
 		}
 
 		/**
 		 * @see #jSetStrength(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
 		 * @param collator
-		 * @param arg_2
+		 * @param newStrength
 		 * @return the SourceModel.Expr representing an application of jSetStrength
 		 */
-		public static final SourceModel.Expr jSetStrength(SourceModel.Expr collator, int arg_2) {
+		public static final SourceModel.Expr jSetStrength(SourceModel.Expr collator, int newStrength) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jSetStrength), collator, SourceModel.Expr.makeIntValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jSetStrength), collator, SourceModel.Expr.makeIntValue(newStrength)});
 		}
 
 		/**
@@ -522,6 +522,6 @@ public final class CAL_Locale_internal {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = 689281659;
+	public static final int javaDocHash = -22771071;
 
 }

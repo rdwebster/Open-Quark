@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Core.Exception module from Java code.
  *  
- * Creation date: Fri Mar 16 13:11:57 PST 2007
+ * Creation date: Fri Sep 21 16:36:20 PDT 2012
  * --!>
  *  
  */
@@ -210,13 +210,27 @@ public final class CAL_Exception_internal {
 		public static final QualifiedName primCatch = 
 			QualifiedName.make(CAL_Exception_internal.MODULE_NAME, "primCatch");
 
-        /**
-         * Name binding for function: primOnException.
-         * @see #primOnException(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
-         */
-        public static final QualifiedName primOnException = 
-            QualifiedName.make(CAL_Exception_internal.MODULE_NAME, "primOnException");
-        
+		/**
+		 * Helper binding method for function: primOnException. 
+		 * @param arg_1
+		 * @param arg_2
+		 * @return the SourceModule.expr representing an application of primOnException
+		 */
+		public static final SourceModel.Expr primOnException(SourceModel.Expr arg_1, SourceModel.Expr arg_2) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.primOnException), arg_1, arg_2});
+		}
+
+		/**
+		 * Name binding for function: primOnException.
+		 * @see #primOnException(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName primOnException = 
+			QualifiedName.make(
+				CAL_Exception_internal.MODULE_NAME, 
+				"primOnException");
+
 		/**
 		 * Primitive for raising an exception. Because the return type is polymorphic, an exception can be raised in any expression
 		 * in CAL.
@@ -283,6 +297,6 @@ public final class CAL_Exception_internal {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = 552541249;
+	public static final int javaDocHash = 65949996;
 
 }

@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Collections.List module from Java code.
  *  
- * Creation date: Mon Jun 18 18:11:10 PDT 2007
+ * Creation date: Fri Sep 21 16:36:29 PDT 2012
  * --!>
  *  
  */
@@ -402,14 +402,14 @@ public final class CAL_List_internal {
 
 		/**
 		 * Helper binding method for function: jSortBy. 
-		 * @param arg_1
-		 * @param arg_2
+		 * @param list
+		 * @param c
 		 * @return the SourceModule.expr representing an application of jSortBy
 		 */
-		public static final SourceModel.Expr jSortBy(SourceModel.Expr arg_1, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr jSortBy(SourceModel.Expr list, SourceModel.Expr c) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jSortBy), arg_1, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jSortBy), list, c});
 		}
 
 		/**
@@ -832,24 +832,24 @@ public final class CAL_List_internal {
 
 		/**
 		 * Must remain private. Support for test code in the List module.
-		 * @param arg_1 (CAL type: <code>Cal.Core.Prelude.Char</code>)
+		 * @param ch (CAL type: <code>Cal.Core.Prelude.Char</code>)
 		 * @return (CAL type: <code>Cal.Core.Prelude.Char</code>) 
 		 */
-		public static final SourceModel.Expr toLowerCase(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr toLowerCase(SourceModel.Expr ch) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.toLowerCase), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.toLowerCase), ch});
 		}
 
 		/**
 		 * @see #toLowerCase(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param ch
 		 * @return the SourceModel.Expr representing an application of toLowerCase
 		 */
-		public static final SourceModel.Expr toLowerCase(char arg_1) {
+		public static final SourceModel.Expr toLowerCase(char ch) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.toLowerCase), SourceModel.Expr.makeCharValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.toLowerCase), SourceModel.Expr.makeCharValue(ch)});
 		}
 
 		/**
@@ -894,24 +894,24 @@ public final class CAL_List_internal {
 
 		/**
 		 * Must remain private. Support for test code in the List module.
-		 * @param arg_1 (CAL type: <code>Cal.Core.Prelude.Char</code>)
+		 * @param ch (CAL type: <code>Cal.Core.Prelude.Char</code>)
 		 * @return (CAL type: <code>Cal.Core.Prelude.Char</code>) 
 		 */
-		public static final SourceModel.Expr toUpperCase(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr toUpperCase(SourceModel.Expr ch) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.toUpperCase), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.toUpperCase), ch});
 		}
 
 		/**
 		 * @see #toUpperCase(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param ch
 		 * @return the SourceModel.Expr representing an application of toUpperCase
 		 */
-		public static final SourceModel.Expr toUpperCase(char arg_1) {
+		public static final SourceModel.Expr toUpperCase(char ch) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.toUpperCase), SourceModel.Expr.makeCharValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.toUpperCase), SourceModel.Expr.makeCharValue(ch)});
 		}
 
 		/**
@@ -958,6 +958,6 @@ public final class CAL_List_internal {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = -1700203446;
+	public static final int javaDocHash = 818810808;
 
 }

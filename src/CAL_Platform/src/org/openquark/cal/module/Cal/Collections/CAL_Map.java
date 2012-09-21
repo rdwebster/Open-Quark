@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Collections.Map module from Java code.
  *  
- * Creation date: Fri Mar 16 13:11:56 PST 2007
+ * Creation date: Fri Sep 21 16:17:09 PDT 2012
  * --!>
  *  
  */
@@ -149,6 +149,25 @@ public final class CAL_Map {
 		 */
 		public static final QualifiedName assocs = 
 			QualifiedName.make(CAL_Map.MODULE_NAME, "assocs");
+
+		/**
+		 * Returns the map association with the lowest key greater than or equal to the specified key value, if any.
+		 * @param k (CAL type: <code>Cal.Core.Prelude.Ord k => k</code>)
+		 * @param map (CAL type: <code>Cal.Core.Prelude.Ord k => Cal.Collections.Map.Map k a</code>)
+		 * @return (CAL type: <code>Cal.Core.Prelude.Ord k => Cal.Core.Prelude.Maybe (k, a)</code>) 
+		 */
+		public static final SourceModel.Expr ceilingAssoc(SourceModel.Expr k, SourceModel.Expr map) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.ceilingAssoc), k, map});
+		}
+
+		/**
+		 * Name binding for function: ceilingAssoc.
+		 * @see #ceilingAssoc(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName ceilingAssoc = 
+			QualifiedName.make(CAL_Map.MODULE_NAME, "ceilingAssoc");
 
 		/**
 		 * Deletes a key and its value from the map. When the key is not a member of the
@@ -617,6 +636,25 @@ public final class CAL_Map {
 			QualifiedName.make(CAL_Map.MODULE_NAME, "findMin");
 
 		/**
+		 * Returns the map association with the highest key less than or equal to the specified key value, if any.
+		 * @param k (CAL type: <code>Cal.Core.Prelude.Ord k => k</code>)
+		 * @param map (CAL type: <code>Cal.Core.Prelude.Ord k => Cal.Collections.Map.Map k a</code>)
+		 * @return (CAL type: <code>Cal.Core.Prelude.Ord k => Cal.Core.Prelude.Maybe (k, a)</code>) 
+		 */
+		public static final SourceModel.Expr floorAssoc(SourceModel.Expr k, SourceModel.Expr map) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.floorAssoc), k, map});
+		}
+
+		/**
+		 * Name binding for function: floorAssoc.
+		 * @see #floorAssoc(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName floorAssoc = 
+			QualifiedName.make(CAL_Map.MODULE_NAME, "floorAssoc");
+
+		/**
 		 * Folds over the values in the map in an unspecified order. (= descending post-order)
 		 * <p>
 		 * Complexity: O(n)
@@ -857,6 +895,25 @@ public final class CAL_Map {
 			QualifiedName.make(CAL_Map.MODULE_NAME, "fromListWithKey");
 
 		/**
+		 * Returns the map association with the lowest key strictly greater than the specified key value, if any.
+		 * @param k (CAL type: <code>Cal.Core.Prelude.Ord k => k</code>)
+		 * @param map (CAL type: <code>Cal.Core.Prelude.Ord k => Cal.Collections.Map.Map k a</code>)
+		 * @return (CAL type: <code>Cal.Core.Prelude.Ord k => Cal.Core.Prelude.Maybe (k, a)</code>) 
+		 */
+		public static final SourceModel.Expr higherAssoc(SourceModel.Expr k, SourceModel.Expr map) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.higherAssoc), k, map});
+		}
+
+		/**
+		 * Name binding for function: higherAssoc.
+		 * @see #higherAssoc(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName higherAssoc = 
+			QualifiedName.make(CAL_Map.MODULE_NAME, "higherAssoc");
+
+		/**
 		 * Inserts a new key and value in the map.
 		 * <p>
 		 * Complexity: O(log n)
@@ -912,6 +969,32 @@ public final class CAL_Map {
 		 */
 		public static final QualifiedName insertLookupWithKey = 
 			QualifiedName.make(CAL_Map.MODULE_NAME, "insertLookupWithKey");
+
+		/**
+		 * A strict version of <code>Cal.Collections.Map.insert</code> which will reduce the new value to WHNF (weak head normal form) 
+		 * before inserting it into the map.  This should be used carefully, but can help to control space usage
+		 * in some situations.
+		 * @param key (CAL type: <code>Cal.Core.Prelude.Ord k => k</code>)
+		 *          the key.
+		 * @param value (CAL type: <code>a</code>)
+		 *          the value.
+		 * @param map (CAL type: <code>Cal.Core.Prelude.Ord k => Cal.Collections.Map.Map k a</code>)
+		 *          the map into which the key-value pair is to be inserted.
+		 * @return (CAL type: <code>Cal.Core.Prelude.Ord k => Cal.Collections.Map.Map k a</code>) 
+		 *          the map with the key-value pair inserted.
+		 */
+		public static final SourceModel.Expr insertStrict(SourceModel.Expr key, SourceModel.Expr value, SourceModel.Expr map) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.insertStrict), key, value, map});
+		}
+
+		/**
+		 * Name binding for function: insertStrict.
+		 * @see #insertStrict(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName insertStrict = 
+			QualifiedName.make(CAL_Map.MODULE_NAME, "insertStrict");
 
 		/**
 		 * Inserts a new key and value in the map with a combining function.
@@ -1326,6 +1409,35 @@ public final class CAL_Map {
 			QualifiedName.make(CAL_Map.MODULE_NAME, "lookupIndex");
 
 		/**
+		 * Looks up the value at a key in the map or inserts the default value if not found.
+		 * <p>
+		 * Complexity: O(log n)
+		 * 
+		 * @param key (CAL type: <code>Cal.Core.Prelude.Ord k => k</code>)
+		 *          the key.
+		 * @param value (CAL type: <code>a</code>)
+		 *          the default value to be used if a
+		 * @param map (CAL type: <code>Cal.Core.Prelude.Ord k => Cal.Collections.Map.Map k a</code>)
+		 *          the map.
+		 * @return (CAL type: <code>Cal.Core.Prelude.Ord k => (a, Cal.Collections.Map.Map k a, Cal.Core.Prelude.Boolean)</code>) 
+		 *          A tuple with (1) the value found (or default if not found)
+		 * (2) the potentially modified Map
+		 * (3) whether the map was modified
+		 */
+		public static final SourceModel.Expr lookupInsert(SourceModel.Expr key, SourceModel.Expr value, SourceModel.Expr map) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.lookupInsert), key, value, map});
+		}
+
+		/**
+		 * Name binding for function: lookupInsert.
+		 * @see #lookupInsert(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName lookupInsert = 
+			QualifiedName.make(CAL_Map.MODULE_NAME, "lookupInsert");
+
+		/**
 		 * <code>lookupWithDefault key map defaultValue</code> returns the value at the given key or <code>defaultValue</code>
 		 * when the key is not in the map.
 		 * <p>
@@ -1352,6 +1464,25 @@ public final class CAL_Map {
 		 */
 		public static final QualifiedName lookupWithDefault = 
 			QualifiedName.make(CAL_Map.MODULE_NAME, "lookupWithDefault");
+
+		/**
+		 * Returns the map association with the highest key strictly less than the specified key value, if any.
+		 * @param k (CAL type: <code>Cal.Core.Prelude.Ord k => k</code>)
+		 * @param map (CAL type: <code>Cal.Core.Prelude.Ord k => Cal.Collections.Map.Map k a</code>)
+		 * @return (CAL type: <code>Cal.Core.Prelude.Ord k => Cal.Core.Prelude.Maybe (k, a)</code>) 
+		 */
+		public static final SourceModel.Expr lowerAssoc(SourceModel.Expr k, SourceModel.Expr map) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.lowerAssoc), k, map});
+		}
+
+		/**
+		 * Name binding for function: lowerAssoc.
+		 * @see #lowerAssoc(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName lowerAssoc = 
+			QualifiedName.make(CAL_Map.MODULE_NAME, "lowerAssoc");
 
 		/**
 		 * Maps a function over all values in the map.
@@ -1869,6 +2000,64 @@ public final class CAL_Map {
 			QualifiedName.make(CAL_Map.MODULE_NAME, "unionWithKey");
 
 		/**
+		 * Returns the left-biased union of two maps, with a combining function. The
+		 * implementation uses the efficient <em>hedge-union</em> algorithm. If the combining
+		 * function returns Nothing, that item is omitted from the resulting map.
+		 * <p>
+		 * Complexity: O(n+m)
+		 * 
+		 * @param f (CAL type: <code>Cal.Core.Prelude.Ord k => k -> a -> a -> Cal.Core.Prelude.Maybe a</code>)
+		 *          the combining function.
+		 * @param map1 (CAL type: <code>Cal.Core.Prelude.Ord k => Cal.Collections.Map.Map k a</code>)
+		 *          the first map.
+		 * @param map2 (CAL type: <code>Cal.Core.Prelude.Ord k => Cal.Collections.Map.Map k a</code>)
+		 *          the second map.
+		 * @return (CAL type: <code>Cal.Core.Prelude.Ord k => Cal.Collections.Map.Map k a</code>) 
+		 *          the left-biased union of two maps.
+		 */
+		public static final SourceModel.Expr unionWithKeyMaybe(SourceModel.Expr f, SourceModel.Expr map1, SourceModel.Expr map2) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.unionWithKeyMaybe), f, map1, map2});
+		}
+
+		/**
+		 * Name binding for function: unionWithKeyMaybe.
+		 * @see #unionWithKeyMaybe(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName unionWithKeyMaybe = 
+			QualifiedName.make(CAL_Map.MODULE_NAME, "unionWithKeyMaybe");
+
+		/**
+		 * Returns the left-biased union of two maps, with a combining function. The
+		 * implementation uses the efficient <em>hedge-union</em> algorithm. If the combining
+		 * function returns Nothing, that item is omitted from the resulting map.
+		 * <p>
+		 * Complexity: O(n+m)
+		 * 
+		 * @param f (CAL type: <code>a -> a -> Cal.Core.Prelude.Maybe a</code>)
+		 *          the combining function.
+		 * @param map1 (CAL type: <code>Cal.Core.Prelude.Ord k => Cal.Collections.Map.Map k a</code>)
+		 *          the first map.
+		 * @param map2 (CAL type: <code>Cal.Core.Prelude.Ord k => Cal.Collections.Map.Map k a</code>)
+		 *          the second map.
+		 * @return (CAL type: <code>Cal.Core.Prelude.Ord k => Cal.Collections.Map.Map k a</code>) 
+		 *          the left-biased union of two maps.
+		 */
+		public static final SourceModel.Expr unionWithMaybe(SourceModel.Expr f, SourceModel.Expr map1, SourceModel.Expr map2) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.unionWithMaybe), f, map1, map2});
+		}
+
+		/**
+		 * Name binding for function: unionWithMaybe.
+		 * @see #unionWithMaybe(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName unionWithMaybe = 
+			QualifiedName.make(CAL_Map.MODULE_NAME, "unionWithMaybe");
+
+		/**
 		 * Returns the union of a list of maps.
 		 * @param maps (CAL type: <code>Cal.Core.Prelude.Ord k => [Cal.Collections.Map.Map k a]</code>)
 		 *          a list of maps.
@@ -2166,6 +2355,6 @@ public final class CAL_Map {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = 810857713;
+	public static final int javaDocHash = -685329562;
 
 }

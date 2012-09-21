@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Utilities.QuickCheck module from Java code.
  *  
- * Creation date: Fri Aug 17 18:11:14 PDT 2007
+ * Creation date: Fri Sep 21 16:18:02 PDT 2012
  * --!>
  *  
  */
@@ -1184,24 +1184,24 @@ public final class CAL_QuickCheck_internal {
 
 		/**
 		 * Converts a <code>Cal.Core.Prelude.Double</code> value to the equivalent <code>Cal.Core.Prelude.Decimal</code> value.
-		 * @param arg_1 (CAL type: <code>Cal.Core.Prelude.Double</code>)
+		 * @param val (CAL type: <code>Cal.Core.Prelude.Double</code>)
 		 * @return (CAL type: <code>Cal.Core.Prelude.Decimal</code>) 
 		 */
-		public static final SourceModel.Expr decimalFromDouble(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr decimalFromDouble(SourceModel.Expr val) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.decimalFromDouble), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.decimalFromDouble), val});
 		}
 
 		/**
 		 * @see #decimalFromDouble(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param val
 		 * @return the SourceModel.Expr representing an application of decimalFromDouble
 		 */
-		public static final SourceModel.Expr decimalFromDouble(double arg_1) {
+		public static final SourceModel.Expr decimalFromDouble(double val) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.decimalFromDouble), SourceModel.Expr.makeDoubleValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.decimalFromDouble), SourceModel.Expr.makeDoubleValue(val)});
 		}
 
 		/**
@@ -1462,24 +1462,24 @@ public final class CAL_QuickCheck_internal {
 
 		/**
 		 * Helper binding method for function: roundDoubleToLong. 
-		 * @param arg_1
+		 * @param a
 		 * @return the SourceModule.expr representing an application of roundDoubleToLong
 		 */
-		public static final SourceModel.Expr roundDoubleToLong(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr roundDoubleToLong(SourceModel.Expr a) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.roundDoubleToLong), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.roundDoubleToLong), a});
 		}
 
 		/**
 		 * @see #roundDoubleToLong(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param a
 		 * @return the SourceModel.Expr representing an application of roundDoubleToLong
 		 */
-		public static final SourceModel.Expr roundDoubleToLong(double arg_1) {
+		public static final SourceModel.Expr roundDoubleToLong(double a) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.roundDoubleToLong), SourceModel.Expr.makeDoubleValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.roundDoubleToLong), SourceModel.Expr.makeDoubleValue(a)});
 		}
 
 		/**
@@ -1493,24 +1493,24 @@ public final class CAL_QuickCheck_internal {
 
 		/**
 		 * Helper binding method for function: roundFloatToInt. 
-		 * @param arg_1
+		 * @param a
 		 * @return the SourceModule.expr representing an application of roundFloatToInt
 		 */
-		public static final SourceModel.Expr roundFloatToInt(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr roundFloatToInt(SourceModel.Expr a) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.roundFloatToInt), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.roundFloatToInt), a});
 		}
 
 		/**
 		 * @see #roundFloatToInt(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param a
 		 * @return the SourceModel.Expr representing an application of roundFloatToInt
 		 */
-		public static final SourceModel.Expr roundFloatToInt(float arg_1) {
+		public static final SourceModel.Expr roundFloatToInt(float a) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.roundFloatToInt), SourceModel.Expr.makeFloatValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.roundFloatToInt), SourceModel.Expr.makeFloatValue(a)});
 		}
 
 		/**
@@ -1721,6 +1721,6 @@ public final class CAL_QuickCheck_internal {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = 2100920939;
+	public static final int javaDocHash = 1255071215;
 
 }

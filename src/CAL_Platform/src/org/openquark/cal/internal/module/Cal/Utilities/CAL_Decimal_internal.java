@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Utilities.Decimal module from Java code.
  *  
- * Creation date: Fri Mar 16 13:11:57 PST 2007
+ * Creation date: Fri Sep 21 16:16:44 PDT 2012
  * --!>
  *  
  */
@@ -97,27 +97,27 @@ public final class CAL_Decimal_internal {
 		/**
 		 * Helper binding method for function: jDivideWithRounding. 
 		 * @param decimal
-		 * @param arg_2
-		 * @param arg_3
+		 * @param divisor
+		 * @param roundingMode
 		 * @return the SourceModule.expr representing an application of jDivideWithRounding
 		 */
-		public static final SourceModel.Expr jDivideWithRounding(SourceModel.Expr decimal, SourceModel.Expr arg_2, SourceModel.Expr arg_3) {
+		public static final SourceModel.Expr jDivideWithRounding(SourceModel.Expr decimal, SourceModel.Expr divisor, SourceModel.Expr roundingMode) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jDivideWithRounding), decimal, arg_2, arg_3});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jDivideWithRounding), decimal, divisor, roundingMode});
 		}
 
 		/**
 		 * @see #jDivideWithRounding(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
 		 * @param decimal
-		 * @param arg_2
-		 * @param arg_3
+		 * @param divisor
+		 * @param roundingMode
 		 * @return the SourceModel.Expr representing an application of jDivideWithRounding
 		 */
-		public static final SourceModel.Expr jDivideWithRounding(SourceModel.Expr decimal, SourceModel.Expr arg_2, int arg_3) {
+		public static final SourceModel.Expr jDivideWithRounding(SourceModel.Expr decimal, SourceModel.Expr divisor, int roundingMode) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jDivideWithRounding), decimal, arg_2, SourceModel.Expr.makeIntValue(arg_3)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jDivideWithRounding), decimal, divisor, SourceModel.Expr.makeIntValue(roundingMode)});
 		}
 
 		/**
@@ -132,29 +132,29 @@ public final class CAL_Decimal_internal {
 		/**
 		 * Helper binding method for function: jDivideWithScaleAndRounding. 
 		 * @param decimal
-		 * @param arg_2
-		 * @param arg_3
-		 * @param arg_4
+		 * @param divisor
+		 * @param scale
+		 * @param roundingMode
 		 * @return the SourceModule.expr representing an application of jDivideWithScaleAndRounding
 		 */
-		public static final SourceModel.Expr jDivideWithScaleAndRounding(SourceModel.Expr decimal, SourceModel.Expr arg_2, SourceModel.Expr arg_3, SourceModel.Expr arg_4) {
+		public static final SourceModel.Expr jDivideWithScaleAndRounding(SourceModel.Expr decimal, SourceModel.Expr divisor, SourceModel.Expr scale, SourceModel.Expr roundingMode) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jDivideWithScaleAndRounding), decimal, arg_2, arg_3, arg_4});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jDivideWithScaleAndRounding), decimal, divisor, scale, roundingMode});
 		}
 
 		/**
 		 * @see #jDivideWithScaleAndRounding(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
 		 * @param decimal
-		 * @param arg_2
-		 * @param arg_3
-		 * @param arg_4
+		 * @param divisor
+		 * @param scale
+		 * @param roundingMode
 		 * @return the SourceModel.Expr representing an application of jDivideWithScaleAndRounding
 		 */
-		public static final SourceModel.Expr jDivideWithScaleAndRounding(SourceModel.Expr decimal, SourceModel.Expr arg_2, int arg_3, int arg_4) {
+		public static final SourceModel.Expr jDivideWithScaleAndRounding(SourceModel.Expr decimal, SourceModel.Expr divisor, int scale, int roundingMode) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jDivideWithScaleAndRounding), decimal, arg_2, SourceModel.Expr.makeIntValue(arg_3), SourceModel.Expr.makeIntValue(arg_4)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jDivideWithScaleAndRounding), decimal, divisor, SourceModel.Expr.makeIntValue(scale), SourceModel.Expr.makeIntValue(roundingMode)});
 		}
 
 		/**
@@ -169,27 +169,27 @@ public final class CAL_Decimal_internal {
 		/**
 		 * Helper binding method for function: jSetScaleWithRounding. 
 		 * @param decimal
-		 * @param arg_2
-		 * @param arg_3
+		 * @param newScale
+		 * @param roundingMode
 		 * @return the SourceModule.expr representing an application of jSetScaleWithRounding
 		 */
-		public static final SourceModel.Expr jSetScaleWithRounding(SourceModel.Expr decimal, SourceModel.Expr arg_2, SourceModel.Expr arg_3) {
+		public static final SourceModel.Expr jSetScaleWithRounding(SourceModel.Expr decimal, SourceModel.Expr newScale, SourceModel.Expr roundingMode) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jSetScaleWithRounding), decimal, arg_2, arg_3});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jSetScaleWithRounding), decimal, newScale, roundingMode});
 		}
 
 		/**
 		 * @see #jSetScaleWithRounding(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
 		 * @param decimal
-		 * @param arg_2
-		 * @param arg_3
+		 * @param newScale
+		 * @param roundingMode
 		 * @return the SourceModel.Expr representing an application of jSetScaleWithRounding
 		 */
-		public static final SourceModel.Expr jSetScaleWithRounding(SourceModel.Expr decimal, int arg_2, int arg_3) {
+		public static final SourceModel.Expr jSetScaleWithRounding(SourceModel.Expr decimal, int newScale, int roundingMode) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jSetScaleWithRounding), decimal, SourceModel.Expr.makeIntValue(arg_2), SourceModel.Expr.makeIntValue(arg_3)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jSetScaleWithRounding), decimal, SourceModel.Expr.makeIntValue(newScale), SourceModel.Expr.makeIntValue(roundingMode)});
 		}
 
 		/**
@@ -279,6 +279,6 @@ public final class CAL_Decimal_internal {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = -1390883646;
+	public static final int javaDocHash = 1840557416;
 
 }

@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Core.Prelude module from Java code.
  *  
- * Creation date: Tue Jul 31 18:06:12 PDT 2007
+ * Creation date: Fri Sep 21 16:36:41 PDT 2012
  * --!>
  *  
  */
@@ -113,10 +113,6 @@ public final class CAL_Prelude_internal {
 		public static final QualifiedName JComparable = 
 			QualifiedName.make(CAL_Prelude_internal.MODULE_NAME, "JComparable");
 
-		/** Name binding for TypeConsApp: JComparator. */
-		public static final QualifiedName JComparator = 
-			QualifiedName.make(CAL_Prelude_internal.MODULE_NAME, "JComparator");
-
 		/** Name binding for TypeConsApp: JDouble. */
 		public static final QualifiedName JDouble = 
 			QualifiedName.make(CAL_Prelude_internal.MODULE_NAME, "JDouble");
@@ -128,12 +124,6 @@ public final class CAL_Prelude_internal {
 		/** Name binding for TypeConsApp: JEnumeration. */
 		public static final QualifiedName JEnumeration = 
 			QualifiedName.make(CAL_Prelude_internal.MODULE_NAME, "JEnumeration");
-
-		/** Name binding for TypeConsApp: JEquivalenceRelation. */
-		public static final QualifiedName JEquivalenceRelation = 
-			QualifiedName.make(
-				CAL_Prelude_internal.MODULE_NAME, 
-				"JEquivalenceRelation");
 
 		/** Name binding for TypeConsApp: JFloat. */
 		public static final QualifiedName JFloat = 
@@ -645,24 +635,24 @@ public final class CAL_Prelude_internal {
 
 		/**
 		 * Helper binding method for function: absDouble. 
-		 * @param arg_1
+		 * @param a
 		 * @return the SourceModule.expr representing an application of absDouble
 		 */
-		public static final SourceModel.Expr absDouble(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr absDouble(SourceModel.Expr a) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.absDouble), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.absDouble), a});
 		}
 
 		/**
 		 * @see #absDouble(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param a
 		 * @return the SourceModel.Expr representing an application of absDouble
 		 */
-		public static final SourceModel.Expr absDouble(double arg_1) {
+		public static final SourceModel.Expr absDouble(double a) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.absDouble), SourceModel.Expr.makeDoubleValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.absDouble), SourceModel.Expr.makeDoubleValue(a)});
 		}
 
 		/**
@@ -674,24 +664,24 @@ public final class CAL_Prelude_internal {
 
 		/**
 		 * Helper binding method for function: absFloat. 
-		 * @param arg_1
+		 * @param a
 		 * @return the SourceModule.expr representing an application of absFloat
 		 */
-		public static final SourceModel.Expr absFloat(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr absFloat(SourceModel.Expr a) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.absFloat), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.absFloat), a});
 		}
 
 		/**
 		 * @see #absFloat(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param a
 		 * @return the SourceModel.Expr representing an application of absFloat
 		 */
-		public static final SourceModel.Expr absFloat(float arg_1) {
+		public static final SourceModel.Expr absFloat(float a) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.absFloat), SourceModel.Expr.makeFloatValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.absFloat), SourceModel.Expr.makeFloatValue(a)});
 		}
 
 		/**
@@ -703,24 +693,24 @@ public final class CAL_Prelude_internal {
 
 		/**
 		 * Helper binding method for function: absInt. 
-		 * @param arg_1
+		 * @param a
 		 * @return the SourceModule.expr representing an application of absInt
 		 */
-		public static final SourceModel.Expr absInt(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr absInt(SourceModel.Expr a) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.absInt), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.absInt), a});
 		}
 
 		/**
 		 * @see #absInt(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param a
 		 * @return the SourceModel.Expr representing an application of absInt
 		 */
-		public static final SourceModel.Expr absInt(int arg_1) {
+		public static final SourceModel.Expr absInt(int a) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.absInt), SourceModel.Expr.makeIntValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.absInt), SourceModel.Expr.makeIntValue(a)});
 		}
 
 		/**
@@ -750,24 +740,24 @@ public final class CAL_Prelude_internal {
 
 		/**
 		 * Helper binding method for function: absLong. 
-		 * @param arg_1
+		 * @param a
 		 * @return the SourceModule.expr representing an application of absLong
 		 */
-		public static final SourceModel.Expr absLong(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr absLong(SourceModel.Expr a) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.absLong), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.absLong), a});
 		}
 
 		/**
 		 * @see #absLong(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param a
 		 * @return the SourceModel.Expr representing an application of absLong
 		 */
-		public static final SourceModel.Expr absLong(long arg_1) {
+		public static final SourceModel.Expr absLong(long a) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.absLong), SourceModel.Expr.makeLongValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.absLong), SourceModel.Expr.makeLongValue(a)});
 		}
 
 		/**
@@ -840,13 +830,13 @@ public final class CAL_Prelude_internal {
 		/**
 		 * Helper binding method for function: addDecimal. 
 		 * @param decimal
-		 * @param arg_2
+		 * @param augend
 		 * @return the SourceModule.expr representing an application of addDecimal
 		 */
-		public static final SourceModel.Expr addDecimal(SourceModel.Expr decimal, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr addDecimal(SourceModel.Expr decimal, SourceModel.Expr augend) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.addDecimal), decimal, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.addDecimal), decimal, augend});
 		}
 
 		/**
@@ -952,13 +942,13 @@ public final class CAL_Prelude_internal {
 		/**
 		 * Helper binding method for function: addInteger. 
 		 * @param integer
-		 * @param arg_2
+		 * @param val
 		 * @return the SourceModule.expr representing an application of addInteger
 		 */
-		public static final SourceModel.Expr addInteger(SourceModel.Expr integer, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr addInteger(SourceModel.Expr integer, SourceModel.Expr val) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.addInteger), integer, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.addInteger), integer, val});
 		}
 
 		/**
@@ -1073,25 +1063,25 @@ public final class CAL_Prelude_internal {
 		/**
 		 * Helper binding method for function: appendString. 
 		 * @param string
-		 * @param arg_2
+		 * @param str
 		 * @return the SourceModule.expr representing an application of appendString
 		 */
-		public static final SourceModel.Expr appendString(SourceModel.Expr string, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr appendString(SourceModel.Expr string, SourceModel.Expr str) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.appendString), string, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.appendString), string, str});
 		}
 
 		/**
 		 * @see #appendString(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
 		 * @param string
-		 * @param arg_2
+		 * @param str
 		 * @return the SourceModel.Expr representing an application of appendString
 		 */
-		public static final SourceModel.Expr appendString(java.lang.String string, java.lang.String arg_2) {
+		public static final SourceModel.Expr appendString(java.lang.String string, java.lang.String str) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.appendString), SourceModel.Expr.makeStringValue(string), SourceModel.Expr.makeStringValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.appendString), SourceModel.Expr.makeStringValue(string), SourceModel.Expr.makeStringValue(str)});
 		}
 
 		/**
@@ -2590,13 +2580,13 @@ public final class CAL_Prelude_internal {
 		/**
 		 * Helper binding method for function: divideInteger. 
 		 * @param integer
-		 * @param arg_2
+		 * @param val
 		 * @return the SourceModule.expr representing an application of divideInteger
 		 */
-		public static final SourceModel.Expr divideInteger(SourceModel.Expr integer, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr divideInteger(SourceModel.Expr integer, SourceModel.Expr val) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.divideInteger), integer, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.divideInteger), integer, val});
 		}
 
 		/**
@@ -3302,13 +3292,13 @@ public final class CAL_Prelude_internal {
 		/**
 		 * Helper binding method for function: equalsObject. 
 		 * @param jObject
-		 * @param arg_2
+		 * @param obj
 		 * @return the SourceModule.expr representing an application of equalsObject
 		 */
-		public static final SourceModel.Expr equalsObject(SourceModel.Expr jObject, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr equalsObject(SourceModel.Expr jObject, SourceModel.Expr obj) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.equalsObject), jObject, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.equalsObject), jObject, obj});
 		}
 
 		/**
@@ -6400,26 +6390,26 @@ public final class CAL_Prelude_internal {
 
 		/**
 		 * Helper binding method for function: jCompareDouble. 
-		 * @param arg_1
+		 * @param d1
 		 * @param arg_2
 		 * @return the SourceModule.expr representing an application of jCompareDouble
 		 */
-		public static final SourceModel.Expr jCompareDouble(SourceModel.Expr arg_1, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr jCompareDouble(SourceModel.Expr d1, SourceModel.Expr arg_2) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jCompareDouble), arg_1, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jCompareDouble), d1, arg_2});
 		}
 
 		/**
 		 * @see #jCompareDouble(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param d1
 		 * @param arg_2
 		 * @return the SourceModel.Expr representing an application of jCompareDouble
 		 */
-		public static final SourceModel.Expr jCompareDouble(double arg_1, double arg_2) {
+		public static final SourceModel.Expr jCompareDouble(double d1, double arg_2) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jCompareDouble), SourceModel.Expr.makeDoubleValue(arg_1), SourceModel.Expr.makeDoubleValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jCompareDouble), SourceModel.Expr.makeDoubleValue(d1), SourceModel.Expr.makeDoubleValue(arg_2)});
 		}
 
 		/**
@@ -6433,26 +6423,26 @@ public final class CAL_Prelude_internal {
 
 		/**
 		 * Helper binding method for function: jCompareFloat. 
-		 * @param arg_1
-		 * @param arg_2
+		 * @param f1
+		 * @param f2
 		 * @return the SourceModule.expr representing an application of jCompareFloat
 		 */
-		public static final SourceModel.Expr jCompareFloat(SourceModel.Expr arg_1, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr jCompareFloat(SourceModel.Expr f1, SourceModel.Expr f2) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jCompareFloat), arg_1, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jCompareFloat), f1, f2});
 		}
 
 		/**
 		 * @see #jCompareFloat(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
-		 * @param arg_2
+		 * @param f1
+		 * @param f2
 		 * @return the SourceModel.Expr representing an application of jCompareFloat
 		 */
-		public static final SourceModel.Expr jCompareFloat(float arg_1, float arg_2) {
+		public static final SourceModel.Expr jCompareFloat(float f1, float f2) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jCompareFloat), SourceModel.Expr.makeFloatValue(arg_1), SourceModel.Expr.makeFloatValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jCompareFloat), SourceModel.Expr.makeFloatValue(f1), SourceModel.Expr.makeFloatValue(f2)});
 		}
 
 		/**
@@ -6467,13 +6457,13 @@ public final class CAL_Prelude_internal {
 		/**
 		 * Helper binding method for function: jCompareInteger. 
 		 * @param integer
-		 * @param arg_2
+		 * @param val
 		 * @return the SourceModule.expr representing an application of jCompareInteger
 		 */
-		public static final SourceModel.Expr jCompareInteger(SourceModel.Expr integer, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr jCompareInteger(SourceModel.Expr integer, SourceModel.Expr val) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jCompareInteger), integer, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jCompareInteger), integer, val});
 		}
 
 		/**
@@ -6488,13 +6478,13 @@ public final class CAL_Prelude_internal {
 		/**
 		 * Returns -1, 0, or 1.
 		 * @param decimal (CAL type: <code>Cal.Core.Prelude.Decimal</code>)
-		 * @param arg_2 (CAL type: <code>Cal.Core.Prelude.Decimal</code>)
+		 * @param val (CAL type: <code>Cal.Core.Prelude.Decimal</code>)
 		 * @return (CAL type: <code>Cal.Core.Prelude.Int</code>) 
 		 */
-		public static final SourceModel.Expr jCompareToDecimal(SourceModel.Expr decimal, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr jCompareToDecimal(SourceModel.Expr decimal, SourceModel.Expr val) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jCompareToDecimal), decimal, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jCompareToDecimal), decimal, val});
 		}
 
 		/**
@@ -6509,27 +6499,27 @@ public final class CAL_Prelude_internal {
 		/**
 		 * Helper binding method for function: jDivideDecimal. 
 		 * @param decimal
-		 * @param arg_2
-		 * @param arg_3
+		 * @param divisor
+		 * @param roundingMode
 		 * @return the SourceModule.expr representing an application of jDivideDecimal
 		 */
-		public static final SourceModel.Expr jDivideDecimal(SourceModel.Expr decimal, SourceModel.Expr arg_2, SourceModel.Expr arg_3) {
+		public static final SourceModel.Expr jDivideDecimal(SourceModel.Expr decimal, SourceModel.Expr divisor, SourceModel.Expr roundingMode) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jDivideDecimal), decimal, arg_2, arg_3});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jDivideDecimal), decimal, divisor, roundingMode});
 		}
 
 		/**
 		 * @see #jDivideDecimal(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
 		 * @param decimal
-		 * @param arg_2
-		 * @param arg_3
+		 * @param divisor
+		 * @param roundingMode
 		 * @return the SourceModel.Expr representing an application of jDivideDecimal
 		 */
-		public static final SourceModel.Expr jDivideDecimal(SourceModel.Expr decimal, SourceModel.Expr arg_2, int arg_3) {
+		public static final SourceModel.Expr jDivideDecimal(SourceModel.Expr decimal, SourceModel.Expr divisor, int roundingMode) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jDivideDecimal), decimal, arg_2, SourceModel.Expr.makeIntValue(arg_3)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jDivideDecimal), decimal, divisor, SourceModel.Expr.makeIntValue(roundingMode)});
 		}
 
 		/**
@@ -6882,25 +6872,25 @@ public final class CAL_Prelude_internal {
 		/**
 		 * Helper binding method for function: jStringBuilder_append. 
 		 * @param jStringBuilder
-		 * @param arg_2
+		 * @param c
 		 * @return the SourceModule.expr representing an application of jStringBuilder_append
 		 */
-		public static final SourceModel.Expr jStringBuilder_append(SourceModel.Expr jStringBuilder, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr jStringBuilder_append(SourceModel.Expr jStringBuilder, SourceModel.Expr c) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jStringBuilder_append), jStringBuilder, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jStringBuilder_append), jStringBuilder, c});
 		}
 
 		/**
 		 * @see #jStringBuilder_append(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
 		 * @param jStringBuilder
-		 * @param arg_2
+		 * @param c
 		 * @return the SourceModel.Expr representing an application of jStringBuilder_append
 		 */
-		public static final SourceModel.Expr jStringBuilder_append(SourceModel.Expr jStringBuilder, char arg_2) {
+		public static final SourceModel.Expr jStringBuilder_append(SourceModel.Expr jStringBuilder, char c) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jStringBuilder_append), jStringBuilder, SourceModel.Expr.makeCharValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jStringBuilder_append), jStringBuilder, SourceModel.Expr.makeCharValue(c)});
 		}
 
 		/**
@@ -6915,25 +6905,25 @@ public final class CAL_Prelude_internal {
 		/**
 		 * Helper binding method for function: jStringBuilder_append2. 
 		 * @param jStringBuilder
-		 * @param arg_2
+		 * @param str
 		 * @return the SourceModule.expr representing an application of jStringBuilder_append2
 		 */
-		public static final SourceModel.Expr jStringBuilder_append2(SourceModel.Expr jStringBuilder, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr jStringBuilder_append2(SourceModel.Expr jStringBuilder, SourceModel.Expr str) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jStringBuilder_append2), jStringBuilder, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jStringBuilder_append2), jStringBuilder, str});
 		}
 
 		/**
 		 * @see #jStringBuilder_append2(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
 		 * @param jStringBuilder
-		 * @param arg_2
+		 * @param str
 		 * @return the SourceModel.Expr representing an application of jStringBuilder_append2
 		 */
-		public static final SourceModel.Expr jStringBuilder_append2(SourceModel.Expr jStringBuilder, java.lang.String arg_2) {
+		public static final SourceModel.Expr jStringBuilder_append2(SourceModel.Expr jStringBuilder, java.lang.String str) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jStringBuilder_append2), jStringBuilder, SourceModel.Expr.makeStringValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jStringBuilder_append2), jStringBuilder, SourceModel.Expr.makeStringValue(str)});
 		}
 
 		/**
@@ -7935,24 +7925,24 @@ public final class CAL_Prelude_internal {
 
 		/**
 		 * Helper binding method for function: longToDecimal. 
-		 * @param arg_1
+		 * @param val
 		 * @return the SourceModule.expr representing an application of longToDecimal
 		 */
-		public static final SourceModel.Expr longToDecimal(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr longToDecimal(SourceModel.Expr val) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.longToDecimal), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.longToDecimal), val});
 		}
 
 		/**
 		 * @see #longToDecimal(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param val
 		 * @return the SourceModel.Expr representing an application of longToDecimal
 		 */
-		public static final SourceModel.Expr longToDecimal(long arg_1) {
+		public static final SourceModel.Expr longToDecimal(long val) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.longToDecimal), SourceModel.Expr.makeLongValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.longToDecimal), SourceModel.Expr.makeLongValue(val)});
 		}
 
 		/**
@@ -8141,46 +8131,6 @@ public final class CAL_Prelude_internal {
 		 */
 		public static final QualifiedName longToShort = 
 			QualifiedName.make(CAL_Prelude_internal.MODULE_NAME, "longToShort");
-
-		/**
-		 * Makes a comparator that uses the ordering function argument to implement the Java comparator's compare method.
-		 * @param arg_1 (CAL type: <code>a -> a -> Cal.Core.Prelude.Ordering</code>)
-		 * @return (CAL type: <code>Cal.Core.Prelude.JComparator</code>) 
-		 */
-		public static final SourceModel.Expr makeComparator(SourceModel.Expr arg_1) {
-			return 
-				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.makeComparator), arg_1});
-		}
-
-		/**
-		 * Name binding for function: makeComparator.
-		 * @see #makeComparator(org.openquark.cal.compiler.SourceModel.Expr)
-		 */
-		public static final QualifiedName makeComparator = 
-			QualifiedName.make(
-				CAL_Prelude_internal.MODULE_NAME, 
-				"makeComparator");
-
-		/**
-		 * Helper binding method for function: makeEquivalenceRelation. 
-		 * @param arg_1
-		 * @return the SourceModule.expr representing an application of makeEquivalenceRelation
-		 */
-		public static final SourceModel.Expr makeEquivalenceRelation(SourceModel.Expr arg_1) {
-			return 
-				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.makeEquivalenceRelation), arg_1});
-		}
-
-		/**
-		 * Name binding for function: makeEquivalenceRelation.
-		 * @see #makeEquivalenceRelation(org.openquark.cal.compiler.SourceModel.Expr)
-		 */
-		public static final QualifiedName makeEquivalenceRelation = 
-			QualifiedName.make(
-				CAL_Prelude_internal.MODULE_NAME, 
-				"makeEquivalenceRelation");
 
 		/**
 		 * <code>map mapFunction list</code> applies the function <code>mapFunction</code> to each element of the list and returns
@@ -8423,13 +8373,13 @@ public final class CAL_Prelude_internal {
 		/**
 		 * Helper binding method for function: maxDecimal. 
 		 * @param decimal
-		 * @param arg_2
+		 * @param val
 		 * @return the SourceModule.expr representing an application of maxDecimal
 		 */
-		public static final SourceModel.Expr maxDecimal(SourceModel.Expr decimal, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr maxDecimal(SourceModel.Expr decimal, SourceModel.Expr val) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.maxDecimal), decimal, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.maxDecimal), decimal, val});
 		}
 
 		/**
@@ -8460,26 +8410,26 @@ public final class CAL_Prelude_internal {
 
 		/**
 		 * Helper binding method for function: maxDouble. 
-		 * @param arg_1
+		 * @param a
 		 * @param arg_2
 		 * @return the SourceModule.expr representing an application of maxDouble
 		 */
-		public static final SourceModel.Expr maxDouble(SourceModel.Expr arg_1, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr maxDouble(SourceModel.Expr a, SourceModel.Expr arg_2) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.maxDouble), arg_1, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.maxDouble), a, arg_2});
 		}
 
 		/**
 		 * @see #maxDouble(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param a
 		 * @param arg_2
 		 * @return the SourceModel.Expr representing an application of maxDouble
 		 */
-		public static final SourceModel.Expr maxDouble(double arg_1, double arg_2) {
+		public static final SourceModel.Expr maxDouble(double a, double arg_2) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.maxDouble), SourceModel.Expr.makeDoubleValue(arg_1), SourceModel.Expr.makeDoubleValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.maxDouble), SourceModel.Expr.makeDoubleValue(a), SourceModel.Expr.makeDoubleValue(arg_2)});
 		}
 
 		/**
@@ -8491,26 +8441,26 @@ public final class CAL_Prelude_internal {
 
 		/**
 		 * Helper binding method for function: maxFloat. 
-		 * @param arg_1
-		 * @param arg_2
+		 * @param a
+		 * @param b
 		 * @return the SourceModule.expr representing an application of maxFloat
 		 */
-		public static final SourceModel.Expr maxFloat(SourceModel.Expr arg_1, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr maxFloat(SourceModel.Expr a, SourceModel.Expr b) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.maxFloat), arg_1, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.maxFloat), a, b});
 		}
 
 		/**
 		 * @see #maxFloat(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
-		 * @param arg_2
+		 * @param a
+		 * @param b
 		 * @return the SourceModel.Expr representing an application of maxFloat
 		 */
-		public static final SourceModel.Expr maxFloat(float arg_1, float arg_2) {
+		public static final SourceModel.Expr maxFloat(float a, float b) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.maxFloat), SourceModel.Expr.makeFloatValue(arg_1), SourceModel.Expr.makeFloatValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.maxFloat), SourceModel.Expr.makeFloatValue(a), SourceModel.Expr.makeFloatValue(b)});
 		}
 
 		/**
@@ -8522,26 +8472,26 @@ public final class CAL_Prelude_internal {
 
 		/**
 		 * Helper binding method for function: maxInt. 
-		 * @param arg_1
-		 * @param arg_2
+		 * @param a
+		 * @param b
 		 * @return the SourceModule.expr representing an application of maxInt
 		 */
-		public static final SourceModel.Expr maxInt(SourceModel.Expr arg_1, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr maxInt(SourceModel.Expr a, SourceModel.Expr b) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.maxInt), arg_1, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.maxInt), a, b});
 		}
 
 		/**
 		 * @see #maxInt(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
-		 * @param arg_2
+		 * @param a
+		 * @param b
 		 * @return the SourceModel.Expr representing an application of maxInt
 		 */
-		public static final SourceModel.Expr maxInt(int arg_1, int arg_2) {
+		public static final SourceModel.Expr maxInt(int a, int b) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.maxInt), SourceModel.Expr.makeIntValue(arg_1), SourceModel.Expr.makeIntValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.maxInt), SourceModel.Expr.makeIntValue(a), SourceModel.Expr.makeIntValue(b)});
 		}
 
 		/**
@@ -8554,13 +8504,13 @@ public final class CAL_Prelude_internal {
 		/**
 		 * Helper binding method for function: maxInteger. 
 		 * @param integer
-		 * @param arg_2
+		 * @param val
 		 * @return the SourceModule.expr representing an application of maxInteger
 		 */
-		public static final SourceModel.Expr maxInteger(SourceModel.Expr integer, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr maxInteger(SourceModel.Expr integer, SourceModel.Expr val) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.maxInteger), integer, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.maxInteger), integer, val});
 		}
 
 		/**
@@ -8572,26 +8522,26 @@ public final class CAL_Prelude_internal {
 
 		/**
 		 * Helper binding method for function: maxLong. 
-		 * @param arg_1
+		 * @param a
 		 * @param arg_2
 		 * @return the SourceModule.expr representing an application of maxLong
 		 */
-		public static final SourceModel.Expr maxLong(SourceModel.Expr arg_1, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr maxLong(SourceModel.Expr a, SourceModel.Expr arg_2) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.maxLong), arg_1, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.maxLong), a, arg_2});
 		}
 
 		/**
 		 * @see #maxLong(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param a
 		 * @param arg_2
 		 * @return the SourceModel.Expr representing an application of maxLong
 		 */
-		public static final SourceModel.Expr maxLong(long arg_1, long arg_2) {
+		public static final SourceModel.Expr maxLong(long a, long arg_2) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.maxLong), SourceModel.Expr.makeLongValue(arg_1), SourceModel.Expr.makeLongValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.maxLong), SourceModel.Expr.makeLongValue(a), SourceModel.Expr.makeLongValue(arg_2)});
 		}
 
 		/**
@@ -8942,13 +8892,13 @@ public final class CAL_Prelude_internal {
 		/**
 		 * Helper binding method for function: minDecimal. 
 		 * @param decimal
-		 * @param arg_2
+		 * @param val
 		 * @return the SourceModule.expr representing an application of minDecimal
 		 */
-		public static final SourceModel.Expr minDecimal(SourceModel.Expr decimal, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr minDecimal(SourceModel.Expr decimal, SourceModel.Expr val) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.minDecimal), decimal, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.minDecimal), decimal, val});
 		}
 
 		/**
@@ -8979,26 +8929,26 @@ public final class CAL_Prelude_internal {
 
 		/**
 		 * Helper binding method for function: minDouble. 
-		 * @param arg_1
+		 * @param a
 		 * @param arg_2
 		 * @return the SourceModule.expr representing an application of minDouble
 		 */
-		public static final SourceModel.Expr minDouble(SourceModel.Expr arg_1, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr minDouble(SourceModel.Expr a, SourceModel.Expr arg_2) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.minDouble), arg_1, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.minDouble), a, arg_2});
 		}
 
 		/**
 		 * @see #minDouble(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param a
 		 * @param arg_2
 		 * @return the SourceModel.Expr representing an application of minDouble
 		 */
-		public static final SourceModel.Expr minDouble(double arg_1, double arg_2) {
+		public static final SourceModel.Expr minDouble(double a, double arg_2) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.minDouble), SourceModel.Expr.makeDoubleValue(arg_1), SourceModel.Expr.makeDoubleValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.minDouble), SourceModel.Expr.makeDoubleValue(a), SourceModel.Expr.makeDoubleValue(arg_2)});
 		}
 
 		/**
@@ -9010,26 +8960,26 @@ public final class CAL_Prelude_internal {
 
 		/**
 		 * Helper binding method for function: minFloat. 
-		 * @param arg_1
-		 * @param arg_2
+		 * @param a
+		 * @param b
 		 * @return the SourceModule.expr representing an application of minFloat
 		 */
-		public static final SourceModel.Expr minFloat(SourceModel.Expr arg_1, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr minFloat(SourceModel.Expr a, SourceModel.Expr b) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.minFloat), arg_1, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.minFloat), a, b});
 		}
 
 		/**
 		 * @see #minFloat(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
-		 * @param arg_2
+		 * @param a
+		 * @param b
 		 * @return the SourceModel.Expr representing an application of minFloat
 		 */
-		public static final SourceModel.Expr minFloat(float arg_1, float arg_2) {
+		public static final SourceModel.Expr minFloat(float a, float b) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.minFloat), SourceModel.Expr.makeFloatValue(arg_1), SourceModel.Expr.makeFloatValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.minFloat), SourceModel.Expr.makeFloatValue(a), SourceModel.Expr.makeFloatValue(b)});
 		}
 
 		/**
@@ -9041,26 +8991,26 @@ public final class CAL_Prelude_internal {
 
 		/**
 		 * Helper binding method for function: minInt. 
-		 * @param arg_1
-		 * @param arg_2
+		 * @param a
+		 * @param b
 		 * @return the SourceModule.expr representing an application of minInt
 		 */
-		public static final SourceModel.Expr minInt(SourceModel.Expr arg_1, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr minInt(SourceModel.Expr a, SourceModel.Expr b) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.minInt), arg_1, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.minInt), a, b});
 		}
 
 		/**
 		 * @see #minInt(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
-		 * @param arg_2
+		 * @param a
+		 * @param b
 		 * @return the SourceModel.Expr representing an application of minInt
 		 */
-		public static final SourceModel.Expr minInt(int arg_1, int arg_2) {
+		public static final SourceModel.Expr minInt(int a, int b) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.minInt), SourceModel.Expr.makeIntValue(arg_1), SourceModel.Expr.makeIntValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.minInt), SourceModel.Expr.makeIntValue(a), SourceModel.Expr.makeIntValue(b)});
 		}
 
 		/**
@@ -9073,13 +9023,13 @@ public final class CAL_Prelude_internal {
 		/**
 		 * Helper binding method for function: minInteger. 
 		 * @param integer
-		 * @param arg_2
+		 * @param val
 		 * @return the SourceModule.expr representing an application of minInteger
 		 */
-		public static final SourceModel.Expr minInteger(SourceModel.Expr integer, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr minInteger(SourceModel.Expr integer, SourceModel.Expr val) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.minInteger), integer, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.minInteger), integer, val});
 		}
 
 		/**
@@ -9091,26 +9041,26 @@ public final class CAL_Prelude_internal {
 
 		/**
 		 * Helper binding method for function: minLong. 
-		 * @param arg_1
+		 * @param a
 		 * @param arg_2
 		 * @return the SourceModule.expr representing an application of minLong
 		 */
-		public static final SourceModel.Expr minLong(SourceModel.Expr arg_1, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr minLong(SourceModel.Expr a, SourceModel.Expr arg_2) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.minLong), arg_1, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.minLong), a, arg_2});
 		}
 
 		/**
 		 * @see #minLong(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param a
 		 * @param arg_2
 		 * @return the SourceModel.Expr representing an application of minLong
 		 */
-		public static final SourceModel.Expr minLong(long arg_1, long arg_2) {
+		public static final SourceModel.Expr minLong(long a, long arg_2) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.minLong), SourceModel.Expr.makeLongValue(arg_1), SourceModel.Expr.makeLongValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.minLong), SourceModel.Expr.makeLongValue(a), SourceModel.Expr.makeLongValue(arg_2)});
 		}
 
 		/**
@@ -9204,13 +9154,13 @@ public final class CAL_Prelude_internal {
 		/**
 		 * Helper binding method for function: multiplyDecimal. 
 		 * @param decimal
-		 * @param arg_2
+		 * @param multiplicand
 		 * @return the SourceModule.expr representing an application of multiplyDecimal
 		 */
-		public static final SourceModel.Expr multiplyDecimal(SourceModel.Expr decimal, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr multiplyDecimal(SourceModel.Expr decimal, SourceModel.Expr multiplicand) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.multiplyDecimal), decimal, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.multiplyDecimal), decimal, multiplicand});
 		}
 
 		/**
@@ -9322,13 +9272,13 @@ public final class CAL_Prelude_internal {
 		/**
 		 * Helper binding method for function: multiplyInteger. 
 		 * @param integer
-		 * @param arg_2
+		 * @param val
 		 * @return the SourceModule.expr representing an application of multiplyInteger
 		 */
-		public static final SourceModel.Expr multiplyInteger(SourceModel.Expr integer, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr multiplyInteger(SourceModel.Expr integer, SourceModel.Expr val) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.multiplyInteger), integer, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.multiplyInteger), integer, val});
 		}
 
 		/**
@@ -10148,24 +10098,24 @@ public final class CAL_Prelude_internal {
 		/**
 		 * Used to implement the <code>Cal.Core.Prelude.output</code> instance function for derived instances of
 		 * <code>Cal.Core.Prelude.Outputable</code> for foreign types having implementation type "boolean".
-		 * @param arg_1 (CAL type: <code>Cal.Core.Prelude.Boolean</code>)
+		 * @param b (CAL type: <code>Cal.Core.Prelude.Boolean</code>)
 		 * @return (CAL type: <code>Cal.Core.Prelude.JBoolean</code>) 
 		 */
-		public static final SourceModel.Expr outputBoolean(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr outputBoolean(SourceModel.Expr b) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputBoolean), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputBoolean), b});
 		}
 
 		/**
 		 * @see #outputBoolean(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param b
 		 * @return the SourceModel.Expr representing an application of outputBoolean
 		 */
-		public static final SourceModel.Expr outputBoolean(boolean arg_1) {
+		public static final SourceModel.Expr outputBoolean(boolean b) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputBoolean), SourceModel.Expr.makeBooleanValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputBoolean), SourceModel.Expr.makeBooleanValue(b)});
 		}
 
 		/**
@@ -10211,24 +10161,24 @@ public final class CAL_Prelude_internal {
 		/**
 		 * Used to implement the <code>Cal.Core.Prelude.output</code> instance function for derived instances of
 		 * <code>Cal.Core.Prelude.Outputable</code> for foreign types having implementation type "byte".
-		 * @param arg_1 (CAL type: <code>Cal.Core.Prelude.Byte</code>)
+		 * @param b (CAL type: <code>Cal.Core.Prelude.Byte</code>)
 		 * @return (CAL type: <code>Cal.Core.Prelude.JByte</code>) 
 		 */
-		public static final SourceModel.Expr outputByte(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr outputByte(SourceModel.Expr b) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputByte), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputByte), b});
 		}
 
 		/**
 		 * @see #outputByte(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param b
 		 * @return the SourceModel.Expr representing an application of outputByte
 		 */
-		public static final SourceModel.Expr outputByte(byte arg_1) {
+		public static final SourceModel.Expr outputByte(byte b) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputByte), SourceModel.Expr.makeByteValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputByte), SourceModel.Expr.makeByteValue(b)});
 		}
 
 		/**
@@ -10241,24 +10191,24 @@ public final class CAL_Prelude_internal {
 		/**
 		 * Used to implement the <code>Cal.Core.Prelude.output</code> instance function for derived instances of
 		 * <code>Cal.Core.Prelude.Outputable</code> for foreign types having implementation type "char".
-		 * @param arg_1 (CAL type: <code>Cal.Core.Prelude.Char</code>)
+		 * @param c (CAL type: <code>Cal.Core.Prelude.Char</code>)
 		 * @return (CAL type: <code>Cal.Core.Prelude.JChar</code>) 
 		 */
-		public static final SourceModel.Expr outputChar(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr outputChar(SourceModel.Expr c) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputChar), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputChar), c});
 		}
 
 		/**
 		 * @see #outputChar(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param c
 		 * @return the SourceModel.Expr representing an application of outputChar
 		 */
-		public static final SourceModel.Expr outputChar(char arg_1) {
+		public static final SourceModel.Expr outputChar(char c) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputChar), SourceModel.Expr.makeCharValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputChar), SourceModel.Expr.makeCharValue(c)});
 		}
 
 		/**
@@ -10271,24 +10221,24 @@ public final class CAL_Prelude_internal {
 		/**
 		 * Used to implement the <code>Cal.Core.Prelude.output</code> instance function for derived instances of
 		 * <code>Cal.Core.Prelude.Outputable</code> for foreign types having implementation type "double".
-		 * @param arg_1 (CAL type: <code>Cal.Core.Prelude.Double</code>)
+		 * @param value (CAL type: <code>Cal.Core.Prelude.Double</code>)
 		 * @return (CAL type: <code>Cal.Core.Prelude.JDouble</code>) 
 		 */
-		public static final SourceModel.Expr outputDouble(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr outputDouble(SourceModel.Expr value) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputDouble), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputDouble), value});
 		}
 
 		/**
 		 * @see #outputDouble(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param value
 		 * @return the SourceModel.Expr representing an application of outputDouble
 		 */
-		public static final SourceModel.Expr outputDouble(double arg_1) {
+		public static final SourceModel.Expr outputDouble(double value) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputDouble), SourceModel.Expr.makeDoubleValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputDouble), SourceModel.Expr.makeDoubleValue(value)});
 		}
 
 		/**
@@ -10319,24 +10269,24 @@ public final class CAL_Prelude_internal {
 		/**
 		 * Used to implement the <code>Cal.Core.Prelude.output</code> instance function for derived instances of
 		 * <code>Cal.Core.Prelude.Outputable</code> for foreign types having implementation type "float".
-		 * @param arg_1 (CAL type: <code>Cal.Core.Prelude.Float</code>)
+		 * @param value (CAL type: <code>Cal.Core.Prelude.Float</code>)
 		 * @return (CAL type: <code>Cal.Core.Prelude.JFloat</code>) 
 		 */
-		public static final SourceModel.Expr outputFloat(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr outputFloat(SourceModel.Expr value) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputFloat), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputFloat), value});
 		}
 
 		/**
 		 * @see #outputFloat(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param value
 		 * @return the SourceModel.Expr representing an application of outputFloat
 		 */
-		public static final SourceModel.Expr outputFloat(float arg_1) {
+		public static final SourceModel.Expr outputFloat(float value) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputFloat), SourceModel.Expr.makeFloatValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputFloat), SourceModel.Expr.makeFloatValue(value)});
 		}
 
 		/**
@@ -10349,24 +10299,24 @@ public final class CAL_Prelude_internal {
 		/**
 		 * Used to implement the <code>Cal.Core.Prelude.output</code> instance function for derived instances of
 		 * <code>Cal.Core.Prelude.Outputable</code> for foreign types having implementation type "int".
-		 * @param arg_1 (CAL type: <code>Cal.Core.Prelude.Int</code>)
+		 * @param i (CAL type: <code>Cal.Core.Prelude.Int</code>)
 		 * @return (CAL type: <code>Cal.Core.Prelude.JInt</code>) 
 		 */
-		public static final SourceModel.Expr outputInt(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr outputInt(SourceModel.Expr i) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputInt), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputInt), i});
 		}
 
 		/**
 		 * @see #outputInt(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param i
 		 * @return the SourceModel.Expr representing an application of outputInt
 		 */
-		public static final SourceModel.Expr outputInt(int arg_1) {
+		public static final SourceModel.Expr outputInt(int i) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputInt), SourceModel.Expr.makeIntValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputInt), SourceModel.Expr.makeIntValue(i)});
 		}
 
 		/**
@@ -10474,24 +10424,24 @@ public final class CAL_Prelude_internal {
 		/**
 		 * Used to implement the <code>Cal.Core.Prelude.output</code> instance function for derived instances of
 		 * <code>Cal.Core.Prelude.Outputable</code> for foreign types having implementation type "long".
-		 * @param arg_1 (CAL type: <code>Cal.Core.Prelude.Long</code>)
+		 * @param l (CAL type: <code>Cal.Core.Prelude.Long</code>)
 		 * @return (CAL type: <code>Cal.Core.Prelude.JLong</code>) 
 		 */
-		public static final SourceModel.Expr outputLong(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr outputLong(SourceModel.Expr l) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputLong), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputLong), l});
 		}
 
 		/**
 		 * @see #outputLong(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param l
 		 * @return the SourceModel.Expr representing an application of outputLong
 		 */
-		public static final SourceModel.Expr outputLong(long arg_1) {
+		public static final SourceModel.Expr outputLong(long l) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputLong), SourceModel.Expr.makeLongValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputLong), SourceModel.Expr.makeLongValue(l)});
 		}
 
 		/**
@@ -10560,24 +10510,24 @@ public final class CAL_Prelude_internal {
 		/**
 		 * Used to implement the <code>Cal.Core.Prelude.output</code> instance function for derived instances of
 		 * <code>Cal.Core.Prelude.Outputable</code> for foreign types having implementation type "short".
-		 * @param arg_1 (CAL type: <code>Cal.Core.Prelude.Short</code>)
+		 * @param s (CAL type: <code>Cal.Core.Prelude.Short</code>)
 		 * @return (CAL type: <code>Cal.Core.Prelude.JShort</code>) 
 		 */
-		public static final SourceModel.Expr outputShort(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr outputShort(SourceModel.Expr s) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputShort), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputShort), s});
 		}
 
 		/**
 		 * @see #outputShort(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param s
 		 * @return the SourceModel.Expr representing an application of outputShort
 		 */
-		public static final SourceModel.Expr outputShort(short arg_1) {
+		public static final SourceModel.Expr outputShort(short s) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputShort), SourceModel.Expr.makeShortValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.outputShort), SourceModel.Expr.makeShortValue(s)});
 		}
 
 		/**
@@ -10937,13 +10887,13 @@ public final class CAL_Prelude_internal {
 		/**
 		 * Helper binding method for function: remainderDecimal. 
 		 * @param decimal
-		 * @param arg_2
+		 * @param divisor
 		 * @return the SourceModule.expr representing an application of remainderDecimal
 		 */
-		public static final SourceModel.Expr remainderDecimal(SourceModel.Expr decimal, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr remainderDecimal(SourceModel.Expr decimal, SourceModel.Expr divisor) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.remainderDecimal), decimal, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.remainderDecimal), decimal, divisor});
 		}
 
 		/**
@@ -11055,13 +11005,13 @@ public final class CAL_Prelude_internal {
 		/**
 		 * Helper binding method for function: remainderInteger. 
 		 * @param integer
-		 * @param arg_2
+		 * @param val
 		 * @return the SourceModule.expr representing an application of remainderInteger
 		 */
-		public static final SourceModel.Expr remainderInteger(SourceModel.Expr integer, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr remainderInteger(SourceModel.Expr integer, SourceModel.Expr val) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.remainderInteger), integer, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.remainderInteger), integer, val});
 		}
 
 		/**
@@ -11651,24 +11601,24 @@ public final class CAL_Prelude_internal {
 
 		/**
 		 * Helper binding method for function: signumFloat. 
-		 * @param arg_1
+		 * @param f
 		 * @return the SourceModule.expr representing an application of signumFloat
 		 */
-		public static final SourceModel.Expr signumFloat(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr signumFloat(SourceModel.Expr f) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.signumFloat), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.signumFloat), f});
 		}
 
 		/**
 		 * @see #signumFloat(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param f
 		 * @return the SourceModel.Expr representing an application of signumFloat
 		 */
-		public static final SourceModel.Expr signumFloat(float arg_1) {
+		public static final SourceModel.Expr signumFloat(float f) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.signumFloat), SourceModel.Expr.makeFloatValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.signumFloat), SourceModel.Expr.makeFloatValue(f)});
 		}
 
 		/**
@@ -11905,13 +11855,13 @@ public final class CAL_Prelude_internal {
 		/**
 		 * Helper binding method for function: subtractDecimal. 
 		 * @param decimal
-		 * @param arg_2
+		 * @param subtrahend
 		 * @return the SourceModule.expr representing an application of subtractDecimal
 		 */
-		public static final SourceModel.Expr subtractDecimal(SourceModel.Expr decimal, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr subtractDecimal(SourceModel.Expr decimal, SourceModel.Expr subtrahend) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.subtractDecimal), decimal, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.subtractDecimal), decimal, subtrahend});
 		}
 
 		/**
@@ -12023,13 +11973,13 @@ public final class CAL_Prelude_internal {
 		/**
 		 * Helper binding method for function: subtractInteger. 
 		 * @param integer
-		 * @param arg_2
+		 * @param val
 		 * @return the SourceModule.expr representing an application of subtractInteger
 		 */
-		public static final SourceModel.Expr subtractInteger(SourceModel.Expr integer, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr subtractInteger(SourceModel.Expr integer, SourceModel.Expr val) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.subtractInteger), integer, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.subtractInteger), integer, val});
 		}
 
 		/**
@@ -15094,6 +15044,6 @@ public final class CAL_Prelude_internal {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = -1736191142;
+	public static final int javaDocHash = -159187760;
 
 }

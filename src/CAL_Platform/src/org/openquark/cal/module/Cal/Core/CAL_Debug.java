@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Core.Debug module from Java code.
  *  
- * Creation date: Wed Oct 03 15:53:07 PDT 2007
+ * Creation date: Fri Sep 21 16:18:09 PDT 2012
  * --!>
  *  
  */
@@ -169,6 +169,24 @@ public final class CAL_Debug {
 		 */
 		public static final QualifiedName compareEvalTimes = 
 			QualifiedName.make(CAL_Debug.MODULE_NAME, "compareEvalTimes");
+
+		/**
+		 * Evaluates the given expression <code>f</code> deeply (as in deepSeq) and returns the time taken to evaluate it.
+		 * @param f (CAL type: <code>a</code>)
+		 * @return (CAL type: <code>Cal.Core.Prelude.Long</code>) 
+		 */
+		public static final SourceModel.Expr deepEvalTime(SourceModel.Expr f) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.deepEvalTime), f});
+		}
+
+		/**
+		 * Name binding for function: deepEvalTime.
+		 * @see #deepEvalTime(org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName deepEvalTime = 
+			QualifiedName.make(CAL_Debug.MODULE_NAME, "deepEvalTime");
 
 		/**
 		 * Returns the number of distinct indirection nodes in the internal graph representing the value that created <code>Cal.Core.Debug.InternalValueStats</code>.
@@ -826,6 +844,138 @@ public final class CAL_Debug {
 			QualifiedName.make(CAL_Debug.MODULE_NAME, "trace");
 
 		/**
+		 * Traces messages for the start and end of the deep (as in deepSeq) evaluation of an expression.
+		 * The end trace will include the evaluation time.
+		 * @param message (CAL type: <code>Cal.Core.Prelude.String</code>)
+		 * @param val (CAL type: <code>a</code>)
+		 * @return (CAL type: <code>a</code>) 
+		 */
+		public static final SourceModel.Expr traceDeepEvalStartAndEnd(SourceModel.Expr message, SourceModel.Expr val) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.traceDeepEvalStartAndEnd), message, val});
+		}
+
+		/**
+		 * @see #traceDeepEvalStartAndEnd(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 * @param message
+		 * @param val
+		 * @return the SourceModel.Expr representing an application of traceDeepEvalStartAndEnd
+		 */
+		public static final SourceModel.Expr traceDeepEvalStartAndEnd(java.lang.String message, SourceModel.Expr val) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.traceDeepEvalStartAndEnd), SourceModel.Expr.makeStringValue(message), val});
+		}
+
+		/**
+		 * Name binding for function: traceDeepEvalStartAndEnd.
+		 * @see #traceDeepEvalStartAndEnd(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName traceDeepEvalStartAndEnd = 
+			QualifiedName.make(
+				CAL_Debug.MODULE_NAME, 
+				"traceDeepEvalStartAndEnd");
+
+		/**
+		 * Traces messages for the start and end of the evaluation of an expression to WHNF.
+		 * The end trace will include the evaluation time.
+		 * @param message (CAL type: <code>Cal.Core.Prelude.String</code>)
+		 * @param val (CAL type: <code>a</code>)
+		 * @return (CAL type: <code>a</code>) 
+		 */
+		public static final SourceModel.Expr traceEvalStartAndEnd(SourceModel.Expr message, SourceModel.Expr val) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.traceEvalStartAndEnd), message, val});
+		}
+
+		/**
+		 * @see #traceEvalStartAndEnd(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 * @param message
+		 * @param val
+		 * @return the SourceModel.Expr representing an application of traceEvalStartAndEnd
+		 */
+		public static final SourceModel.Expr traceEvalStartAndEnd(java.lang.String message, SourceModel.Expr val) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.traceEvalStartAndEnd), SourceModel.Expr.makeStringValue(message), val});
+		}
+
+		/**
+		 * Name binding for function: traceEvalStartAndEnd.
+		 * @see #traceEvalStartAndEnd(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName traceEvalStartAndEnd = 
+			QualifiedName.make(CAL_Debug.MODULE_NAME, "traceEvalStartAndEnd");
+
+		/**
+		 * Traces messages for the start and end of the evaluation of an expression to WHNF.
+		 * The end trace will include the evaluation time duration.
+		 * The start and end time values (in system time) will be output as well.
+		 * @param message (CAL type: <code>Cal.Core.Prelude.String</code>)
+		 * @param val (CAL type: <code>a</code>)
+		 * @return (CAL type: <code>a</code>) 
+		 */
+		public static final SourceModel.Expr traceEvalStartAndEndTimes(SourceModel.Expr message, SourceModel.Expr val) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.traceEvalStartAndEndTimes), message, val});
+		}
+
+		/**
+		 * @see #traceEvalStartAndEndTimes(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 * @param message
+		 * @param val
+		 * @return the SourceModel.Expr representing an application of traceEvalStartAndEndTimes
+		 */
+		public static final SourceModel.Expr traceEvalStartAndEndTimes(java.lang.String message, SourceModel.Expr val) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.traceEvalStartAndEndTimes), SourceModel.Expr.makeStringValue(message), val});
+		}
+
+		/**
+		 * Name binding for function: traceEvalStartAndEndTimes.
+		 * @see #traceEvalStartAndEndTimes(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName traceEvalStartAndEndTimes = 
+			QualifiedName.make(
+				CAL_Debug.MODULE_NAME, 
+				"traceEvalStartAndEndTimes");
+
+		/**
+		 * Traces a message containing the time required to evaluate an expression to WHNF.
+		 * @param message (CAL type: <code>Cal.Core.Prelude.String</code>)
+		 * @param val (CAL type: <code>a</code>)
+		 * @return (CAL type: <code>a</code>) 
+		 */
+		public static final SourceModel.Expr traceEvalTime(SourceModel.Expr message, SourceModel.Expr val) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.traceEvalTime), message, val});
+		}
+
+		/**
+		 * @see #traceEvalTime(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 * @param message
+		 * @param val
+		 * @return the SourceModel.Expr representing an application of traceEvalTime
+		 */
+		public static final SourceModel.Expr traceEvalTime(java.lang.String message, SourceModel.Expr val) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.traceEvalTime), SourceModel.Expr.makeStringValue(message), val});
+		}
+
+		/**
+		 * Name binding for function: traceEvalTime.
+		 * @see #traceEvalTime(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName traceEvalTime = 
+			QualifiedName.make(CAL_Debug.MODULE_NAME, "traceEvalTime");
+
+		/**
 		 * Augments a list of values such that a trace message will be displayed when members at a specified interval are accessed.
 		 * This could be useful for tracking progress of a lengthy operation over a long list.
 		 * @param message (CAL type: <code>Cal.Core.Prelude.String</code>)
@@ -903,6 +1053,69 @@ public final class CAL_Debug {
 			QualifiedName.make(CAL_Debug.MODULE_NAME, "traceOnStdOut");
 
 		/**
+		 * This works the same as <code>Cal.Core.Debug.traceShowable</code> except that <code>Cal.Core.Debug.showInternal</code> is used to show the value.
+		 * @param message (CAL type: <code>Cal.Core.Prelude.String</code>)
+		 * @param val (CAL type: <code>a</code>)
+		 * @return (CAL type: <code>a</code>) 
+		 */
+		public static final SourceModel.Expr traceShowInternal(SourceModel.Expr message, SourceModel.Expr val) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.traceShowInternal), message, val});
+		}
+
+		/**
+		 * @see #traceShowInternal(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 * @param message
+		 * @param val
+		 * @return the SourceModel.Expr representing an application of traceShowInternal
+		 */
+		public static final SourceModel.Expr traceShowInternal(java.lang.String message, SourceModel.Expr val) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.traceShowInternal), SourceModel.Expr.makeStringValue(message), val});
+		}
+
+		/**
+		 * Name binding for function: traceShowInternal.
+		 * @see #traceShowInternal(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName traceShowInternal = 
+			QualifiedName.make(CAL_Debug.MODULE_NAME, "traceShowInternal");
+
+		/**
+		 * As <code>Cal.Core.Debug.traceShowInternal</code> except that the value is evaluated before showing it.
+		 * This can be useful in debugging for tracing values which are not Showable.
+		 * @param msg (CAL type: <code>Cal.Core.Prelude.String</code>)
+		 * @param val (CAL type: <code>a</code>)
+		 * @return (CAL type: <code>a</code>) 
+		 */
+		public static final SourceModel.Expr traceShowInternalStrict(SourceModel.Expr msg, SourceModel.Expr val) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.traceShowInternalStrict), msg, val});
+		}
+
+		/**
+		 * @see #traceShowInternalStrict(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 * @param msg
+		 * @param val
+		 * @return the SourceModel.Expr representing an application of traceShowInternalStrict
+		 */
+		public static final SourceModel.Expr traceShowInternalStrict(java.lang.String msg, SourceModel.Expr val) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.traceShowInternalStrict), SourceModel.Expr.makeStringValue(msg), val});
+		}
+
+		/**
+		 * Name binding for function: traceShowInternalStrict.
+		 * @see #traceShowInternalStrict(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName traceShowInternalStrict = 
+			QualifiedName.make(CAL_Debug.MODULE_NAME, "traceShowInternalStrict");
+
+		/**
 		 * Traces the specified showable value and returns its original value.
 		 * 
 		 * <dl><dt><b>See Also:</b>
@@ -940,6 +1153,87 @@ public final class CAL_Debug {
 		 */
 		public static final QualifiedName traceShowable = 
 			QualifiedName.make(CAL_Debug.MODULE_NAME, "traceShowable");
+
+		/**
+		 * Traces the specified showable list of values -- each item on its own line -- and returns the original list.
+		 * 
+		 * <dl><dt><b>See Also:</b>
+		 * <dd><b>Functions and Class Methods:</b> Cal.Core.Debug.trace
+		 * </dl>
+		 * 
+		 * @param message (CAL type: <code>Cal.Core.Prelude.String</code>)
+		 *          a message to be included with each trace output, followed by the Show form of the list values
+		 * @param lst (CAL type: <code>Cal.Core.Debug.Show a => [a]</code>)
+		 *          the list of values to be traced and returned
+		 * @return (CAL type: <code>Cal.Core.Debug.Show a => [a]</code>) 
+		 *          the original list of values after tracing it
+		 */
+		public static final SourceModel.Expr traceShowableList(SourceModel.Expr message, SourceModel.Expr lst) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.traceShowableList), message, lst});
+		}
+
+		/**
+		 * @see #traceShowableList(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 * @param message
+		 * @param lst
+		 * @return the SourceModel.Expr representing an application of traceShowableList
+		 */
+		public static final SourceModel.Expr traceShowableList(java.lang.String message, SourceModel.Expr lst) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.traceShowableList), SourceModel.Expr.makeStringValue(message), lst});
+		}
+
+		/**
+		 * Name binding for function: traceShowableList.
+		 * @see #traceShowableList(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName traceShowableList = 
+			QualifiedName.make(CAL_Debug.MODULE_NAME, "traceShowableList");
+
+		/**
+		 * Traces the specified value (using the show function provided) and returns its original value.
+		 * 
+		 * <dl><dt><b>See Also:</b>
+		 * <dd><b>Functions and Class Methods:</b> Cal.Core.Debug.trace
+		 * </dl>
+		 * 
+		 * @param showValFn (CAL type: <code>a -> Cal.Core.Prelude.String</code>)
+		 *          a function to produce the string output for the value
+		 * @param message (CAL type: <code>Cal.Core.Prelude.String</code>)
+		 *          a message to be included with each trace output, followed by the Show form of the value
+		 * @param val (CAL type: <code>a</code>)
+		 *          the value to be traced and returned
+		 * @return (CAL type: <code>a</code>) 
+		 *          the original value after tracing it
+		 */
+		public static final SourceModel.Expr traceShowableWith(SourceModel.Expr showValFn, SourceModel.Expr message, SourceModel.Expr val) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.traceShowableWith), showValFn, message, val});
+		}
+
+		/**
+		 * @see #traceShowableWith(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 * @param showValFn
+		 * @param message
+		 * @param val
+		 * @return the SourceModel.Expr representing an application of traceShowableWith
+		 */
+		public static final SourceModel.Expr traceShowableWith(SourceModel.Expr showValFn, java.lang.String message, SourceModel.Expr val) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.traceShowableWith), showValFn, SourceModel.Expr.makeStringValue(message), val});
+		}
+
+		/**
+		 * Name binding for function: traceShowableWith.
+		 * @see #traceShowableWith(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName traceShowableWith = 
+			QualifiedName.make(CAL_Debug.MODULE_NAME, "traceShowableWith");
 
 		/**
 		 * Returns true if function tracing will also display the values of the function arguments as part of the trace.
@@ -1087,6 +1381,6 @@ public final class CAL_Debug {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = -702463554;
+	public static final int javaDocHash = 1995113763;
 
 }

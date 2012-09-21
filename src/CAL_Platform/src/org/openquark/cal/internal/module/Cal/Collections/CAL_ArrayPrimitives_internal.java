@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Collections.ArrayPrimitives module from Java code.
  *  
- * Creation date: Wed Mar 28 13:07:55 PST 2007
+ * Creation date: Fri Sep 21 16:17:56 PDT 2012
  * --!>
  *  
  */
@@ -1838,26 +1838,26 @@ public final class CAL_ArrayPrimitives_internal {
 
 		/**
 		 * Helper binding method for function: byteArray_binarySearch. 
-		 * @param arg_1
-		 * @param arg_2
+		 * @param a
+		 * @param key
 		 * @return the SourceModule.expr representing an application of byteArray_binarySearch
 		 */
-		public static final SourceModel.Expr byteArray_binarySearch(SourceModel.Expr arg_1, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr byteArray_binarySearch(SourceModel.Expr a, SourceModel.Expr key) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.byteArray_binarySearch), arg_1, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.byteArray_binarySearch), a, key});
 		}
 
 		/**
 		 * @see #byteArray_binarySearch(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
-		 * @param arg_2
+		 * @param a
+		 * @param key
 		 * @return the SourceModel.Expr representing an application of byteArray_binarySearch
 		 */
-		public static final SourceModel.Expr byteArray_binarySearch(SourceModel.Expr arg_1, byte arg_2) {
+		public static final SourceModel.Expr byteArray_binarySearch(SourceModel.Expr a, byte key) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.byteArray_binarySearch), arg_1, SourceModel.Expr.makeByteValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.byteArray_binarySearch), a, SourceModel.Expr.makeByteValue(key)});
 		}
 
 		/**
@@ -3706,26 +3706,26 @@ public final class CAL_ArrayPrimitives_internal {
 
 		/**
 		 * Helper binding method for function: charArray_binarySearch. 
-		 * @param arg_1
-		 * @param arg_2
+		 * @param a
+		 * @param key
 		 * @return the SourceModule.expr representing an application of charArray_binarySearch
 		 */
-		public static final SourceModel.Expr charArray_binarySearch(SourceModel.Expr arg_1, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr charArray_binarySearch(SourceModel.Expr a, SourceModel.Expr key) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.charArray_binarySearch), arg_1, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.charArray_binarySearch), a, key});
 		}
 
 		/**
 		 * @see #charArray_binarySearch(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
-		 * @param arg_2
+		 * @param a
+		 * @param key
 		 * @return the SourceModel.Expr representing an application of charArray_binarySearch
 		 */
-		public static final SourceModel.Expr charArray_binarySearch(SourceModel.Expr arg_1, char arg_2) {
+		public static final SourceModel.Expr charArray_binarySearch(SourceModel.Expr a, char key) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.charArray_binarySearch), arg_1, SourceModel.Expr.makeCharValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.charArray_binarySearch), a, SourceModel.Expr.makeCharValue(key)});
 		}
 
 		/**
@@ -4588,13 +4588,13 @@ public final class CAL_ArrayPrimitives_internal {
 
 		/**
 		 * Helper binding method for function: charArray_toString. 
-		 * @param arg_1
+		 * @param data0
 		 * @return the SourceModule.expr representing an application of charArray_toString
 		 */
-		public static final SourceModel.Expr charArray_toString(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr charArray_toString(SourceModel.Expr data0) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.charArray_toString), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.charArray_toString), data0});
 		}
 
 		/**
@@ -4943,26 +4943,26 @@ public final class CAL_ArrayPrimitives_internal {
 
 		/**
 		 * Helper binding method for function: doubleArray_binarySearch. 
-		 * @param arg_1
-		 * @param arg_2
+		 * @param a
+		 * @param key
 		 * @return the SourceModule.expr representing an application of doubleArray_binarySearch
 		 */
-		public static final SourceModel.Expr doubleArray_binarySearch(SourceModel.Expr arg_1, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr doubleArray_binarySearch(SourceModel.Expr a, SourceModel.Expr key) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.doubleArray_binarySearch), arg_1, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.doubleArray_binarySearch), a, key});
 		}
 
 		/**
 		 * @see #doubleArray_binarySearch(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
-		 * @param arg_2
+		 * @param a
+		 * @param key
 		 * @return the SourceModel.Expr representing an application of doubleArray_binarySearch
 		 */
-		public static final SourceModel.Expr doubleArray_binarySearch(SourceModel.Expr arg_1, double arg_2) {
+		public static final SourceModel.Expr doubleArray_binarySearch(SourceModel.Expr a, double key) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.doubleArray_binarySearch), arg_1, SourceModel.Expr.makeDoubleValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.doubleArray_binarySearch), a, SourceModel.Expr.makeDoubleValue(key)});
 		}
 
 		/**
@@ -6290,26 +6290,26 @@ public final class CAL_ArrayPrimitives_internal {
 
 		/**
 		 * Helper binding method for function: floatArray_binarySearch. 
-		 * @param arg_1
-		 * @param arg_2
+		 * @param a
+		 * @param key
 		 * @return the SourceModule.expr representing an application of floatArray_binarySearch
 		 */
-		public static final SourceModel.Expr floatArray_binarySearch(SourceModel.Expr arg_1, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr floatArray_binarySearch(SourceModel.Expr a, SourceModel.Expr key) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.floatArray_binarySearch), arg_1, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.floatArray_binarySearch), a, key});
 		}
 
 		/**
 		 * @see #floatArray_binarySearch(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
-		 * @param arg_2
+		 * @param a
+		 * @param key
 		 * @return the SourceModel.Expr representing an application of floatArray_binarySearch
 		 */
-		public static final SourceModel.Expr floatArray_binarySearch(SourceModel.Expr arg_1, float arg_2) {
+		public static final SourceModel.Expr floatArray_binarySearch(SourceModel.Expr a, float key) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.floatArray_binarySearch), arg_1, SourceModel.Expr.makeFloatValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.floatArray_binarySearch), a, SourceModel.Expr.makeFloatValue(key)});
 		}
 
 		/**
@@ -7476,26 +7476,26 @@ public final class CAL_ArrayPrimitives_internal {
 
 		/**
 		 * Helper binding method for function: intArray_binarySearch. 
-		 * @param arg_1
-		 * @param arg_2
+		 * @param a
+		 * @param key
 		 * @return the SourceModule.expr representing an application of intArray_binarySearch
 		 */
-		public static final SourceModel.Expr intArray_binarySearch(SourceModel.Expr arg_1, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr intArray_binarySearch(SourceModel.Expr a, SourceModel.Expr key) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.intArray_binarySearch), arg_1, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.intArray_binarySearch), a, key});
 		}
 
 		/**
 		 * @see #intArray_binarySearch(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
-		 * @param arg_2
+		 * @param a
+		 * @param key
 		 * @return the SourceModel.Expr representing an application of intArray_binarySearch
 		 */
-		public static final SourceModel.Expr intArray_binarySearch(SourceModel.Expr arg_1, int arg_2) {
+		public static final SourceModel.Expr intArray_binarySearch(SourceModel.Expr a, int key) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.intArray_binarySearch), arg_1, SourceModel.Expr.makeIntValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.intArray_binarySearch), a, SourceModel.Expr.makeIntValue(key)});
 		}
 
 		/**
@@ -8662,26 +8662,26 @@ public final class CAL_ArrayPrimitives_internal {
 
 		/**
 		 * Helper binding method for function: longArray_binarySearch. 
-		 * @param arg_1
-		 * @param arg_2
+		 * @param a
+		 * @param key
 		 * @return the SourceModule.expr representing an application of longArray_binarySearch
 		 */
-		public static final SourceModel.Expr longArray_binarySearch(SourceModel.Expr arg_1, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr longArray_binarySearch(SourceModel.Expr a, SourceModel.Expr key) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.longArray_binarySearch), arg_1, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.longArray_binarySearch), a, key});
 		}
 
 		/**
 		 * @see #longArray_binarySearch(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
-		 * @param arg_2
+		 * @param a
+		 * @param key
 		 * @return the SourceModel.Expr representing an application of longArray_binarySearch
 		 */
-		public static final SourceModel.Expr longArray_binarySearch(SourceModel.Expr arg_1, long arg_2) {
+		public static final SourceModel.Expr longArray_binarySearch(SourceModel.Expr a, long key) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.longArray_binarySearch), arg_1, SourceModel.Expr.makeLongValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.longArray_binarySearch), a, SourceModel.Expr.makeLongValue(key)});
 		}
 
 		/**
@@ -10047,14 +10047,14 @@ public final class CAL_ArrayPrimitives_internal {
 
 		/**
 		 * Helper binding method for function: objectArray_sort. 
-		 * @param arg_1
-		 * @param arg_2
+		 * @param a
+		 * @param c
 		 * @return the SourceModule.expr representing an application of objectArray_sort
 		 */
-		public static final SourceModel.Expr objectArray_sort(SourceModel.Expr arg_1, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr objectArray_sort(SourceModel.Expr a, SourceModel.Expr c) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.objectArray_sort), arg_1, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.objectArray_sort), a, c});
 		}
 
 		/**
@@ -10511,26 +10511,26 @@ public final class CAL_ArrayPrimitives_internal {
 
 		/**
 		 * Helper binding method for function: shortArray_binarySearch. 
-		 * @param arg_1
-		 * @param arg_2
+		 * @param a
+		 * @param key
 		 * @return the SourceModule.expr representing an application of shortArray_binarySearch
 		 */
-		public static final SourceModel.Expr shortArray_binarySearch(SourceModel.Expr arg_1, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr shortArray_binarySearch(SourceModel.Expr a, SourceModel.Expr key) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.shortArray_binarySearch), arg_1, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.shortArray_binarySearch), a, key});
 		}
 
 		/**
 		 * @see #shortArray_binarySearch(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
-		 * @param arg_2
+		 * @param a
+		 * @param key
 		 * @return the SourceModel.Expr representing an application of shortArray_binarySearch
 		 */
-		public static final SourceModel.Expr shortArray_binarySearch(SourceModel.Expr arg_1, short arg_2) {
+		public static final SourceModel.Expr shortArray_binarySearch(SourceModel.Expr a, short key) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.shortArray_binarySearch), arg_1, SourceModel.Expr.makeShortValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.shortArray_binarySearch), a, SourceModel.Expr.makeShortValue(key)});
 		}
 
 		/**
@@ -11433,6 +11433,6 @@ public final class CAL_ArrayPrimitives_internal {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = 776534279;
+	public static final int javaDocHash = 168358994;
 
 }

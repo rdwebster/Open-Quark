@@ -1208,8 +1208,8 @@ final class ExpressionGenerator {
             
             generateBuiltInFunction(CAL_Prelude_internal.Functions.objectToCalValue);
             generateBuiltInFunction(CAL_Prelude_internal.Functions.calValueToObject, new boolean[] {false});
-            generateBuiltInFunction(CAL_Prelude_internal.Functions.makeComparator);
-            generateBuiltInFunction(CAL_Prelude_internal.Functions.makeEquivalenceRelation);
+            generateBuiltInFunction(CAL_Prelude.Functions.makeComparator);            
+            generateBuiltInFunction(CAL_Prelude.Functions.makeEquivalenceRelation);
             generateBuiltInFunction(CAL_Prelude.Functions.makeCalFunction);
                
             generateBuiltInFunction(CAL_Prelude.Functions.eager);

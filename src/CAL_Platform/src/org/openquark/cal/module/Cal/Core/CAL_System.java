@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Core.System module from Java code.
  *  
- * Creation date: Wed Oct 24 10:53:51 PDT 2007
+ * Creation date: Fri Sep 21 16:16:58 PDT 2012
  * --!>
  *  
  */
@@ -135,6 +135,36 @@ public final class CAL_System {
 			QualifiedName.make(CAL_System.MODULE_NAME, "hasProperty");
 
 		/**
+		 * Looks up the specified system property and inputs the value to the specified type.
+		 * <code>Cal.Core.Prelude.Nothing</code> will be returned if the property does not exist or has a Null value.
+		 * @param key (CAL type: <code>Cal.Core.Prelude.String</code>)
+		 * @return (CAL type: <code>Cal.Core.Prelude.Inputable a => Cal.Core.Prelude.Maybe a</code>) 
+		 */
+		public static final SourceModel.Expr inputProperty(SourceModel.Expr key) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.inputProperty), key});
+		}
+
+		/**
+		 * @see #inputProperty(org.openquark.cal.compiler.SourceModel.Expr)
+		 * @param key
+		 * @return the SourceModel.Expr representing an application of inputProperty
+		 */
+		public static final SourceModel.Expr inputProperty(java.lang.String key) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.inputProperty), SourceModel.Expr.makeStringValue(key)});
+		}
+
+		/**
+		 * Name binding for function: inputProperty.
+		 * @see #inputProperty(org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName inputProperty = 
+			QualifiedName.make(CAL_System.MODULE_NAME, "inputProperty");
+
+		/**
 		 * Returns the keys of the system properties defined in the current execution context.
 		 * @return (CAL type: <code>[Cal.Core.Prelude.String]</code>) 
 		 *          a list of the keys.
@@ -209,6 +239,6 @@ public final class CAL_System {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = -492345752;
+	public static final int javaDocHash = -178263789;
 
 }

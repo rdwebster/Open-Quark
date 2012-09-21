@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Core.Dynamic module from Java code.
  *  
- * Creation date: Fri Mar 16 13:11:56 PST 2007
+ * Creation date: Fri Sep 21 16:17:38 PDT 2012
  * --!>
  *  
  */
@@ -110,6 +110,30 @@ public final class CAL_Dynamic {
 		 */
 		public static final QualifiedName appendRecord = 
 			QualifiedName.make(CAL_Dynamic.MODULE_NAME, "appendRecord");
+
+		/**
+		 * Returns the underlying value as a <code>Cal.Core.Prelude.CalValue</code> if it matches the specified type.
+		 * If type types do not match, then <code>Cal.Core.Prelude.Nothing</code> is returned.
+		 * @param dynamicValue (CAL type: <code>Cal.Core.Dynamic.Dynamic</code>)
+		 *          the <code>Dynamic</code> value whose underlying value is to be extracted.
+		 * @param requestedType (CAL type: <code>Cal.Core.Prelude.TypeRep</code>)
+		 *          the <code>TypeRep</code> for which the underlying value is to be returned.
+		 * @return (CAL type: <code>Cal.Core.Prelude.Maybe Cal.Core.Prelude.CalValue</code>) 
+		 *          <code>Cal.Core.Prelude.Just v</code>, where <code>v</code> is the underlying value as a <code>CalValue</code> if its type matches what is required of the context,
+		 * or <code>Cal.Core.Prelude.Nothing</code> otherwise.
+		 */
+		public static final SourceModel.Expr calValueFromDynamic(SourceModel.Expr dynamicValue, SourceModel.Expr requestedType) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.calValueFromDynamic), dynamicValue, requestedType});
+		}
+
+		/**
+		 * Name binding for function: calValueFromDynamic.
+		 * @see #calValueFromDynamic(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName calValueFromDynamic = 
+			QualifiedName.make(CAL_Dynamic.MODULE_NAME, "calValueFromDynamic");
 
 		/**
 		 * Takes a function wrapped in a <code>Cal.Core.Dynamic.Dynamic</code> value and applies it to an argument
@@ -596,6 +620,6 @@ public final class CAL_Dynamic {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = 1565997170;
+	public static final int javaDocHash = -1385613998;
 
 }

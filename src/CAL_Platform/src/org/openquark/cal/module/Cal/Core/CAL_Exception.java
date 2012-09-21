@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Core.Exception module from Java code.
  *  
- * Creation date: Wed Apr 11 16:34:15 PDT 2007
+ * Creation date: Fri Sep 21 16:15:34 PDT 2012
  * --!>
  *  
  */
@@ -159,6 +159,10 @@ public final class CAL_Exception {
 		 * If an exception is raised while doing this, then <code>Cal.Core.Exception.finally</code> evaluates the argument <code>finalizer</code>
 		 * to weak-head normal form, before re-raising the exception.
 		 * Otherwise, <code>Cal.Core.Exception.finally</code> will still evaluate <code>finalizer</code> to weak-head normal form before returning <code>expr</code>.
+		 * <p>
+		 * Cancellation will be suspended while the <code>finalizer</code> argument is evaluated to prevent
+		 * interruption.
+		 * 
 		 * @param expr (CAL type: <code>a</code>)
 		 *          expression to evaluate to weak-head normal form
 		 * @param finalizer (CAL type: <code>b</code>)
@@ -365,6 +369,56 @@ public final class CAL_Exception {
 				"isPatternMatchingFailure");
 
 		/**
+		 * As <code>Cal.Core.Exception.onException</code> except that any exception type is handled.
+		 * The exception is not passed as an argument to the handler.
+		 * This is similar to <code>Cal.Core.Exception.finally</code> except that the handler is not executed when 
+		 * <code>expr</code> evaluated with no exception.
+		 * @param expr (CAL type: <code>a</code>)
+		 * @param handler (CAL type: <code>b</code>)
+		 * @return (CAL type: <code>a</code>) 
+		 */
+		public static final SourceModel.Expr onAnyException(SourceModel.Expr expr, SourceModel.Expr handler) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.onAnyException), expr, handler});
+		}
+
+		/**
+		 * Name binding for function: onAnyException.
+		 * @see #onAnyException(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName onAnyException = 
+			QualifiedName.make(CAL_Exception.MODULE_NAME, "onAnyException");
+
+		/**
+		 * <code>Cal.Core.Exception.onException</code> evaluates the argument <code>expr</code> to weak-head normal form.
+		 * If no exception is raised, then the <code>expr</code> argument is simply returned.
+		 * If an exception is raised, and the handler function is of the appropriate type to handle the exception,
+		 * then the handler function is applied to the raised exception, and the original exception is propagated 
+		 * (discarding the result of the handler function).
+		 * Otherwise, the exception is simply not caught and propagated ownward.
+		 * <p>
+		 * Cancellation will be suspended while the <code>handler</code> function is evaluated to prevent
+		 * interruption.
+		 * 
+		 * @param expr (CAL type: <code>a</code>)
+		 * @param handler (CAL type: <code>Cal.Core.Exception.Exception e => e -> b</code>)
+		 * @return (CAL type: <code>a</code>) 
+		 */
+		public static final SourceModel.Expr onException(SourceModel.Expr expr, SourceModel.Expr handler) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.onException), expr, handler});
+		}
+
+		/**
+		 * Name binding for function: onException.
+		 * @see #onException(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName onException = 
+			QualifiedName.make(CAL_Exception.MODULE_NAME, "onException");
+
+		/**
 		 * Raise a CAL user-defined exception i.e. one that has a specific CAL type that is a member of the <code>Cal.Core.Exception.Exception</code>
 		 * type class. Such exceptions must be caught at their specific CAL type.
 		 * <p>
@@ -414,6 +468,6 @@ public final class CAL_Exception {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = -373372265;
+	public static final int javaDocHash = -203304753;
 
 }

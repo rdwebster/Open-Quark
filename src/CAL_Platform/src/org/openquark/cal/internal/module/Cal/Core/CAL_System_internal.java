@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Core.System module from Java code.
  *  
- * Creation date: Tue Oct 23 09:49:53 PDT 2007
+ * Creation date: Fri Sep 21 16:17:03 PDT 2012
  * --!>
  *  
  */
@@ -81,6 +81,24 @@ public final class CAL_System_internal {
 			QualifiedName.make(
 				CAL_System_internal.MODULE_NAME, 
 				"executionContextProperties");
+
+		/**
+		 * Test whether a JObject value is null.
+		 * @param arg_1 (CAL type: <code>Cal.Core.Prelude.JObject</code>)
+		 * @return (CAL type: <code>Cal.Core.Prelude.Boolean</code>) 
+		 */
+		public static final SourceModel.Expr isNullObject(SourceModel.Expr arg_1) {
+			return 
+				SourceModel.Expr.Application.make(
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.isNullObject), arg_1});
+		}
+
+		/**
+		 * Name binding for function: isNullObject.
+		 * @see #isNullObject(org.openquark.cal.compiler.SourceModel.Expr)
+		 */
+		public static final QualifiedName isNullObject = 
+			QualifiedName.make(CAL_System_internal.MODULE_NAME, "isNullObject");
 
 		/**
 		 * Returns the <code>Cal.Core.System.ExecutionContextProperties</code> instance encapsulating the set of properties associated with
@@ -265,6 +283,6 @@ public final class CAL_System_internal {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = 1302459931;
+	public static final int javaDocHash = 1633598030;
 
 }

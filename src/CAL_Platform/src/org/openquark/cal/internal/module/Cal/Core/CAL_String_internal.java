@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Core.String module from Java code.
  *  
- * Creation date: Tue Jul 31 18:06:12 PDT 2007
+ * Creation date: Fri Sep 21 16:18:20 PDT 2012
  * --!>
  *  
  */
@@ -169,25 +169,25 @@ public final class CAL_String_internal {
 		/**
 		 * Helper binding method for function: jCompareStringIgnoreCase. 
 		 * @param string
-		 * @param arg_2
+		 * @param str
 		 * @return the SourceModule.expr representing an application of jCompareStringIgnoreCase
 		 */
-		public static final SourceModel.Expr jCompareStringIgnoreCase(SourceModel.Expr string, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr jCompareStringIgnoreCase(SourceModel.Expr string, SourceModel.Expr str) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jCompareStringIgnoreCase), string, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jCompareStringIgnoreCase), string, str});
 		}
 
 		/**
 		 * @see #jCompareStringIgnoreCase(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
 		 * @param string
-		 * @param arg_2
+		 * @param str
 		 * @return the SourceModel.Expr representing an application of jCompareStringIgnoreCase
 		 */
-		public static final SourceModel.Expr jCompareStringIgnoreCase(java.lang.String string, java.lang.String arg_2) {
+		public static final SourceModel.Expr jCompareStringIgnoreCase(java.lang.String string, java.lang.String str) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jCompareStringIgnoreCase), SourceModel.Expr.makeStringValue(string), SourceModel.Expr.makeStringValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jCompareStringIgnoreCase), SourceModel.Expr.makeStringValue(string), SourceModel.Expr.makeStringValue(str)});
 		}
 
 		/**
@@ -301,25 +301,25 @@ public final class CAL_String_internal {
 		/**
 		 * Helper binding method for function: stringBuilder_appendChar. 
 		 * @param jStringBuilder
-		 * @param arg_2
+		 * @param c
 		 * @return the SourceModule.expr representing an application of stringBuilder_appendChar
 		 */
-		public static final SourceModel.Expr stringBuilder_appendChar(SourceModel.Expr jStringBuilder, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr stringBuilder_appendChar(SourceModel.Expr jStringBuilder, SourceModel.Expr c) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.stringBuilder_appendChar), jStringBuilder, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.stringBuilder_appendChar), jStringBuilder, c});
 		}
 
 		/**
 		 * @see #stringBuilder_appendChar(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
 		 * @param jStringBuilder
-		 * @param arg_2
+		 * @param c
 		 * @return the SourceModel.Expr representing an application of stringBuilder_appendChar
 		 */
-		public static final SourceModel.Expr stringBuilder_appendChar(SourceModel.Expr jStringBuilder, char arg_2) {
+		public static final SourceModel.Expr stringBuilder_appendChar(SourceModel.Expr jStringBuilder, char c) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.stringBuilder_appendChar), jStringBuilder, SourceModel.Expr.makeCharValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.stringBuilder_appendChar), jStringBuilder, SourceModel.Expr.makeCharValue(c)});
 		}
 
 		/**
@@ -334,25 +334,25 @@ public final class CAL_String_internal {
 		/**
 		 * Helper binding method for function: stringBuilder_charAt. 
 		 * @param jStringBuilder
-		 * @param arg_2
+		 * @param x0
 		 * @return the SourceModule.expr representing an application of stringBuilder_charAt
 		 */
-		public static final SourceModel.Expr stringBuilder_charAt(SourceModel.Expr jStringBuilder, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr stringBuilder_charAt(SourceModel.Expr jStringBuilder, SourceModel.Expr x0) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.stringBuilder_charAt), jStringBuilder, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.stringBuilder_charAt), jStringBuilder, x0});
 		}
 
 		/**
 		 * @see #stringBuilder_charAt(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
 		 * @param jStringBuilder
-		 * @param arg_2
+		 * @param x0
 		 * @return the SourceModel.Expr representing an application of stringBuilder_charAt
 		 */
-		public static final SourceModel.Expr stringBuilder_charAt(SourceModel.Expr jStringBuilder, int arg_2) {
+		public static final SourceModel.Expr stringBuilder_charAt(SourceModel.Expr jStringBuilder, int x0) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.stringBuilder_charAt), jStringBuilder, SourceModel.Expr.makeIntValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.stringBuilder_charAt), jStringBuilder, SourceModel.Expr.makeIntValue(x0)});
 		}
 
 		/**
@@ -383,24 +383,24 @@ public final class CAL_String_internal {
 
 		/**
 		 * Helper binding method for function: stringBuilder_new1. 
-		 * @param arg_1
+		 * @param capacity
 		 * @return the SourceModule.expr representing an application of stringBuilder_new1
 		 */
-		public static final SourceModel.Expr stringBuilder_new1(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr stringBuilder_new1(SourceModel.Expr capacity) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.stringBuilder_new1), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.stringBuilder_new1), capacity});
 		}
 
 		/**
 		 * @see #stringBuilder_new1(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param capacity
 		 * @return the SourceModel.Expr representing an application of stringBuilder_new1
 		 */
-		public static final SourceModel.Expr stringBuilder_new1(int arg_1) {
+		public static final SourceModel.Expr stringBuilder_new1(int capacity) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.stringBuilder_new1), SourceModel.Expr.makeIntValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.stringBuilder_new1), SourceModel.Expr.makeIntValue(capacity)});
 		}
 
 		/**
@@ -414,24 +414,24 @@ public final class CAL_String_internal {
 
 		/**
 		 * Helper binding method for function: stringBuilder_new2. 
-		 * @param arg_1
+		 * @param str
 		 * @return the SourceModule.expr representing an application of stringBuilder_new2
 		 */
-		public static final SourceModel.Expr stringBuilder_new2(SourceModel.Expr arg_1) {
+		public static final SourceModel.Expr stringBuilder_new2(SourceModel.Expr str) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.stringBuilder_new2), arg_1});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.stringBuilder_new2), str});
 		}
 
 		/**
 		 * @see #stringBuilder_new2(org.openquark.cal.compiler.SourceModel.Expr)
-		 * @param arg_1
+		 * @param str
 		 * @return the SourceModel.Expr representing an application of stringBuilder_new2
 		 */
-		public static final SourceModel.Expr stringBuilder_new2(java.lang.String arg_1) {
+		public static final SourceModel.Expr stringBuilder_new2(java.lang.String str) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.stringBuilder_new2), SourceModel.Expr.makeStringValue(arg_1)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.stringBuilder_new2), SourceModel.Expr.makeStringValue(str)});
 		}
 
 		/**
@@ -466,27 +466,27 @@ public final class CAL_String_internal {
 		/**
 		 * Helper binding method for function: stringBuilder_setCharAt. 
 		 * @param jStringBuilder
-		 * @param arg_2
-		 * @param arg_3
+		 * @param x0
+		 * @param x1
 		 * @return the SourceModule.expr representing an application of stringBuilder_setCharAt
 		 */
-		public static final SourceModel.Expr stringBuilder_setCharAt(SourceModel.Expr jStringBuilder, SourceModel.Expr arg_2, SourceModel.Expr arg_3) {
+		public static final SourceModel.Expr stringBuilder_setCharAt(SourceModel.Expr jStringBuilder, SourceModel.Expr x0, SourceModel.Expr x1) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.stringBuilder_setCharAt), jStringBuilder, arg_2, arg_3});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.stringBuilder_setCharAt), jStringBuilder, x0, x1});
 		}
 
 		/**
 		 * @see #stringBuilder_setCharAt(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
 		 * @param jStringBuilder
-		 * @param arg_2
-		 * @param arg_3
+		 * @param x0
+		 * @param x1
 		 * @return the SourceModel.Expr representing an application of stringBuilder_setCharAt
 		 */
-		public static final SourceModel.Expr stringBuilder_setCharAt(SourceModel.Expr jStringBuilder, int arg_2, char arg_3) {
+		public static final SourceModel.Expr stringBuilder_setCharAt(SourceModel.Expr jStringBuilder, int x0, char x1) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.stringBuilder_setCharAt), jStringBuilder, SourceModel.Expr.makeIntValue(arg_2), SourceModel.Expr.makeCharValue(arg_3)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.stringBuilder_setCharAt), jStringBuilder, SourceModel.Expr.makeIntValue(x0), SourceModel.Expr.makeCharValue(x1)});
 		}
 
 		/**
@@ -638,6 +638,6 @@ public final class CAL_String_internal {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = -1632126270;
+	public static final int javaDocHash = -1215277696;
 
 }

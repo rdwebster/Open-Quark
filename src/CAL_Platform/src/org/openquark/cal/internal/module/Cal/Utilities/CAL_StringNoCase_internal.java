@@ -12,7 +12,7 @@
  * The constants and methods provided are intended to facilitate accessing the
  * Cal.Utilities.StringNoCase module from Java code.
  *  
- * Creation date: Fri Mar 16 13:11:58 PST 2007
+ * Creation date: Fri Sep 21 16:16:51 PDT 2012
  * --!>
  *  
  */
@@ -278,26 +278,26 @@ public final class CAL_StringNoCase_internal {
 		/**
 		 * 
 		 * @param stringNoCase (CAL type: <code>Cal.Utilities.StringNoCase.StringNoCase</code>)
-		 * @param arg_2 (CAL type: <code>Cal.Utilities.StringNoCase.StringNoCase</code>)
+		 * @param str (CAL type: <code>Cal.Utilities.StringNoCase.StringNoCase</code>)
 		 * @return (CAL type: <code>Cal.Core.Prelude.Int</code>) 
 		 *          -1 for LT, 0 for EQ, 1 for GT
 		 */
-		public static final SourceModel.Expr jCompareStringNoCase(SourceModel.Expr stringNoCase, SourceModel.Expr arg_2) {
+		public static final SourceModel.Expr jCompareStringNoCase(SourceModel.Expr stringNoCase, SourceModel.Expr str) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jCompareStringNoCase), stringNoCase, arg_2});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jCompareStringNoCase), stringNoCase, str});
 		}
 
 		/**
 		 * @see #jCompareStringNoCase(org.openquark.cal.compiler.SourceModel.Expr, org.openquark.cal.compiler.SourceModel.Expr)
 		 * @param stringNoCase
-		 * @param arg_2
+		 * @param str
 		 * @return the SourceModel.Expr representing an application of jCompareStringNoCase
 		 */
-		public static final SourceModel.Expr jCompareStringNoCase(java.lang.String stringNoCase, java.lang.String arg_2) {
+		public static final SourceModel.Expr jCompareStringNoCase(java.lang.String stringNoCase, java.lang.String str) {
 			return 
 				SourceModel.Expr.Application.make(
-					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jCompareStringNoCase), SourceModel.Expr.makeStringValue(stringNoCase), SourceModel.Expr.makeStringValue(arg_2)});
+					new SourceModel.Expr[] {SourceModel.Expr.Var.make(Functions.jCompareStringNoCase), SourceModel.Expr.makeStringValue(stringNoCase), SourceModel.Expr.makeStringValue(str)});
 		}
 
 		/**
@@ -510,6 +510,6 @@ public final class CAL_StringNoCase_internal {
 	 * A hash of the concatenated JavaDoc for this class (including inner classes).
 	 * This value is used when checking for changes to generated binding classes.
 	 */
-	public static final int javaDocHash = 1149935927;
+	public static final int javaDocHash = -1201869001;
 
 }
