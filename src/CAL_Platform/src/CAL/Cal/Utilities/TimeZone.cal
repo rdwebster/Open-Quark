@@ -46,7 +46,7 @@ module Cal.Utilities.TimeZone;
 
 import Cal.Core.Prelude using
     typeConstructor = String;
-    typeClass = Eq;
+    typeClass = Eq, Inputable, Outputable;
     ;
 
 import Cal.Utilities.Locale using
@@ -66,7 +66,7 @@ import Cal.Core.Debug using
  * Represents a time zone.
  */
 data foreign unsafe import jvm public "org.openquark.util.time.TimeZone"
-    public TimeZone deriving Eq, Show;
+    public TimeZone deriving Inputable, Outputable, Eq, Show;
 
 /**
  * Java's own time zone class.

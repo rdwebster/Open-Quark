@@ -37,6 +37,7 @@
  */
 package org.openquark.cal.foreignsupport.module.DataGems;
 
+import org.openquark.cal.runtime.CancelNotifier;
 import org.openquark.util.datadictionary.ValueType;
 import org.openquark.util.time.Time;
 
@@ -69,6 +70,15 @@ public interface JDBCPreparedStatement {
      * @throws DatabaseException
      */
     public JDBCPreparedStatement setInt(int parameterIndex, int x) throws DatabaseException;
+    
+    /**
+     * Binds an long integer value to the prepared statement at the specified index.
+     * @param parameterIndex
+     * @param x
+     * @return JDBCPreparedStatement
+     * @throws DatabaseException
+     */
+    public JDBCPreparedStatement setLong(int parameterIndex, long x) throws DatabaseException;
     
     /**
      * Binds a double value to the prepared statement at the specified index.
@@ -119,14 +129,14 @@ public interface JDBCPreparedStatement {
      * @return int
      * @throws DatabaseException
      */
-    public int executeUpdate() throws DatabaseException;
+    public int executeUpdate(CancelNotifier cancelNotifier) throws DatabaseException;
     
     /**
      * Executes this statement against all the batched parameters.
      * @return int[]
      * @throws DatabaseException
      */
-    public int[] executeBatch() throws DatabaseException;
+    public int[] executeBatch(CancelNotifier cancelNotifier) throws DatabaseException;
     
     
     /**

@@ -56,7 +56,7 @@ import Cal.Core.Prelude using
     typeClass = Eq, Inputable, Ord, Outputable;
     typeConstructor = Boolean, Double, Int, JObject, Maybe, String;
     dataConstructor = Nothing, Just;
-    function = assert, concat, error, fromMaybe, fst, input, intToString, negate, not, output, snd, toDouble, truncate;
+    function = assert, error, fromMaybe, fst, input, intToString, negate, not, output, snd, toDouble, truncate;
     ;
 import Cal.Collections.List using
     function = join, subscript;
@@ -118,7 +118,7 @@ foreign unsafe import jvm "cast"
  */
 div :: Int -> Int -> Int;
 div !x !y =   
-    if (x > 0 && y < 0 || x < 0 && y > 0) then
+    if x % y < 0 then
         x / y - 1
     else
         x / y;
@@ -139,11 +139,11 @@ div !x !y =
  * @return the modulus.
  */
 rem :: Int -> Int -> Int;
-rem !x !y =     
-    if (x > 0 && y < 0 || x < 0 && y > 0) then
-        (x % y) + y
-    else
-        (x % y); 
+rem !x !y = 
+    let
+        r = x % y;
+    in
+        if r < 0 then r + y else r;
 
 divRem :: Int -> Int -> (Int, Int);
 divRem !x !y = (div x y, rem x y);

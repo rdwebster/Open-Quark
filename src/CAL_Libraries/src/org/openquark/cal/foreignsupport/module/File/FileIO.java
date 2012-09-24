@@ -49,6 +49,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -90,6 +94,31 @@ public final class FileIO {
     }
     
     /**
+     * Read the specified file (containing UTF-8 string data) and return the contents in a String.
+     * @param fileName the name of the file to be read.
+     */
+    public static IOResult/*String*/ readFileUTF8(File fileName) {                                   
+        
+        try {
+            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "UTF-8"));
+            StringBuilder resultString = new StringBuilder();
+            
+            try {
+                int c;
+                while ((c = in.read()) != -1) {
+                    resultString.append((char)c);
+                }
+            } finally {
+                in.close();
+            }
+            return IOResult.makeResult(resultString.toString());
+            
+        } catch (IOException e) {
+            return IOResult.makeError(e, fileName);
+        }
+    }
+    
+    /**
      * Write the specified contents into the file specified by the file name.
      * @param fileName the name of the file to be (over)written.
      * @param contents the contents to be written to the file.
@@ -98,6 +127,27 @@ public final class FileIO {
         
         try {
             FileWriter writer = new FileWriter(fileName);
+            try {
+                writer.write(contents);
+            } finally {
+                writer.close();
+            }
+            return IOResult.makeVoidResult();
+            
+        } catch (IOException e) {
+            return IOResult.makeError(e, fileName);
+        }
+    }
+    
+    /**
+     * Write the specified contents into the file specified by the file name in UTF-8 format.
+     * @param fileName the name of the file to be (over)written.
+     * @param contents the contents to be written to the file.
+     */
+    public static IOResult/*void*/ writeFileUTF8(File fileName, String contents) {
+        
+        try {
+        	Writer writer = new OutputStreamWriter(new FileOutputStream(fileName), "UTF-8");
             try {
                 writer.write(contents);
             } finally {

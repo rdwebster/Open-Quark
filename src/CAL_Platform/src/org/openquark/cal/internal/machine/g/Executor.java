@@ -69,6 +69,8 @@ import org.openquark.cal.machine.StatsGenerator.StatsObject;
 import org.openquark.cal.module.Cal.Core.CAL_Prelude;
 import org.openquark.cal.runtime.CALExecutorException;
 import org.openquark.cal.runtime.CalValue;
+import org.openquark.cal.runtime.CancelNotifier;
+import org.openquark.cal.runtime.Cleanable;
 import org.openquark.cal.runtime.ExecutionContext;
 import org.openquark.cal.runtime.ExecutionContextProperties;
 import org.openquark.cal.runtime.ResourceAccess;
@@ -2406,7 +2408,11 @@ public class Executor implements CALExecutor {
         void clearProgram () {
             setRuntimeEnvironment (null);
         }
-                
+
+        @Override
+        public CancelNotifier getCancelNotifier() {
+            return CancelNotifier.NON_FIRING_NOTIFIER;
+        }
     }
 
     GExecutionContext getExecutionContext() {

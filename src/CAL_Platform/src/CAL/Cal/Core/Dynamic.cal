@@ -110,6 +110,14 @@ public toDynamic v =
     Dynamic (typeOf v) (toCalValue v);
 
 /**
+ * Creates a {@link typeConstructor = Dynamic@} value for the specified type and CalValue.
+ * Use this with caution as it trusts that the type matches the value provided.
+ */
+toDynamicUnsafe :: TypeRep -> CalValue -> Dynamic;
+public toDynamicUnsafe !type untypedValue = 
+    Dynamic type untypedValue;
+
+/**
  * One of the ways to extract a value from a {@link typeConstructor = Dynamic@} value.
  * If the underlying type of the dynamic value is the same as that of
  * the {@code defaultValue@}, then the underlying value is returned. Otherwise

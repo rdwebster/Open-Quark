@@ -38,8 +38,11 @@
 
 package org.openquark.cal.internal.runtime.lecc;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -48,6 +51,8 @@ import org.openquark.cal.compiler.ModuleName;
 import org.openquark.cal.compiler.QualifiedName;
 import org.openquark.cal.internal.runtime.ExecutionContextImpl;
 import org.openquark.cal.internal.runtime.RuntimeEnvironment;
+import org.openquark.cal.runtime.CancelNotifier;
+import org.openquark.cal.runtime.Cleanable;
 import org.openquark.cal.runtime.ExecutionContextProperties;
 
 
@@ -73,6 +78,7 @@ public final class RTExecutionContext extends ExecutionContextImpl {
     private final ConcurrentMap<QualifiedName, AtomicInteger> callCounts = new ConcurrentHashMap<QualifiedName, AtomicInteger>(); 
     private final ConcurrentMap<QualifiedName, AtomicInteger> dcConstructorCounts = new ConcurrentHashMap<QualifiedName, AtomicInteger>();
     private final ConcurrentMap<QualifiedName, AtomicInteger> dcFunctionCounts = new ConcurrentHashMap<QualifiedName, AtomicInteger>();
+    private final ConcurrentMap<QualifiedName, AtomicInteger> cafCallCounts = new ConcurrentHashMap<QualifiedName, AtomicInteger>();
 
     /**
      * Used by the client to tell the executor to stop prematurely.
@@ -97,7 +103,17 @@ public final class RTExecutionContext extends ExecutionContextImpl {
      * The cancel flag will be ignored while this flag is set.
      */
     private boolean cancelOverrideFlag = false;
-
+    
+    /**
+     * Enable/disable notification of cancellation based on a runtime property.
+     */
+    private static final boolean ENABLE_CANCEL_NOTIFICATION = "true".equalsIgnoreCase(System.getProperty("org.openquark.cal.enable_cancel_notification"));
+    
+    /**
+     * Registered listeners for cancellation events.
+     */
+    private final Set<Cleanable> cancelListeners = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<Cleanable, Boolean>()));
+    
     /**
      * Constructs an instance of this class with the specified properties.
      * @param properties the properties to be associated with the execution context.
@@ -112,6 +128,17 @@ public final class RTExecutionContext extends ExecutionContextImpl {
      */
     public void requestQuit () {
         continueAction = ACTION_QUIT;
+        
+        // Notify any registered cancellation listeners of the intention to cancel.
+        // TODO: should we copy the set of listeners just to be safe?
+        for (Cleanable cleanable : cancelListeners) {
+            try {
+                cleanable.cleanup();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -182,6 +209,10 @@ public final class RTExecutionContext extends ExecutionContextImpl {
     public final void dcFunctionCalled (String moduleName, String unqualifiedName) {
         incrementCounts(moduleName, unqualifiedName, dcFunctionCounts);        
     }
+    public final void cafFunctionCalled (String moduleName, String unqualifiedName) {
+        incrementCounts(moduleName, unqualifiedName, cafCallCounts);        
+    }
+    
     private static void incrementCounts(
             final String moduleName,
             final String unqualifiedName,
@@ -235,6 +266,12 @@ public final class RTExecutionContext extends ExecutionContextImpl {
     public final Map<QualifiedName, Integer> getDcFunctionCounts() {
         return copyMap(dcFunctionCounts);
     }
+    /**
+     * @return Returns the cafCallCounts. This is a copy and can be freely modified.
+     */
+    public final Map<QualifiedName, Integer> getCafFunctionCounts() {
+        return copyMap(cafCallCounts);
+    }
     
     private static Map<QualifiedName, Integer> copyMap(ConcurrentMap<QualifiedName, AtomicInteger> map) {
         Map<QualifiedName, Integer> result = new HashMap<QualifiedName, Integer>();
@@ -260,6 +297,7 @@ public final class RTExecutionContext extends ExecutionContextImpl {
         callCounts.clear();
         dcConstructorCounts.clear();
         dcFunctionCounts.clear();
+        cafCallCounts.clear();
         continueAction = ACTION_CONTINUE;
         setRuntimeEnvironment(newRuntimeEnvironment);
     }
@@ -271,6 +309,23 @@ public final class RTExecutionContext extends ExecutionContextImpl {
      */
     public void clearRuntimeEnvironment() {
         setRuntimeEnvironment(null);
+    }
+
+    @Override
+    public CancelNotifier getCancelNotifier() {
+        return new CancelNotifier() {
+            @Override
+            public void registerCancelListener(Cleanable listener) {
+                if (ENABLE_CANCEL_NOTIFICATION) {
+                    cancelListeners.add(listener);
+                }
+            }
+
+            @Override
+            public void unregisterCancelListener(Cleanable listener) {
+                cancelListeners.remove(listener);
+            }
+        };
     }
 }
 

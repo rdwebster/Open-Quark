@@ -42,6 +42,8 @@ import java.util.Locale;
 
 import org.openquark.util.Messages;
 
+import com.ibm.icu.util.Calendar;
+
 
 /**
  * Instances of this class represent a time zone.
@@ -56,7 +58,10 @@ import org.openquark.util.Messages;
  */
 public final class TimeZone {
     private final com.ibm.icu.util.TimeZone timeZone;
-    
+
+    /** Cache the Calendar corresponding to this timezone to avoid repeated lookups. */
+    private final com.ibm.icu.util.Calendar icuCalendar;
+
     /** Use this message bundle to dig up localized messages */
     private static final Messages messages = PackageMessages.instance;
     
@@ -113,8 +118,8 @@ public final class TimeZone {
      */
     private TimeZone (com.ibm.icu.util.TimeZone timeZone) {
         this.timeZone = timeZone;
+        this.icuCalendar = com.ibm.icu.util.Calendar.getInstance(timeZone);
     }
-    
     
     /**
      * @see java.lang.Object#toString()
@@ -134,6 +139,15 @@ public final class TimeZone {
      */
     public com.ibm.icu.util.TimeZone toICUTimeZone () {
         return com.ibm.icu.util.TimeZone.getTimeZone(timeZone.getID());
+//    	return timeZone;	// TODO: Can this just return the original timeZone?  Is a copy/clone needed?
+    }
+    
+    /**
+     * Returns the ICU Calendar corresponding to this TimeZone.
+     */
+    Calendar getICUCalendar() {
+    	// Return a clone of the calendar (since it is mutable).
+    	return (Calendar) icuCalendar.clone();
     }
     
     /**

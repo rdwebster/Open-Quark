@@ -252,6 +252,9 @@ mySql_functionNameText func =
     Sql.AggrVarP                -> "VARIANCE";
     Sql.DateTimeAddFunction {}  -> "TIMESTAMPADD";
     Sql.DateTimeDiffFunction {} -> "TIMESTAMPDIFF";
+    Sql.LengthFunction          -> 
+        // For string lengths, return the number of characters (CHAR_LENGTH), not the number of bytes (LENGTH).
+        "CHAR_LENGTH";
     Sql.DifferenceFunction      -> 
         // MySQL doesn't support the SoundEx Difference function.
         error ("Unsupported function 'DIFFERENCE'");

@@ -45,7 +45,7 @@ module Cal.Utilities.Format;
 
 import Cal.Core.Prelude using
     typeConstructor = Int, String;
-    function = concat, error, isEmpty, max, min;
+    function = concat, isEmpty, max, min, not;
     ;
 import Cal.Collections.List using
     function = chop, head, join, length, replicate, transpose;
@@ -56,9 +56,7 @@ import Cal.Core.Debug using
     typeClass = Show;
     ;
 
-import Cal.Core.Record using
-    function = fieldNames, unsafeBuildList;
-    ;
+import Cal.Core.Record;
 
 
 /**
@@ -264,4 +262,44 @@ public formatInColumns !nColumns !columnGap !values =
         padding = replicate (nColumns * nRows - nValues) "";
     in
         formatTable columnGap (transpose (chop nRows (values ++ padding)));
+
+/**
+ * Arranges a list of multi-line strings such the contents appear next to each other, with a specified gap between them.
+ * Any empty strings will be ignored.
+ */
+formatSideBySide :: Int -> [String] -> String;
+public formatSideBySide !gapSize !strList = 
+    let
+        nonEmptyStrs :: [String];
+        nonEmptyStrs = List.filter (not # isEmpty) strList;
+        
+        nColumns :: Int;
+        nColumns = List.length nonEmptyStrs;
+        
+        // Break each string into lines.
+        strLines :: [[String]];
+        strLines = List.map String.lines nonEmptyStrs;
+        
+        nResultLines :: Int;
+        nResultLines = List.maximum $ List.map List.length strLines;
+        
+        columnWidths :: [Int];
+        columnWidths = 
+            List.mapIndexed (\!lines !index -> if index == nColumns - 1 then 0 else List.maximum $ List.map String.length lines) strLines;
+        
+        gapString :: String;
+        gapString = String.space gapSize;
+        
+        padString :: String -> Int -> String;
+        padString !str !width = 
+            str ++ String.space (max 0 $ width - String.length str);
+        
+        makeRow :: [String] -> String;
+        makeRow !colValues = 
+            List.join gapString $
+            List.zipWith padString colValues columnWidths;
+    in
+        if isEmpty nonEmptyStrs then ""
+        else if List.isSingletonList nonEmptyStrs then List.head nonEmptyStrs
+        else String.unlines $ List.map makeRow $ List.transpose strLines;
 
