@@ -650,10 +650,7 @@ public class TypeDeclarationInserter_Test extends TestCase {
             "    function = toDouble;\n" +
             "    ;\n" +
             "\n" +
-            "wrapRecord ::\n" +
-            "    a\\shouldWrap =>\n" +
-            "    {a | shouldWrap :: " + MinimallyQualifiedPreludeName + ".Boolean}\n" +
-            "    -> [{a | shouldWrap :: " + MinimallyQualifiedPreludeName + ".Boolean}];\n" +
+            "wrapRecord :: a\\shouldWrap => {a | shouldWrap :: " + MinimallyQualifiedPreludeName + ".Boolean} -> [{a | shouldWrap :: " + MinimallyQualifiedPreludeName + ".Boolean}];\n" +
             "wrapRecord r =\n" +
             "    let\n" +
             "        wrappedRecord =\n" + 

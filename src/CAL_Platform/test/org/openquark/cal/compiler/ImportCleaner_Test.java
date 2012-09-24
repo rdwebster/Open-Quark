@@ -266,16 +266,14 @@ public class ImportCleaner_Test extends TestCase {
         assertTrue(logger.getMaxSeverity().compareTo(CompilerMessage.Severity.ERROR) < 0);
         
         String newModuleText = sourceModifier.apply(origModuleText);
-        CompilerTestUtilities.assertEqualsCanonicalLineFeed(
+        String oldModuleText = 
             "/** module-level comments */\n" +
             "module " + CALPlatformTestModuleNames.ImportCleaner_Test_Support1 + ";\n" +
             "import " + CAL_Prelude.MODULE_NAME + " using\n" +
-            "    dataConstructor =\n" +
-            "        False, True, Left, Right, Nil, Cons, Nothing, Just, LT, EQ, GT;\n" +
+            "    dataConstructor = False, True, Left, Right, Nil, Cons, Nothing, Just, LT, EQ, GT;\n" +
             "    function =\n" +
-            "        abs, concat, equals, error, field1, field2, field3, field4, fromJust,\n" +
-            "        fromMaybe, fst, intToString, isEmpty, isJust, isNotANumber, isNothing,\n" +
-            "        max, min, multiply, not, notANumber, output, seq, snd, upFrom, upFromTo;\n" +
+            "        abs, concat, equals, error, field1, field2, field3, field4, fromJust, fromMaybe, fst, intToString, isEmpty, isJust,\n" +
+            "        isNotANumber, isNothing, max, min, multiply, not, notANumber, output, seq, snd, upFrom, upFromTo;\n" +
             "    ;\n" +
             "import " + CAL_List.MODULE_NAME + " using\n" +
             "    function = tail;\n" +
@@ -285,8 +283,8 @@ public class ImportCleaner_Test extends TestCase {
             "private referencePreludeFunctions =\n" + 
             "    (concat, equals, error, fromJust, fst, intToString, isNothing, isEmpty, max, not, output, seq, snd, field1, field2, field3, upFrom, upFromTo, fromMaybe, notANumber, isNotANumber, isJust, abs, multiply, min, field4);" +
             "private referencePreludeDataconses =" + 
-            "    (False, True, LT, EQ, GT, Nil, Cons, Nothing, Just, Left, Right);",
-            newModuleText);
+            "    (False, True, LT, EQ, GT, Nil, Cons, Nothing, Just, Left, Right);";
+        CompilerTestUtilities.assertEqualsCanonicalLineFeed(oldModuleText, newModuleText);
     }
 
     /**
@@ -324,13 +322,11 @@ public class ImportCleaner_Test extends TestCase {
             "/** module-level comments */\n" +
             "module " + CALPlatformTestModuleNames.ImportCleaner_Test_Support1 + ";\n" +
             "import " + CAL_Prelude.MODULE_NAME + " using\n" +
+            "    function = concat, equals, error, fromJust, fst, intToString, isEmpty, isNothing;\n" +
             "    function =\n" +
-            "        concat, equals, error, fromJust, fst, intToString, isEmpty, isNothing;\n" +
-            "    function =\n" +
-            "        abs, field1, field2, field3, field4, fromMaybe, isJust, isNotANumber,\n" +
-            "        max, min, multiply, not, notANumber, output, seq, snd, upFrom, upFromTo;\n" +
-            "    dataConstructor =\n" +
-            "        False, True, Left, Right, Nil, Cons, Nothing, Just, LT, EQ, GT;\n" +
+            "        abs, field1, field2, field3, field4, fromMaybe, isJust, isNotANumber, max, min, multiply, not, notANumber, output, seq,\n" +
+            "        snd, upFrom, upFromTo;\n" +
+            "    dataConstructor = False, True, Left, Right, Nil, Cons, Nothing, Just, LT, EQ, GT;\n" +
             "    ;\n" +
             "import " + CAL_List.MODULE_NAME + " using\n" +
             "    function = tail;\n" +
