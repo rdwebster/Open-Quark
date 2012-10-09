@@ -43,7 +43,7 @@
  */
 module Cal.Utilities.Time;
 import Cal.Core.Prelude using
-    typeClass = Eq, Inputable, Ord, Outputable;
+    typeClass = Enum, Eq, Inputable, IntEnum, Ord, Outputable;
     typeConstructor = Boolean, Double, Int, JList, Long, String;
     function = input, output;
     dataConstructor = False, True;
@@ -175,7 +175,7 @@ data public DayOfWeek =
     public Friday |
     public Saturday |
     public Sunday
-    deriving Eq;
+    deriving Eq, Enum, IntEnum;
 
 instance Show DayOfWeek where
     show = showDayOfWeek;
