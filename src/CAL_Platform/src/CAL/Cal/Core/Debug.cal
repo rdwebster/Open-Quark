@@ -80,18 +80,50 @@ public traceOnStdOut !message = seq (jPrintToStandardOut message);
 foreign unsafe import jvm "static method org.openquark.cal.internal.foreignsupport.module.Debug.Debug.printToStandardOut"
     private jPrintToStandardOut :: String -> ();    
 
-/** 
- * Prints its first argument to the standard error stream, and then returns its second argument.
- * @arg message the message to trace to the standard error stream
+//Original Implementation:
+///** 
+// * Prints its first argument to the standard error stream, and then returns its second argument.
+// * @arg message the message to trace to the standard error stream
+// * @arg value the value to return
+// * @return the value
+// */
+//trace :: String -> a -> a;
+//public trace !message = seq (jPrintToStandardError message);
+
+/**
+ * Traces the first argument to the Java logger at the info level.
+ * Note that it is no longer necessary to add a new-line character at the end of the trace message.
+ * @arg message the message to trace to the logger
  * @arg value the value to return
  * @return the value
  */
 trace :: String -> a -> a;
-public trace !message = seq (jPrintToStandardError message);
+public trace message = seq (logInfo message);   // Send the trace output to the Java logging instead of directly to StdErr.
 
 foreign unsafe import jvm "static method org.openquark.cal.internal.foreignsupport.module.Debug.Debug.printToStandardError"
     private jPrintToStandardError :: String -> ();    
 
+
+data foreign unsafe import jvm "java.util.logging.Logger" JLogger;
+data foreign unsafe import jvm "java.util.logging.Level" JLoggingLevel;
+
+foreign unsafe import jvm "static method java.util.logging.Logger.getLogger" jGetLogger :: String -> JLogger;
+
+defaultCalLogger :: JLogger;
+defaultCalLogger = jGetLogger "cal.core.debug";
+
+foreign unsafe import jvm "static field java.util.logging.Level.INFO" loggingLevel_INFO :: JLoggingLevel;
+
+foreign unsafe import jvm "method isLoggable" jIsLoggable :: JLogger -> JLoggingLevel -> Boolean;
+foreign unsafe import jvm "method logp" jLog :: JLogger -> JLoggingLevel -> String -> String -> String -> ();
+
+/** Write the message to the specified Java Logger at the 'info' level. */
+logInfo :: String -> ();
+logInfo msg = 
+    if jIsLoggable defaultCalLogger loggingLevel_INFO then jLog defaultCalLogger loggingLevel_INFO "Cal.Core.Debug" "trace" msg
+    else ();
+
+        
 /** 
  * Traces the specified showable value and returns its original value.
  * @arg message  a message to be included with each trace output, followed by the Show form of the value
@@ -111,7 +143,7 @@ public traceShowable = traceShowableWith show;
  */
 traceShowableList :: Show a => String -> [a] -> [a];
 public traceShowableList !message !lst = 
-    if isEmpty lst then trace (message ++ "<nil>\n") lst
+    if isEmpty lst then trace (message ++ "<nil>") lst
     else traceShowableWith (\!lst -> List.join "\n    " $ List.map show lst) (message ++ "\n    ") lst;
 
 /** 
@@ -123,13 +155,13 @@ public traceShowableList !message !lst =
  * @see trace
  */
 traceShowableWith :: (a -> String) -> String -> a -> a;
-public traceShowableWith !showValFn !message !val = trace (message ++ showValFn val ++ "\n") val;
+public traceShowableWith !showValFn !message !val = trace (message ++ showValFn val) val;
 
 /**
  * This works the same as {@link traceShowable@} except that {@link showInternal@} is used to show the value.
  */
 traceShowInternal :: String -> a -> a;
-public traceShowInternal !message val = trace (message ++ showInternal val ++ "\n") val;
+public traceShowInternal !message val = trace (message ++ showInternal val) val;
 
 /**
  * As {@link traceShowInternal@} except that the value is evaluated before showing it.
@@ -155,14 +187,14 @@ public traceListMemberAccess message !interval !lst =
             mapHelper !index !lst = 
                 case lst of
                 [] ->
-                    trace (message ++ " end " ++ intToString (index - 1) ++ "\n") [];
+                    trace (message ++ " end " ++ intToString (index - 1)) [];
                 lstHead : lstTail -> 
                     if index % interval == 0 then
-                        trace (message ++ " " ++ intToString index ++ "\n") lstHead : mapHelper (index + 1) lstTail
+                        trace (message ++ " " ++ intToString index) lstHead : mapHelper (index + 1) lstTail
                     else lstHead : mapHelper (index + 1) lstTail;
                 ;
         in
-            trace (message ++ " start\n") $
+            trace (message ++ " start") $
             mapHelper 1 lst;
 
 /**
@@ -177,14 +209,14 @@ public traceListMemberAccessTimes message !interval !lst =
             mapHelper !index !lst = 
                 case lst of
                 [] ->
-                    trace (show (getSystemTime - initialTime) ++ "  " ++ message ++ " end " ++ intToString (index - 1) ++ "\n") [];
+                    trace (show (getSystemTime - initialTime) ++ "  " ++ message ++ " end " ++ intToString (index - 1)) [];
                 lstHead : lstTail -> 
                     if index % interval == 0 then
-                        trace (show (getSystemTime - initialTime) ++ "  " ++ message ++ " " ++ intToString index ++ "\n") lstHead : mapHelper (index + 1) lstTail
+                        trace (show (getSystemTime - initialTime) ++ "  " ++ message ++ " " ++ intToString index) lstHead : mapHelper (index + 1) lstTail
                     else lstHead : mapHelper (index + 1) lstTail;
                 ;
         in
-            trace (show (getSystemTime - initialTime) ++ "  " ++ message ++ " start\n") $
+            trace (show (getSystemTime - initialTime) ++ "  " ++ message ++ " start") $
             mapHelper 1 lst;
 
 /**
@@ -202,7 +234,7 @@ public traceTransformation message transformFn =
             let
                 resultVal = transformFn inVal;
             in
-                trace (message ++ "\n    input:  " ++ show inVal ++ "\n    output: " ++ show resultVal ++ "\n") resultVal;
+                trace (message ++ "\n    input:  " ++ show inVal ++ "\n    output: " ++ show resultVal) resultVal;
     in
         newTransformFn;
 
@@ -223,7 +255,7 @@ public traceTransformationDifferences message transformFn =
                 resultVal = transformFn inVal;
             in
                 if (inVal == resultVal) then resultVal
-                else trace (message ++ "\n    input:  " ++ show inVal ++ "\n    output: " ++ show resultVal ++ "\n") resultVal;
+                else trace (message ++ "\n    input:  " ++ show inVal ++ "\n    output: " ++ show resultVal) resultVal;
     in
         newTransformFn;
 
@@ -232,7 +264,7 @@ public traceTransformationDifferences message transformFn =
  */
 traceEvalTime :: String -> a -> a;
 public traceEvalTime !message val = 
-    trace (message ++ " -- " ++ longToString (evalTime val) ++ " ms\n") val;
+    trace (message ++ " -- " ++ longToString (evalTime val) ++ " ms") val;
 
 /**
  * Traces messages for the start and end of the evaluation of an expression to WHNF.
@@ -240,8 +272,8 @@ public traceEvalTime !message val =
  */
 traceEvalStartAndEnd :: String -> a -> a;
 public traceEvalStartAndEnd !message val = 
-    trace ("START -- " ++ message ++ "\n") $
-    trace ("END   -- " ++ message ++ " -- " ++ longToString (evalTime val) ++ " ms\n") val;
+    trace ("START -- " ++ message) $
+    trace ("END   -- " ++ message ++ " -- " ++ longToString (evalTime val) ++ " ms") val;
 
 /**
  * Traces messages for the start and end of the evaluation of an expression to WHNF.
@@ -257,9 +289,9 @@ public traceEvalStartAndEndTimes !message val =
         end :: Long;
         end = getSystemTime;
     in
-        trace (show (start - initialTime) ++ "  START -- " ++ message ++ "\n") $
+        trace (show (start - initialTime) ++ "  START -- " ++ message) $
         val `seq`
-        trace (show (end - initialTime)   ++ "  END   -- " ++ message ++ " -- " ++ longToString (end - start) ++ " ms\n") val;
+        trace (show (end - initialTime)   ++ "  END   -- " ++ message ++ " -- " ++ longToString (end - start) ++ " ms") val;
 
 initialTime :: Long;
 initialTime = getSystemTime;
@@ -270,8 +302,8 @@ initialTime = getSystemTime;
  */
 traceDeepEvalStartAndEnd :: String -> a -> a;
 public traceDeepEvalStartAndEnd !message val = 
-    trace ("START -- " ++ message ++ "\n") $
-    trace ("END   -- " ++ message ++ " -- " ++ longToString (deepEvalTime val) ++ " ms\n") val;
+    trace ("START -- " ++ message) $
+    trace ("END   -- " ++ message ++ " -- " ++ longToString (deepEvalTime val) ++ " ms") val;
 
 /**
 The type class {@code Show@} is intended for debug purposes only. In particular, the output string format
@@ -780,7 +812,7 @@ public sameEvalTimesTrace f1 f2 !margin =
         result :: {percentDiff :: Double, time1 :: Long, time2 :: Long, timeDiff :: Long};
         result = compareEvalTimes f1 f2; 
     in 
-        trace (show result ++ "\n") ((Prelude.abs result.percentDiff) <= margin);
+        trace (show result) ((Prelude.abs result.percentDiff) <= margin);
     
 /**
  * {@code sleep@} for a specified number of milliseconds and then return.
