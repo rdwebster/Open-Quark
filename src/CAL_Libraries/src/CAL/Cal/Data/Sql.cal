@@ -84,24 +84,22 @@
  */
 module Cal.Data.Sql;
 import Cal.Core.Prelude using
-    typeConstructor = Byte, Int, Double, String, Boolean, Char, Integer, JObject, JList, Maybe, Ordering;
-    dataConstructor = False, True, LT, EQ, GT, Nothing, Just;
-    typeClass = Eq, Ord, Num, Inputable, Outputable;
-    function = 
-        append, compare, concat, const, doubleToString, equals, error, fromJust, fst, input,
-        intToString, isNothing, isEmpty,  max, mod, not, output, round, seq, snd, toDouble,
-        field1, field2, field3, upFrom, upFromTo;
+    typeConstructor = Boolean, Byte, Double, Int, JList, JObject, Maybe, String;
+    dataConstructor = False, True, Nothing, Just;
+    typeClass = Eq, Num, Ord, Outputable;
+    function = equals, error, field1, fromJust, fst, intToString, isEmpty, not, output, snd, toDouble, upFrom;
     typeConstructor = Long;
-    function = compose, fromMaybe, isJust, listToMaybe, maybeToList, longToString;
+    function = compose, fromMaybe, isJust, listToMaybe, maybeToList;
     ;
-import Cal.Collections.List using  
-    function = all, chop, filter, foldLeft, foldLeftStrict, foldRight, head, intersperse,
-        last, length, list2, map, outputList, outputListWith, reverse, subscript, sum, tail, take,
-        zip, zip3, zipWith;  
-    function = any, concatMap, deleteFirsts, drop, elemIndex, isElem, mapIndexed, repeat, removeDuplicates, 
-        removeDuplicatesBy, lookupWithDefault, find, groupBy, intersect, isSingletonList, sort;
+import Cal.Collections.List using
+    function =
+        all, chop, filter, foldLeft, foldLeftStrict, foldRight, head, length, map, outputList, outputListWith, tail, take, zip,
+        zipWith;
+    function =
+        any, concatMap, deleteFirsts, drop, elemIndex, find, intersect, isElem, isSingletonList, lookupWithDefault,
+        removeDuplicates, removeDuplicatesBy, repeat;
     ;      
-import Cal.Core.String using     
+import Cal.Core.String using
     function = toLowerCase;
     ;        
 import Cal.Core.Debug using
@@ -128,9 +126,7 @@ import Cal.Collections.Array using
     typeConstructor = Array;
     ;
 import Cal.Data.DatabaseMetadata using
-    typeConstructor = DatabaseReference, TableReference, TableDescription, FieldDescription,
-                      TableConstraint;
-    dataConstructor = PrimaryKeyConstraint, UniqueConstraint, ForeignKeyConstraint;
+    typeConstructor = DatabaseReference, FieldDescription, TableDescription, TableReference;
     function = getTableNameFromReference, makeTableReference;
     ;
 import Cal.Utilities.UniqueIdentifier using
@@ -140,9 +136,7 @@ import Cal.Utilities.UniqueIdentifier using
     ;
 import Cal.Utilities.Range using
     typeConstructor = Range;
-    function = 
-        hasLeftEndpoint, hasRightEndpoint, includesLeftEndpoint, 
-        includesRightEndpoint, leftEndpoint, rightEndpoint;
+    function = hasLeftEndpoint, hasRightEndpoint, includesLeftEndpoint, includesRightEndpoint, leftEndpoint, rightEndpoint;
     ;
 
 
@@ -3837,9 +3831,11 @@ data public SqlBuilder =
             // (viewRef onlyIfViewExists)
             (TableReference -> Boolean -> Document)
         
-        buildAlterTableAddIndexStatementFn :: 
-            // tableRef unique indexName indexColumnNames
-            (TableReference -> Boolean -> Maybe String -> [String] -> Document)
+        buildAlterTableStatementFn :: 
+            (TableReference -> [AlterTableAction] -> Document)
+        
+        buildAlterTableActionFn :: 
+            (AlterTableAction -> Document)
         
         buildInsertValuesStatementFn ::
             // (tableRef maybeDestColumns rowsOfValues)
@@ -3933,7 +3929,8 @@ makeSqlBuilder :: { prepareQuery                    :: SqlBuilderState -> Query 
                     buildCreateViewStatement        :: SqlBuilder -> TableReference -> Query -> Boolean -> Document,
                     buildDropTableStatement         :: SqlBuilder -> TableReference -> Boolean -> Boolean -> Document,
                     buildDropViewStatement          :: SqlBuilder -> TableReference -> Boolean -> Document,                    
-                    buildAlterTableAddIndexStatement :: SqlBuilder -> TableReference -> Boolean -> Maybe String -> [String] -> Document,
+                    buildAlterTableStatement        :: SqlBuilder -> TableReference -> [AlterTableAction] -> Document,
+                    buildAlterTableAction           :: SqlBuilder -> AlterTableAction -> Document,
                     
                     buildInsertValuesStatement      :: SqlBuilder -> TableReference -> Maybe [String] -> [[Expr]] -> Document,
                     buildInsertQueryValuesStatement :: SqlBuilder -> TableReference -> Maybe [String] -> Query -> Document,
@@ -3989,7 +3986,8 @@ public makeSqlBuilder sqlBuilderFns =
                                 (sqlBuilderFns.buildCreateViewStatement sqlBuilder)
                                 (sqlBuilderFns.buildDropTableStatement sqlBuilder)
                                 (sqlBuilderFns.buildDropViewStatement sqlBuilder)
-                                (sqlBuilderFns.buildAlterTableAddIndexStatement sqlBuilder)
+                                (sqlBuilderFns.buildAlterTableStatement sqlBuilder)
+                                (sqlBuilderFns.buildAlterTableAction sqlBuilder)
                                 (sqlBuilderFns.buildInsertValuesStatement sqlBuilder)
                                 (sqlBuilderFns.buildInsertQueryValuesStatement sqlBuilder)
                                 (sqlBuilderFns.buildUpdateValuesStatement sqlBuilder)
@@ -4652,11 +4650,9 @@ data public Statement =
         viewRef           :: TableReference 
         onlyIfViewExists  :: Boolean
     |
-    private AlterTableAddIndexStatement 
+    private AlterTableStatement
         tableRef          :: TableReference
-        unique            :: Boolean
-        indexName         :: (Maybe String)
-        indexColumnNames  :: [String]
+        alterTableActions :: ![AlterTableAction]
     |
     private InsertValuesStatement 
         tableRef          :: TableReference 
@@ -4687,6 +4683,30 @@ data public Statement =
         statementText     :: !String
     ;
 
+/** Individual actions which can be applied to alter a table. */
+data public AlterTableAction = 
+    public AlterTableAction_AddIndex 
+        unique            :: !Boolean
+        indexName         :: !(Maybe String)
+        indexColumnNames  :: ![String]
+    |
+    public AlterTableAction_DropIndex 
+        indexName         :: !String
+    |
+    public AlterTableAction_AddColumn
+        columnDesc        :: !FieldDescription
+    |
+    public AlterTableAction_ModifyColumnType
+        columnDesc        :: !FieldDescription
+    |
+    public AlterTableAction_SetColumnDefault
+        columnName        :: !String
+        defaultValue      :: !Expr
+    |
+    public AlterTableAction_DropColumn
+        columnName        :: !String
+    ;
+
 makeCreateDatabaseStatement :: DatabaseReference -> Boolean -> Statement;
 public makeCreateDatabaseStatement = CreateDatabaseStatement;
 
@@ -4711,10 +4731,8 @@ public makeDropTemporaryTableStatement !tableRef !onlyIfTableExists = DropTableS
 makeDropViewStatement :: TableReference -> Boolean -> Statement;
 public makeDropViewStatement = DropViewStatement;
 
-/** A statement to add an index to an existing table. */
-makeAlterTableAddIndexStatement :: TableReference -> Boolean -> Maybe String -> [String] -> Statement;
-public makeAlterTableAddIndexStatement !tableRef !unique !indexName !indexColumnNames = 
-    AlterTableAddIndexStatement tableRef unique indexName indexColumnNames;
+makeAlterTableStatement :: TableReference -> [AlterTableAction] -> Statement;
+public makeAlterTableStatement = AlterTableStatement;
 
 /**
  * Construct an Insert statement to insert one row of values.
@@ -4829,7 +4847,7 @@ public statementText !builder !forDisplay statement =
                 buildCreateViewStatementFn,
                 buildDropTableStatementFn,
                 buildDropViewStatementFn,
-                buildAlterTableAddIndexStatementFn, 
+                buildAlterTableStatementFn,
                 buildInsertValuesStatementFn,
                 buildInsertQueryValuesStatementFn,
                 buildUpdateValuesStatementFn,
@@ -4862,8 +4880,8 @@ public statementText !builder !forDisplay statement =
                     buildDropTableStatementFn tableRef isTemporary onlyIfTableExists;
                 DropViewStatement {viewRef, onlyIfViewExists} -> 
                     buildDropViewStatementFn viewRef onlyIfViewExists;
-                AlterTableAddIndexStatement {tableRef, unique, indexName, indexColumnNames} -> 
-                    buildAlterTableAddIndexStatementFn tableRef unique indexName indexColumnNames;
+                AlterTableStatement {tableRef, alterTableActions} -> 
+                    buildAlterTableStatementFn tableRef alterTableActions;
                 InsertValuesStatement {tableRef, maybeDestColumns, rowsOfValues} -> 
                     buildInsertValuesStatementFn tableRef maybeDestColumns rowsOfValues;
                 InsertQueryValuesStatement {tableRef, maybeDestColumns, insertQuery} -> 
@@ -4896,6 +4914,11 @@ public fieldDescriptionText !builder fieldDesc =
 fieldTypeText :: SqlBuilder -> SqlType -> Document;
 public fieldTypeText !builder !dataType = 
     (builder.SqlBuilder.buildFieldTypeFn) dataType;
+
+
+fieldAlterTableActionText :: SqlBuilder -> AlterTableAction -> Document;
+public fieldAlterTableActionText !builder !alterTableAction = 
+    (builder.SqlBuilder.buildAlterTableActionFn) alterTableAction;
 
 
 /**

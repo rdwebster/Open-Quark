@@ -45,8 +45,9 @@ import Cal.Core.Prelude using
     ;
 
 import Cal.Data.Sql using
-    typeConstructor = Expr, Query, QueryOption, SqlBuilder, SqlBuilderState;
+    typeConstructor = AlterTableAction, Expr, Query, QueryOption, SqlBuilder, SqlBuilderState;
     function = expressionText2;
+    dataConstructor = AlterTableAction_ModifyColumnType;
     ;
 
 import Cal.Data.SqlBuilder.DefaultSqlBuilder using
@@ -136,6 +137,7 @@ public mySqlBuilderFunctions =
                   buildDropTableStatement      := mySql_buildDropTableStatement,
                   buildCreateViewStatement     := mySql_buildCreateViewStatement,
                   buildDropViewStatement       := mySql_buildDropViewStatement,
+                  buildAlterTableAction        := mySql_buildAlterTableAction,
                   buildSelectClause            := mySql_buildSelectClause,
                   buildOrderByClause           := mySql_buildOrderByClause,
                   buildGroupByClause           := mySql_buildGroupByClause,
@@ -327,6 +329,16 @@ mySql_buildDropViewStatement !builder !viewRef !onlyIfViewExists =
         ifExistsText = if onlyIfViewExists then " IF EXISTS" else "";
     in
         text "DROP VIEW" ++ text ifExistsText ++ singleSpace ++ Sql.quoteIdentifier builder (getTableNameFromReference viewRef);
+
+mySql_buildAlterTableAction :: SqlBuilder -> AlterTableAction -> Document;
+mySql_buildAlterTableAction !builder !action = 
+    case action of
+    AlterTableAction_ModifyColumnType {columnDesc} -> 
+        spread [text "MODIFY COLUMN", Sql.fieldDescriptionText builder columnDesc];
+    _ -> 
+        defaultSqlBuilderFunctions.buildAlterTableAction builder action;
+    ;
+
 
 mySql_buildSelectClause :: SqlBuilder -> SqlBuilderState -> [QueryOption] -> [(Expr, String)] -> Document;
 mySql_buildSelectClause !builder !builderState !options = 

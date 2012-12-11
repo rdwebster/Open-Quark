@@ -39,23 +39,23 @@ module Cal.Data.SqlBuilder.PostgreSqlBuilder;
 
 import Cal.Core.Prelude using
     function = error, intToString;
-    typeConstructor = Boolean, String;
+    typeConstructor = Boolean, Maybe, String;
+    dataConstructor = False, True, Nothing, Just;
     ;
 
 import Cal.Data.Sql using
-    typeConstructor = DbFunction, Expr, SqlBuilder, SqlBuilderState;
+    typeConstructor = AlterTableAction, DbFunction, Expr, SqlBuilder, SqlBuilderState;
     function = expressionText2;
+    dataConstructor = AlterTableAction_ModifyColumnType;
     ;
 
 import Cal.Data.SqlBuilder.DefaultSqlBuilder using
-    function =
-        defaultSqlBuilderFunctions, quoteIdentifierHelper,
-        quotesNeeded_allowUppercaseOnly;
+    function = defaultSqlBuilderFunctions, quoteIdentifierHelper, quotesNeeded_allowUppercaseOnly;
     ;
 
 import Cal.Utilities.PrettyPrinter using
     typeConstructor = Document;
-    function = text;
+    function = fillSeparatedList, singleSpace, spread, text;
     ;
 
 import Cal.Utilities.Time using
@@ -69,12 +69,10 @@ import Cal.Utilities.TimeZone using
 import Cal.Data.SqlType using
     typeConstructor = SqlType;
     dataConstructor =
-        SqlType_TinyInt, SqlType_SmallInt, SqlType_Integer, SqlType_BigInt,
-        SqlType_Decimal, SqlType_Numeric, SqlType_Real, SqlType_Float,
-        SqlType_Double, SqlType_Bit, SqlType_Boolean, SqlType_Char,
-        SqlType_VarChar, SqlType_LongVarChar, SqlType_Clob, SqlType_Binary,
-        SqlType_VarBinary, SqlType_LongVarBinary, SqlType_Blob, SqlType_Date,
-        SqlType_Time, SqlType_TimeStamp;
+        SqlType_TinyInt, SqlType_SmallInt, SqlType_Integer, SqlType_BigInt, SqlType_Decimal, SqlType_Numeric, SqlType_Real,
+        SqlType_Float, SqlType_Double, SqlType_Bit, SqlType_Boolean, SqlType_Char, SqlType_VarChar, SqlType_LongVarChar,
+        SqlType_Clob, SqlType_Binary, SqlType_VarBinary, SqlType_LongVarBinary, SqlType_Blob, SqlType_Date, SqlType_Time,
+        SqlType_TimeStamp;
     ;
 
 import Cal.Utilities.Locale;
@@ -83,8 +81,13 @@ import Cal.Core.Debug using
     function = show;
     ;
 
-import Cal.Collections.List using
-    function = head;
+import Cal.Collections.List;
+
+import Cal.Data.DatabaseMetadata using
+    typeConstructor = TableDescription, TableIndex, TableReference;
+    function =
+        getTableConstraints, getTableFields, getTableIndexes, getTableNameFromReference, getTableReference, makeTableDescription;
+    dataConstructor = TableIndex;
     ;
 
 
@@ -116,7 +119,12 @@ public postgreSqlBuilderFunctions =
                     functionToSql             := postgreSql_functionToSql,
                     functionName              := postgreSql_functionNameText,
                     operatorText              := postgreSql_operatorText,
-                    buildFieldType            := postgreSql_buildFieldType
+                    buildFieldType            := postgreSql_buildFieldType,
+                    buildCreateTableStatement := postgreSql_buildCreateTableStatement,
+                    buildDropTableStatement   := postgreSql_buildDropTableStatement,
+                    buildAlterTableAction     := postgreSql_buildAlterTableAction,
+                    buildOrderByClause        := postgreSql_buildOrderByClause
+
             };
 
 /**
@@ -129,13 +137,11 @@ postgreSql_quoteIdentifier = quoteIdentifierHelper quotesNeeded_allowUppercaseOn
 postgreSql_functionToSql :: SqlBuilder -> SqlBuilderState -> DbFunction -> [Expr] -> Document;
 postgreSql_functionToSql builder builderState func arguments = 
     let
+        arg1Text = expressionText2 builder builderState $ List.head arguments;
+        
         postgreSql_datePartText :: String -> Document;
         postgreSql_datePartText datePartString = 
-            let
-                dateArg = head arguments;
-                dateArgText = expressionText2 builder builderState dateArg;
-            in
-                text ("EXTRACT (" ++ datePartString ++ " FROM ") ++ dateArgText ++ text ")";
+            text ("EXTRACT (" ++ datePartString ++ " FROM ") ++ arg1Text ++ text ")";
     in
         case func of
         Sql.YearFunction       -> postgreSql_datePartText "year";
@@ -150,6 +156,15 @@ postgreSql_functionToSql builder builderState func arguments =
         Sql.WeekFunction       -> postgreSql_datePartText "week";
 //        Sql.MonthNameFunction  -> ?;
 //        Sql.DayNameFunction    -> ?;
+        
+        Sql.ConvertToStringFunction -> text "CAST(" ++ arg1Text ++ text " AS text)";
+        Sql.ConvertToIntFunction    -> text "CAST(" ++ arg1Text ++ text " AS int)";
+        Sql.ConvertToDoubleFunction -> text "CAST(" ++ arg1Text ++ text " AS double precision)";
+        
+        Sql.LocateFunction -> 
+            // Postgres has the 'strpos' function, but the arguments are in the other order from Locate. 
+            defaultSqlBuilderFunctions.functionToSql builder builderState (Sql.FunctionOther "strpos") $ List.reverse arguments;
+        
         _ ->
             defaultSqlBuilderFunctions.functionToSql builder builderState func arguments;
         ;
@@ -157,7 +172,6 @@ postgreSql_functionToSql builder builderState func arguments =
 /* Functions
     InsertFunction  -> error unsupported???
     LeftFunction    -> perhap use: substr(string, from [, count])
-    LocateFunction  -> use position, but check signature
     RightFunction   -> perhap use: substr(string, from [, count])
     
     SpaceFunction   -> use repeat with a space char?
@@ -182,6 +196,7 @@ postgreSql_functionNameText func =
     Sql.UcaseFunction    -> "UPPER";
     Sql.DatabaseFunction -> "CURRENT_DATABASE";
     Sql.IfNullFunction   -> "COALESCE";
+    Sql.NowFunction      -> "CURRENT_TIMESTAMP";
     Sql.AggrStdDev       -> "STDDEV_SAMP";
     Sql.AggrStdDevP      -> "STDDEV_POP";
     Sql.AggrVar          -> "VAR_SAMP";
@@ -200,8 +215,10 @@ postgreSql_functionNameText func =
 postgreSql_operatorText :: DbFunction -> String;
 postgreSql_operatorText operator =
     case operator of
+    Sql.OpMod    -> "%";
     Sql.OpCat    -> "||";
     Sql.OpBitXor -> "#";
+    Sql.OpNullSafeEq -> "IS NOT DISTINCT FROM";
     _ -> defaultSqlBuilderFunctions.operatorText operator;
     ;
 
@@ -249,5 +266,57 @@ postgreSql_buildFieldType !dataType =
     _ -> error ("Unsupported data type '" ++ show dataType ++ "'.");
     ;
 
+postgreSql_buildCreateTableStatement :: SqlBuilder -> TableDescription -> Boolean -> Boolean -> Document;
+postgreSql_buildCreateTableStatement !builder !tableDesc !isTemporary !skipIfTableExists = 
+    let
+        skipIfExistsText :: Maybe Document;
+        skipIfExistsText = if skipIfTableExists then Just (text "IF NOT EXISTS") else Nothing;
+        
+        // PostgreSQL doesn't allow non-unique indexes to created as part of the CREATE TABLE statement.
+        // Add them separately using CREATE INDEX.
+        tableDescNoIndexes = makeTableDescription (getTableReference tableDesc) (getTableFields tableDesc) (getTableConstraints tableDesc);
+        tableIndexes = getTableIndexes tableDesc;
+        
+        createTableDoc = DefaultSqlBuilder.buildCreateTableStatement Nothing skipIfExistsText Nothing builder tableDescNoIndexes isTemporary False;
+        
+        createIndexDoc :: TableIndex -> Document;
+        createIndexDoc !tableIndex = 
+            text "CREATE INDEX ON " ++ Sql.quoteIdentifier builder (DatabaseMetadata.getTableName tableDesc) 
+            ++ text "(" ++ List.join (text ", ") (List.map (Sql.quoteIdentifier builder) tableIndex.TableIndex.indexFieldNames) ++ text ")";
+    in
+        Sql.buildCompoundStatement builder $ createTableDoc : List.map createIndexDoc tableIndexes;
+        
 
+postgreSql_buildDropTableStatement :: SqlBuilder -> TableReference -> Boolean -> Boolean -> Document;
+postgreSql_buildDropTableStatement !builder !tableRef !isTemporary !onlyIfTableExists = 
+    let
+        ifExistsText :: String;
+        ifExistsText = if onlyIfTableExists then " IF EXISTS" else "";
+    in
+        text "DROP TABLE" ++ text ifExistsText ++ singleSpace ++ Sql.quoteIdentifier builder (getTableNameFromReference tableRef);
+
+//TODO: should override the default 'buildAlterTableStatement' function as well to pull out adding/dropping indexes into separate statements (since this cannot be done for all indexes via ALTER TABLE in Postgres).
+postgreSql_buildAlterTableAction :: SqlBuilder -> AlterTableAction -> Document;
+postgreSql_buildAlterTableAction !builder !action = 
+    case action of
+    AlterTableAction_ModifyColumnType {columnDesc} -> 
+        // TODO: should this also set the NULL option?
+        spread [text "ALTER COLUMN", text $ DatabaseMetadata.getFieldName columnDesc, text "TYPE", postgreSql_buildFieldType $ DatabaseMetadata.getFieldDataType columnDesc];
+    _ -> 
+        defaultSqlBuilderFunctions.buildAlterTableAction builder action;
+    ;
+
+
+// Override the default NULL ordering for Postgres such that NULLs are sorted as less than non-null values.
+postgreSql_buildOrderByClause :: SqlBuilder -> SqlBuilderState -> [(Expr, Boolean)] -> [(Expr, String)] -> Document;
+postgreSql_buildOrderByClause !builder !builderState !orderExprs projectionExprs = 
+    let
+        orderExprText orderExpr = 
+            let
+                exprText = expressionText2 builder builderState orderExpr.#1;
+                sortDirectionText = if orderExpr.#2 then "ASC NULLS FIRST" else "DESC NULLS LAST";
+            in
+                spread [exprText, text sortDirectionText];
+    in
+        fillSeparatedList True "," (List.map orderExprText orderExprs);
 

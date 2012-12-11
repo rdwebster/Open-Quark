@@ -50,8 +50,12 @@ import Cal.Core.Prelude using
 
 import Cal.Data.Sql using
     typeConstructor =
-        DbFunction, Expr, JoinNode, JoinType, Parameter, Query, QueryOption, QueryTable, SqlBuilder, SqlBuilderState, TypedExpr;
+        AlterTableAction, DbFunction, Expr, JoinNode, JoinType, Parameter, Query, QueryOption, QueryTable, SqlBuilder,
+        SqlBuilderState, TypedExpr;
     function = exprOperatorPrecedence, expressionText2, operatorPrecedence, toUntypedExpr;
+    dataConstructor =
+        AlterTableAction_AddIndex, AlterTableAction_DropIndex, AlterTableAction_AddColumn, AlterTableAction_ModifyColumnType,
+        AlterTableAction_SetColumnDefault, AlterTableAction_DropColumn;
     ;
 
 import Cal.Utilities.PrettyPrinter using
@@ -127,7 +131,8 @@ public defaultSqlBuilderFunctions =
         buildCreateViewStatement        = default_buildCreateViewStatement,
         buildDropTableStatement         = default_buildDropTableStatement,
         buildDropViewStatement          = default_buildDropViewStatement,
-        buildAlterTableAddIndexStatement = default_buildAlterTableAddIndexStatement,
+        buildAlterTableStatement        = default_buildAlterTableStatement,
+        buildAlterTableAction           = default_buildAlterTableAction,
         buildInsertValuesStatement      = default_buildSingleRowInsertValuesStatement,
         buildInsertQueryValuesStatement = default_buildInsertQueryValuesStatement,
         buildUpdateValuesStatement      = default_buildUpdateValuesStatement,
@@ -417,26 +422,48 @@ default_buildDropViewStatement :: SqlBuilder -> TableReference -> Boolean -> Doc
 default_buildDropViewStatement !builder !viewRef !onlyIfViewExists = 
     text "DROP VIEW" ++ singleSpace ++ Sql.quoteIdentifier builder (getTableNameFromReference viewRef);
 
-default_buildAlterTableAddIndexStatement :: SqlBuilder -> TableReference -> Boolean -> Maybe String -> [String] -> Document;
-default_buildAlterTableAddIndexStatement !builder !tableRef !unique !maybeIndexName !indexColumnNames = 
-    let
-        addIndexText :: String;
-        addIndexText = if unique then "ADD UNIQUE INDEX" else "ADD INDEX";
-        
-        indexNameText :: String;
-        indexNameText = 
-            case maybeIndexName of
-            Nothing -> "";
-            Just indexName -> " " ++ indexName;
-            ;
-    in
-        group (
-        spread [text "ALTER TABLE", 
-                Sql.quoteIdentifier builder (getTableNameFromReference tableRef),
-                text (addIndexText ++ indexNameText),
-                text "(" ++ join (text ", ") (map (Sql.quoteIdentifier builder) indexColumnNames) ++ text ")"
-               ]
-        );
+default_buildAlterTableStatement :: SqlBuilder -> TableReference -> [AlterTableAction] -> Document;
+default_buildAlterTableStatement !builder !tableRef !alterTableActions = 
+    group (
+    spread [text "ALTER TABLE", Sql.quoteIdentifier builder (getTableNameFromReference tableRef)]
+    ++ nest 4 (line ++ fillSeparatedList True "," (List.map (Sql.fieldAlterTableActionText builder) alterTableActions))
+    );
+
+default_buildAlterTableAction :: SqlBuilder -> AlterTableAction -> Document;
+default_buildAlterTableAction !builder !action = 
+    case action of
+    AlterTableAction_AddIndex {unique, indexName, indexColumnNames} -> 
+        let
+            addIndexText :: String;
+            addIndexText = if unique then "ADD UNIQUE INDEX" else "ADD INDEX";
+            
+            indexNameText :: String;
+            indexNameText = 
+                case indexName of
+                Nothing -> "";
+                Just name -> " " ++ name;
+                ;
+        in
+            spread [text (addIndexText ++ indexNameText), 
+                    text "(" ++ join (text ", ") (map (Sql.quoteIdentifier builder) indexColumnNames) ++ text ")"
+                   ];
+    
+    AlterTableAction_DropIndex {indexName} -> 
+        spread [text "DROP INDEX", Sql.quoteIdentifier builder indexName];
+    
+    AlterTableAction_AddColumn {columnDesc} -> 
+        spread [text "ADD COLUMN", Sql.fieldDescriptionText builder columnDesc];
+    
+    AlterTableAction_ModifyColumnType {columnDesc} -> 
+        spread [text "ALTER COLUMN", Sql.fieldDescriptionText builder columnDesc];
+    
+    AlterTableAction_DropColumn {columnName} -> 
+        spread [text "DROP COLUMN", Sql.quoteIdentifier builder columnName];
+    
+    AlterTableAction_SetColumnDefault {columnName, defaultValue} -> 
+        spread [text "ALTER COLUMN", Sql.quoteIdentifier builder columnName, text "SET DEFAULT", text $ Sql.expressionText builder defaultValue];
+    ;
+
 
 // By default, break up a multi-row INSERT statement to create N individual INSERT statements.
 // The buildMultiRowInsertValuesStatement function can be used for cases where INSERT supports multiple rows in one statement.
