@@ -1152,12 +1152,12 @@ public class JDBC {
 	                
 	                java.sql.Connection conn = DriverManager.getConnection(connectionUrl, connectionProperties);
 	                
-	                // For PostgreSQL, turn off the auto-commit flag by default since this enables fetching of data in batches 
-	                // (instead of reading the entire resultset into memory).
-	                // TODO: this could be dangerous if the connection is to be used for processing updates to the database instead of querying it.
-	                if (isPostgresConnection(conn)) {
-	                    conn.setAutoCommit(false);
-	                }
+//	                // For PostgreSQL, turn off the auto-commit flag by default since this enables fetching of data in batches 
+//	                // (instead of reading the entire resultset into memory).
+//	                // TODO: this could be dangerous if the connection is to be used for processing updates to the database instead of querying it.
+//	                if (isPostgresConnection(conn)) {
+//	                    conn.setAutoCommit(false);
+//	                }
 	                
 	                jdbcConnection = conn;
 	                
