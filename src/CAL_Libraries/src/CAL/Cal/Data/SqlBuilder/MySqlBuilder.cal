@@ -39,7 +39,7 @@
 module Cal.Data.SqlBuilder.MySqlBuilder;
 
 import Cal.Core.Prelude using
-    function = error, intToString, isEmpty, not;
+    function = error, intToString, not;
     typeConstructor = Boolean, Maybe, String;
     dataConstructor = False, True, Nothing, Just;
     ;
@@ -56,7 +56,7 @@ import Cal.Data.SqlBuilder.DefaultSqlBuilder using
 
 import Cal.Utilities.PrettyPrinter using
     typeConstructor = Document;
-    function = fillSeparatedList, singleSpace, spread, text;
+    function = singleSpace, spread, text;
     ;
 
 import Cal.Utilities.Time using
@@ -84,10 +84,6 @@ import Cal.Core.Debug using
 
 import Cal.Collections.List using
     function = head;
-    ;
-
-import Cal.Collections.Set using
-    typeConstructor = Set;
     ;
 
 import Cal.Data.DatabaseMetadata using
@@ -128,7 +124,9 @@ public mySqlBuilderFunctions =
                   booleanToSql      := mySql_booleanToSql,
                   buildFieldType    := mySql_buildFieldType,
                   functionToSql     := mySql_functionToSql,
+                  addParensForZeroArgFunc := mySql_addParensForZeroArgFunc,
                   functionName      := mySql_functionNameText,
+                  operatorText      := mySql_operatorText,
                   timeIntervalToSql := mySql_timeIntervalToSql,
                   buildInsertValuesStatement   := DefaultSqlBuilder.default_buildMultiRowInsertValuesStatement,
                   buildCreateDatabaseStatement := mySql_buildCreateDatabaseStatement,
@@ -139,8 +137,8 @@ public mySqlBuilderFunctions =
                   buildDropViewStatement       := mySql_buildDropViewStatement,
                   buildAlterTableAction        := mySql_buildAlterTableAction,
                   buildSelectClause            := mySql_buildSelectClause,
-                  buildOrderByClause           := mySql_buildOrderByClause,
-                  buildGroupByClause           := mySql_buildGroupByClause,
+                  buildOrderByClause           := DefaultSqlBuilder.buildOrderByClause True "ASC" "DESC",
+                  buildGroupByClause           := DefaultSqlBuilder.buildGroupByClause True,
                   constructQuery               := mySql_constructQuery
             };
 
@@ -193,13 +191,9 @@ mySql_buildFieldType !dataType =
 mySql_functionToSql :: SqlBuilder -> SqlBuilderState -> Sql.DbFunction -> [Expr] -> Document;
 mySql_functionToSql builder builderState func arguments = 
     let
-        typeNameKeywords :: Set String;
-        typeNameKeywords = Set.fromList ["CHAR", "SIGNED INTEGER", "DECIMAL", "DATETIME"];
-
         convertFunctionSql :: String -> Document;
         convertFunctionSql !typeName = 
-            mySql_functionToSql builder builderState (Sql.FunctionOther "CONVERT") [head arguments, 
-                                                                                    Sql.untypedFunctionExpr (Sql.FunctionOther typeName) []];
+            text "CONVERT(" ++ expressionText2 builder builderState (List.head arguments) ++ text ", " ++ text typeName ++ text ")";
     in
         case func of
         Sql.OpCat   -> 
@@ -235,15 +229,16 @@ mySql_functionToSql builder builderState func arguments =
         //
         Sql.OpIsNull -> mySql_functionToSql builder builderState Sql.OpNullSafeEq [head arguments, Sql.toUntypedExpr Sql.nullValue];
         Sql.OpIsNotNull -> mySql_functionToSql builder builderState Sql.OpNot [Sql.untypedFunctionExpr Sql.OpIsNull arguments];
-
+        
+        Sql.OpNullSafeNotEq -> mySql_functionToSql builder builderState Sql.OpNot [Sql.untypedFunctionExpr Sql.OpNullSafeEq arguments];
+        
         _ -> 
-            // MySQL doesn't seem to allow the parens to be omitted for zero-argument functions, so ensure that the parens are included in this case.
-            // However, special keywords (such as data type constants) need to be included without parens.
-            // TODO: find a nicer way to handle this (perhaps not treating these type keywords as functions).
-            if isEmpty arguments && not (Set.member (Sql.functionName builder func) typeNameKeywords) then text (Sql.functionName builder func) ++ text "()"
-            else defaultSqlBuilderFunctions.functionToSql builder builderState func arguments;
+            defaultSqlBuilderFunctions.functionToSql builder builderState func arguments;
         ;
 
+/** MySQL doesn't seem to allow the parens to be omitted for zero-argument functions, so ensure that the parens are included in this case. */
+mySql_addParensForZeroArgFunc :: Sql.DbFunction -> Boolean;
+mySql_addParensForZeroArgFunc !func = True;
 
 mySql_functionNameText :: Sql.DbFunction -> String;
 mySql_functionNameText func =
@@ -261,6 +256,13 @@ mySql_functionNameText func =
         // MySQL doesn't support the SoundEx Difference function.
         error ("Unsupported function 'DIFFERENCE'");
     _ -> defaultSqlBuilderFunctions.functionName func;
+    ;
+
+mySql_operatorText :: Sql.DbFunction -> String;
+mySql_operatorText operator =
+    case operator of
+    Sql.OpNullSafeEq -> "<=>";
+    _ -> defaultSqlBuilderFunctions.operatorText operator;
     ;
 
 mySql_timeIntervalToSql :: Sql.TimeInterval -> Document;
@@ -348,36 +350,6 @@ mySql_buildSelectClause !builder !builderState !options =
     in
         // Build the default SQL with the TopN option removed (since it will be added as a LIMIT to the end of the query instead).
         defaultSqlBuilderFunctions.buildSelectClause builder builderState optionsNoTopN;
-
-mySql_buildOrderByClause :: SqlBuilder -> SqlBuilderState -> [(Expr, Boolean)] -> [(Expr, String)] -> Document;
-mySql_buildOrderByClause !builder !builderState !orderExprs projectionExprs = 
-    let
-        orderExprText orderExpr = 
-            let
-                exprText :: Document;
-                exprText = 
-                    case List.findIndex (\!projExpr -> orderExpr.#1 == projExpr.#1) projectionExprs of
-                    Nothing -> expressionText2 builder builderState orderExpr.#1;
-                    Just projColumnIndex -> text $ intToString $ projColumnIndex + 1; 
-                    ;
-                
-                sortDirectionText = if orderExpr.#2 then "ASC" else "DESC";
-            in
-                spread [exprText, text sortDirectionText];
-    in
-        fillSeparatedList True "," (List.map orderExprText orderExprs);
-
-mySql_buildGroupByClause :: SqlBuilder -> SqlBuilderState -> [Expr] -> [(Expr, String)] -> Document;
-mySql_buildGroupByClause !builder !builderState !groupExpressions !projectionExprs = 
-    let
-        groupExprText :: Expr -> Document;
-        groupExprText !groupExpr = 
-            case List.findIndex (\!projExpr -> groupExpr == projExpr.#1) projectionExprs of
-            Nothing -> expressionText2 builder builderState groupExpr;
-            Just projColumnIndex -> text $ intToString $ projColumnIndex + 1; 
-            ;
-    in
-        fillSeparatedList True "," (List.map groupExprText groupExpressions);
 
 mySql_constructQuery :: SqlBuilder -> SqlBuilderState -> [QueryOption] -> Document -> Document -> Document -> Document -> Document -> Document -> Document;
 mySql_constructQuery !builder !builderState !queryOptions = 

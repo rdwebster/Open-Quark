@@ -38,7 +38,7 @@
 module Cal.Data.SqlBuilder.PostgreSqlBuilder;
 
 import Cal.Core.Prelude using
-    function = error, intToString;
+    function = error, intToString, not;
     typeConstructor = Boolean, Maybe, String;
     dataConstructor = False, True, Nothing, Just;
     ;
@@ -55,7 +55,7 @@ import Cal.Data.SqlBuilder.DefaultSqlBuilder using
 
 import Cal.Utilities.PrettyPrinter using
     typeConstructor = Document;
-    function = fillSeparatedList, singleSpace, spread, text;
+    function = singleSpace, spread, text;
     ;
 
 import Cal.Utilities.Time using
@@ -90,6 +90,14 @@ import Cal.Data.DatabaseMetadata using
     dataConstructor = TableIndex;
     ;
 
+import Cal.Collections.Set using
+    typeConstructor = Set;
+    ;
+
+import Cal.Utilities.StringNoCase using
+    typeConstructor = StringNoCase;
+    ;
+
 
 
 /**
@@ -117,14 +125,15 @@ public postgreSqlBuilderFunctions =
                     timeToSql                 := postgreSql_timeToSql,
                     booleanToSql              := postgreSql_booleanToSql,
                     functionToSql             := postgreSql_functionToSql,
+                    addParensForZeroArgFunc   := postgreSql_addParensForZeroArgFunc,
                     functionName              := postgreSql_functionNameText,
                     operatorText              := postgreSql_operatorText,
                     buildFieldType            := postgreSql_buildFieldType,
                     buildCreateTableStatement := postgreSql_buildCreateTableStatement,
                     buildDropTableStatement   := postgreSql_buildDropTableStatement,
                     buildAlterTableAction     := postgreSql_buildAlterTableAction,
-                    buildOrderByClause        := postgreSql_buildOrderByClause
-
+                    buildOrderByClause        := DefaultSqlBuilder.buildOrderByClause True "ASC NULLS FIRST" "DESC NULLS LAST",
+                    buildGroupByClause        := DefaultSqlBuilder.buildGroupByClause True
             };
 
 /**
@@ -184,6 +193,22 @@ postgreSql_functionToSql builder builderState func arguments =
     DateTimeDiffFunction {} -> ???
 */
 
+/** Postgres requires parens for some zero-arg functions, but doesn't allow it for others. */
+postgreSql_addParensForZeroArgFunc :: Sql.DbFunction -> Boolean;
+postgreSql_addParensForZeroArgFunc !func = 
+    not $ Set.member (StringNoCase.fromString $ postgreSql_functionNameText func) noParenFunctionNames;
+
+/** The following zero-arg functions must NOT include parens in Postgres. All others must include parens. */
+noParenFunctionNames :: Set StringNoCase;
+noParenFunctionNames = 
+    Set.fromListWith StringNoCase.fromString 
+                     ["current_date",
+                      "current_time",
+                      "current_timestamp",
+                      "localtime",
+                      "localtimestamp"
+                     ];
+
 postgreSql_functionNameText :: DbFunction -> String;
 postgreSql_functionNameText func =
     case func of
@@ -218,7 +243,6 @@ postgreSql_operatorText operator =
     Sql.OpMod    -> "%";
     Sql.OpCat    -> "||";
     Sql.OpBitXor -> "#";
-    Sql.OpNullSafeEq -> "IS NOT DISTINCT FROM";
     _ -> defaultSqlBuilderFunctions.operatorText operator;
     ;
 
@@ -305,18 +329,4 @@ postgreSql_buildAlterTableAction !builder !action =
     _ -> 
         defaultSqlBuilderFunctions.buildAlterTableAction builder action;
     ;
-
-
-// Override the default NULL ordering for Postgres such that NULLs are sorted as less than non-null values.
-postgreSql_buildOrderByClause :: SqlBuilder -> SqlBuilderState -> [(Expr, Boolean)] -> [(Expr, String)] -> Document;
-postgreSql_buildOrderByClause !builder !builderState !orderExprs projectionExprs = 
-    let
-        orderExprText orderExpr = 
-            let
-                exprText = expressionText2 builder builderState orderExpr.#1;
-                sortDirectionText = if orderExpr.#2 then "ASC NULLS FIRST" else "DESC NULLS LAST";
-            in
-                spread [exprText, text sortDirectionText];
-    in
-        fillSeparatedList True "," (List.map orderExprText orderExprs);
 

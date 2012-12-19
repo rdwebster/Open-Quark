@@ -52,10 +52,10 @@ import Cal.Data.Sql using
     typeConstructor =
         AlterTableAction, DbFunction, Expr, JoinNode, JoinType, Parameter, Query, QueryOption, QueryTable, SqlBuilder,
         SqlBuilderState, TypedExpr;
-    function = exprOperatorPrecedence, expressionText2, operatorPrecedence, toUntypedExpr;
+    function = addParensForZeroArgFunction, exprOperatorPrecedence, expressionText2, operatorPrecedence, toUntypedExpr;
     dataConstructor =
         AlterTableAction_AddIndex, AlterTableAction_DropIndex, AlterTableAction_AddColumn, AlterTableAction_ModifyColumnType,
-        AlterTableAction_SetColumnDefault, AlterTableAction_DropColumn;
+        AlterTableAction_SetColumnDefault, AlterTableAction_DropColumn, OverPartitionFunction;
     ;
 
 import Cal.Utilities.PrettyPrinter using
@@ -145,6 +145,7 @@ public defaultSqlBuilderFunctions =
         parameterToSql          = default_parameterToSql,
         listToSql               = default_listToSql,
         functionToSql           = default_functionToSql,
+        addParensForZeroArgFunc = default_addParensForZeroArgFunc,
         functionName            = default_functionNameText,
         operatorText            = default_operatorText,
         addParens               = default_addParens,
@@ -245,19 +246,59 @@ default_buildSelectClause !builder !builderState !options !columns =
 
 default_buildOrderByClause :: SqlBuilder -> SqlBuilderState -> [(Expr, Boolean)] -> [(Expr, String)] -> Document;
 default_buildOrderByClause !builder !builderState !orderExprs projectionExprs = 
-    let
-        orderExprText orderExpr = 
-            let
-                exprText = expressionText2 builder builderState (field1 orderExpr);
-                sortDirectionText = if (field2 orderExpr) then "ASC" else "DESC";
-            in
-                spread [exprText, text sortDirectionText];
-    in
-        fillSeparatedList True "," (map orderExprText orderExprs);
+    buildOrderByClause False "ASC" "DESC" builder builderState orderExprs projectionExprs;
 
 default_buildGroupByClause :: SqlBuilder -> SqlBuilderState -> [Expr] -> [(Expr, String)] -> Document;
 default_buildGroupByClause !builder !builderState !groupExpressions projectionExprs =
-    fillExpressionList builder builderState groupExpressions;
+    buildGroupByClause False builder builderState groupExpressions projectionExprs;
+
+/**
+ * Constructs the contents of an ORDER BY clause.
+ * If the 'allowColumnOrdinals' option is specified, then column ordinal values (from the SELECT clause) will be used where there is a match.
+ */
+buildOrderByClause :: Boolean -> String -> String -> SqlBuilder -> SqlBuilderState -> [(Expr, Boolean)] -> [(Expr, String)] -> Document;
+public buildOrderByClause !allowColumnOrdinals !ascText !descText !builder !builderState !orderExprs projectionExprs = 
+    let
+        orderExprText orderExpr = 
+            let
+                defaultExprText = expressionText2 builder builderState orderExpr.#1;
+                
+                exprText :: Document;
+                exprText = 
+                    if not allowColumnOrdinals then defaultExprText
+                    else
+                        case List.findIndex (\!projExpr -> orderExpr.#1 == projExpr.#1) projectionExprs of
+                        Nothing -> defaultExprText;
+                        Just projColumnIndex -> text $ intToString $ projColumnIndex + 1; 
+                        ;
+                
+                sortDirectionText = if orderExpr.#2 then ascText else descText;
+            in
+                spread [exprText, text sortDirectionText];
+    in
+        fillSeparatedList True "," (List.map orderExprText orderExprs);
+
+/**
+ * Constructs the contents of an GROUP BY clause.
+ * If the 'allowColumnOrdinals' option is specified, then column ordinal values (from the SELECT clause) will be used where there is a match.
+ */
+buildGroupByClause :: Boolean -> SqlBuilder -> SqlBuilderState -> [Expr] -> [(Expr, String)] -> Document;
+public buildGroupByClause !allowColumnOrdinals !builder !builderState !groupExpressions !projectionExprs = 
+    let
+        groupExprText :: Expr -> Document;
+        groupExprText !groupExpr = 
+            let
+                defaultExprText = expressionText2 builder builderState groupExpr;
+            in
+                if not allowColumnOrdinals then defaultExprText
+                else
+                    case List.findIndex (\!projExpr -> groupExpr == projExpr.#1) projectionExprs of
+                    Nothing -> defaultExprText;
+                    Just projColumnIndex -> text $ intToString $ projColumnIndex + 1; 
+                    ;
+    in
+        fillSeparatedList True "," (List.map groupExprText groupExpressions);
+
 
 default_buildFromClause :: SqlBuilder -> SqlBuilderState -> [JoinNode] -> Document;
 default_buildFromClause !builder !builderState !joins = 
@@ -637,7 +678,13 @@ default_functionToSql !builder !builderState !func !arguments =
         arg1TextParens = nest 4 (text "(" ++ arg1Text ++ text ")");
         arg2TextParens = nest 4 (text "(" ++ arg2Text ++ text ")");
         arg3TextParens = nest 4 (text "(" ++ arg3Text ++ text ")");
-
+        
+        arg2ListExprs :: [Expr];
+        arg2ListExprs = Sql.getListFromListExpr arg2Expr;
+    
+        arg3ListExprs :: [Expr];
+        arg3ListExprs = Sql.getListFromListExpr arg3Expr;
+        
         functionName :: String;
         functionName = Sql.functionName builder func;
         
@@ -717,6 +764,7 @@ default_functionToSql !builder !builderState !func !arguments =
 
         (Sql.OpEq       // Binary operators which are done on one line.
             | Sql.OpNullSafeEq
+            | Sql.OpNullSafeNotEq
             | Sql.OpLt
             | Sql.OpLtEq
             | Sql.OpGt
@@ -760,10 +808,39 @@ default_functionToSql !builder !builderState !func !arguments =
                                         ++ buildExpressionList builder builderState arguments;
             in
                 text functionName++ text "(" ++ argExpressionText ++ text ")";
-
-        _ -> if (isEmpty arguments) then text functionName
-             else text functionName ++ text "(" ++ buildExpressionList builder builderState arguments ++ text ")";
+        
+        OverPartitionFunction -> 
+            let
+                orderingText = 
+                    if nArgs < 3 || isEmpty arg3ListExprs then empty
+                    else
+                        spread [text "ORDER BY" ,
+                                (List.join (text ", ") $
+                                 List.map (\!orderInfo -> spread [expressionText2 builder builderState (List.head orderInfo),
+                                                                  if List.length orderInfo > 1 && List.subscript orderInfo 1 == toUntypedExpr Sql.falseConstant then text "DESC" else text "ASC"
+                                                                 ]) $
+                                 List.chop 2 arg3ListExprs
+                                )
+                               ];
+            in
+                spread ([arg1Text,
+                         text "OVER",
+                         text "(PARTITION BY",
+                         buildExpressionList builder builderState arg2ListExprs,
+                         orderingText
+                        ]
+                       )
+                ++ text ")";
+        
+        _ -> 
+            // Omit the parens for zero-arg functions where specified for the builder.
+            if isEmpty arguments && not (addParensForZeroArgFunction builder func) then text functionName
+            else text functionName ++ text "(" ++ buildExpressionList builder builderState arguments ++ text ")";
         ;
+
+/** By default, do not add parens for functions with zero arguments. */
+default_addParensForZeroArgFunc :: DbFunction -> Boolean;
+default_addParensForZeroArgFunc !func = False;
 
 default_functionNameText :: DbFunction -> String;
 default_functionNameText !func = 
@@ -779,7 +856,8 @@ default_operatorText !operator =
     Sql.OpIsNotNull     -> " IS NOT NULL";
     Sql.OpExists        -> "EXISTS ";
     Sql.OpEq            -> "=";
-    Sql.OpNullSafeEq    -> "<=>";       // Not widely supported currently. Could generate the following for other DBs:  IFNULL(arg1 = arg2, FALSE) OR (arg1 IS NULL AND arg2 IS NULL)
+    Sql.OpNullSafeEq    -> "IS NOT DISTINCT FROM";  // Not widely supported currently. Could generate the following for other DBs:  IFNULL(arg1 = arg2, FALSE) OR (arg1 IS NULL AND arg2 IS NULL)
+    Sql.OpNullSafeNotEq -> "IS DISTINCT FROM";
     Sql.OpLt            -> "<";
     Sql.OpLtEq          -> "<=";
     Sql.OpGt            -> ">";

@@ -1173,7 +1173,7 @@ data public DbFunction =
     
     // Binary operators
     | public OpEq | public OpLt | public OpLtEq | public OpGt | public OpGtEq | public OpNotEq
-    | public OpNullSafeEq       // Null-safe equals operator -- not widely supported.
+    | public OpNullSafeEq | public OpNullSafeNotEq       // Null-safe equals operators -- not widely supported.
     | public OpAnd | public OpOr
     | public OpLike | public OpIn | public OpNotIn
     | public OpCat
@@ -1221,6 +1221,9 @@ data public DbFunction =
     | public AggrCountAll
     | public AggrStdDev | public AggrStdDevP | public AggrVar | public AggrVarP
     | public AggrOther  other :: String
+    
+    // Window/Partitioning functions.
+    | public OverPartitionFunction | public RankFunction
 
     // A function with the specified name.
     | public FunctionOther funcName :: String
@@ -1341,7 +1344,9 @@ public defaultFunctionName !func =
     YearFunction    -> "YEAR";
     DateTimeAddFunction {} -> "DATEADD";
     DateTimeDiffFunction {} -> "DATEDIFF";
-
+    
+    RankFunction {} -> "RANK";
+    
     AggrCount       -> "COUNT";
     AggrSum         -> "SUM";
     AggrAvg         -> "AVG";
@@ -1358,7 +1363,8 @@ public defaultFunctionName !func =
     AggrDistinctCount -> "DISTINCT COUNT";
     AggrDistinctSum   -> "DISTINCT SUM";
     AggrDistinctAvg   -> "DISTINCT AVG";
-    AggrCountAll      -> "COUNT ALL";     
+    AggrCountAll      -> "COUNT ALL";
+    OverPartitionFunction -> "OVER PARTITION";
 
     FunctionOther {funcName} -> funcName;
     ;
@@ -1507,6 +1513,17 @@ public nullSafeEqExpr = functionExpr2 OpNullSafeEq;
  */
 notEqExpr :: Eq a => TypedExpr a -> TypedExpr a -> TypedExpr Boolean;
 public notEqExpr = functionExpr2 OpNotEq;
+
+/**
+ * Constructs a database expression which test two operand expressions for null-safe inequality.
+ * Unlike the regular notEquals operator, this will compare 2 Null values as not equal, and will return True
+ * (instead of Null) for a comparison with Null against a non-null value.
+ * @arg expr1  a database expression for the first operand
+ * @arg expr2  a database expression for the second operand
+ * @return     a Boolean database expression to test the operand expressions for null-safe inequality
+ */
+nullSafeNotEqExpr :: Eq a => TypedExpr a -> TypedExpr a -> TypedExpr Boolean;
+public nullSafeNotEqExpr = functionExpr2 OpNullSafeNotEq;
 
 /**
  * Constructs a database expression to test whether the first operand is less than the second.
@@ -2024,6 +2041,20 @@ public varianceExpr = functionExpr1 AggrVar;
 
 variancePExpr :: Num a => TypedExpr a -> TypedExpr Double;
 public variancePExpr = functionExpr1 AggrVarP;
+
+overPartitionExpr :: TypedExpr a -> [TypedExpr b] -> TypedExpr a;
+public overPartitionExpr !valueExpr !partitionByExprs = 
+    overPartitionOrderedExpr valueExpr partitionByExprs [];
+
+overPartitionOrderedExpr :: TypedExpr a -> [TypedExpr b] -> [(TypedExpr c, Boolean)] -> TypedExpr a;
+public overPartitionOrderedExpr !valueExpr !partitionByExprs !orderingExprs = 
+    functionExpr3 OverPartitionFunction 
+                  valueExpr 
+                  (listExpr partitionByExprs) 
+                  (toTypedExpr $ ListExpr $ List.concatMap (\!pr -> [toUntypedExpr pr.#1, toUntypedExpr $ booleanConstant pr.#2]) orderingExprs);
+
+rankExpr :: TypedExpr Int;
+public rankExpr = functionExpr0 RankFunction;
 
 
 /**
@@ -3571,7 +3602,9 @@ private fixQueryForGroupBy query =
                 ListExpr {listValues} -> 
                     concatMap getExprAggregationExprs listValues;
                 FunctionExpr {func, arguments} -> 
-                    if isAggregationFunction func then [expr]
+                    // Ignore any special window (over/partition) functions.
+                    if func == OverPartitionFunction then []
+                    else if isAggregationFunction func then [expr]
                     else List.concatMap getExprAggregationExprs arguments;
                 _ -> [];
                 ;
@@ -3878,7 +3911,11 @@ data public SqlBuilder =
         functionToSqlFn ::
             // (builderState func argExprs)
             (SqlBuilderState -> DbFunction -> [Expr] -> Document)
-
+        
+        addParensForZeroArgFuncFn :: 
+            // (addParensForZeroArgFunc func)
+            (DbFunction -> Boolean)
+        
         functionNameFn :: 
             // (dbFunction)
             (DbFunction -> String)
@@ -3944,6 +3981,7 @@ makeSqlBuilder :: { prepareQuery                    :: SqlBuilderState -> Query 
                     parameterToSql                  :: SqlBuilder -> Parameter -> Document,
                     listToSql                       :: SqlBuilder -> SqlBuilderState -> [Expr] -> Document,
                     functionToSql                   :: SqlBuilder -> SqlBuilderState -> DbFunction -> [Expr] -> Document,
+                    addParensForZeroArgFunc         :: DbFunction -> Boolean,
                     functionName                    :: DbFunction -> String,
                     operatorText                    :: DbFunction -> String,
                     addParens                       :: Document -> Document,
@@ -3999,6 +4037,7 @@ public makeSqlBuilder sqlBuilderFns =
                                 (sqlBuilderFns.parameterToSql sqlBuilder)
                                 (sqlBuilderFns.listToSql sqlBuilder)
                                 (sqlBuilderFns.functionToSql sqlBuilder)
+                                (sqlBuilderFns.addParensForZeroArgFunc)
                                 (sqlBuilderFns.functionName)
                                 (sqlBuilderFns.operatorText)
                                 (sqlBuilderFns.addParens)
@@ -4165,6 +4204,13 @@ private functionToSql !sqlBuilder builderState func argExprs =
     (sqlBuilder.SqlBuilder.functionToSqlFn) builderState func argExprs;
 
 /**
+ * Indicates whether parens should be added for the specified zero-arg function.
+ */
+addParensForZeroArgFunction :: SqlBuilder -> DbFunction -> Boolean;
+public addParensForZeroArgFunction !sqlBuilder !func = 
+    (sqlBuilder.SqlBuilder.addParensForZeroArgFuncFn) func;
+
+/**
  * Returns the name for a SQL function.
  */
 functionName :: SqlBuilder -> DbFunction -> String;
@@ -4280,7 +4326,8 @@ public expressionText2 builder builderState expr =
         // TODO: how should this info be supplied?
         timeZone = TimeZone.currentTimeZone;
     in
-        case expr of
+        // Reduce any Not expressions before building the text (to clean up double-negatives, etc).
+        case simplifyNotExpr expr of
         QueryField {fieldName, queryTable} -> 
             let
                 tableAlias = quoteIdentifier builder (getQueryTableAlias queryTable);
@@ -4332,6 +4379,7 @@ public operatorPrecedence func =
 
     OpEq     -> 4;
     OpNullSafeEq -> 4;
+    OpNullSafeNotEq -> 4;
     OpLt     -> 4;
     OpLtEq   -> 4;
     OpGt     -> 4;
@@ -4952,6 +5000,7 @@ public isBinaryFunction dbFun =
     case dbFun of
     (OpEq 
     | OpNullSafeEq
+    | OpNullSafeNotEq
     | OpLt 
     | OpLtEq 
     | OpGt 
@@ -5064,6 +5113,40 @@ public convertDateQueryFieldsToTimeExprs expr =
 //
 //        _ -> error "unsupported query type for change of restrictions";
 //    ;
+
+/**
+ * Attempts to simplify an expression that consists of the NOT operator 
+ * with certain nested operators to a simpler form.
+ */
+simplifyNotExpr :: Expr -> Expr;
+public simplifyNotExpr !expr = 
+    case expr of
+    FunctionExpr {func, arguments} -> 
+        case func of
+        OpNot -> 
+            case List.head arguments of
+            FunctionExpr {func = innerFunc, arguments = innerArgs} -> 
+                case innerFunc of
+                OpNot           -> List.head innerArgs;   // Remove a double 'Not'.
+                OpEq            -> FunctionExpr OpNotEq innerArgs;
+                OpNotEq         -> FunctionExpr OpEq innerArgs;
+                OpNullSafeEq    -> FunctionExpr OpNullSafeNotEq innerArgs;
+                OpNullSafeNotEq -> FunctionExpr OpNullSafeEq innerArgs;
+                OpIn            -> FunctionExpr OpNotIn innerArgs;
+                OpNotIn         -> FunctionExpr OpIn innerArgs;
+                OpLt  -> FunctionExpr OpGtEq innerArgs;
+                OpLtEq  -> FunctionExpr OpGt innerArgs;
+                OpGt  -> FunctionExpr OpLtEq innerArgs;
+                OpGtEq  -> FunctionExpr OpLt innerArgs;
+                _ -> expr;
+                ;
+            _ -> expr;
+            ;
+        _ -> expr;
+        ;
+    _ -> expr;
+    ;
+
 
 /**
  * The {@code transformQueryRestrictionExpr@} takes a conversion function and executes it against 
@@ -5450,6 +5533,7 @@ foreign unsafe import jvm "static field org.openquark.cal.foreignsupport.module.
 foreign unsafe import jvm "static field org.openquark.cal.foreignsupport.module.Sql.DatabaseFunction$Operator.EXISTS_OPERATOR"                jExistsOperator             :: JDatabaseFunction;
 foreign unsafe import jvm "static field org.openquark.cal.foreignsupport.module.Sql.DatabaseFunction$Operator.EQUAL_OPERATOR"                 jEqualOperator              :: JDatabaseFunction;
 foreign unsafe import jvm "static field org.openquark.cal.foreignsupport.module.Sql.DatabaseFunction$Operator.NULL_SAFE_EQUAL_OPERATOR"       jNullSafeEqualsOperator     :: JDatabaseFunction;
+foreign unsafe import jvm "static field org.openquark.cal.foreignsupport.module.Sql.DatabaseFunction$Operator.NULL_SAFE_NOT_EQUAL_OPERATOR"   jNullSafeNotEqualsOperator  :: JDatabaseFunction;
 foreign unsafe import jvm "static field org.openquark.cal.foreignsupport.module.Sql.DatabaseFunction$Operator.LESS_THAN_OPERATOR"             jLessThanOperator           :: JDatabaseFunction;
 foreign unsafe import jvm "static field org.openquark.cal.foreignsupport.module.Sql.DatabaseFunction$Operator.LESS_THAN_OR_EQUAL_OPERATOR"    jLessThanOrEqualOperator    :: JDatabaseFunction;
 foreign unsafe import jvm "static field org.openquark.cal.foreignsupport.module.Sql.DatabaseFunction$Operator.GREATER_THAN_OPERATOR"          jGreaterThanOperator        :: JDatabaseFunction;
@@ -5494,6 +5578,7 @@ outputDbFunction !func =
     OpExists        -> jExistsOperator;
     OpEq            -> jEqualOperator;
     OpNullSafeEq    -> jNullSafeEqualsOperator;
+    OpNullSafeNotEq -> jNullSafeNotEqualsOperator;
     OpLt            -> jLessThanOperator;
     OpLtEq          -> jLessThanOrEqualOperator;
     OpGt            -> jGreaterThanOperator;

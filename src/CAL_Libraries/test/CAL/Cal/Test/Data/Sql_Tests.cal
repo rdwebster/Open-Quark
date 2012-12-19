@@ -85,6 +85,10 @@ import Cal.Data.DatabaseMetadata using
     function = makeTableReference, makeTableDescription, makeFieldDescription;
     ;
 
+import Cal.Data.SqlBuilder.MySqlBuilder;
+
+import Cal.Data.SqlBuilder.PostgreSqlBuilder;
+
 
 //////////////////////////////////////////////////////////////////
 // Sql Query Test gems
@@ -236,6 +240,23 @@ public test4 =
         qry2 = order qry1 countryField2 False;
     in
         qry2;
+
+partitionFunctionsText :: Query;
+partitionFunctionsText = 
+    let
+        ordersTable = makeQueryTable "Orders";
+        regionField = stringField ordersTable "Region";
+        productClassField = stringField ordersTable "ProductClass";
+        productField = stringField ordersTable "Product";
+        
+        amountField = doubleField ordersTable "Amount";
+    in
+        newQuery
+        `projectColumn` regionField
+        `projectColumn` productField
+        `projectColumn` Sql.overPartitionExpr (sumExpr amountField) [productClassField, productField]
+        `projectColumn` Sql.overPartitionOrderedExpr (sumExpr amountField) [productClassField] [(productClassField, True), (productField, False)]
+        ;
 
 
 unionQueryTest1 :: Query;
@@ -665,7 +686,10 @@ private testQuery query =
                     ("MS SQL Server", SqlBuilder.msSqlServerSqlBuilder),
                     ("Oracle",        SqlBuilder.oracleSqlBuilder),
                     ("Teradata",      SqlBuilder.ncrTeradataSqlBuilder),
-                    ("DB2",           SqlBuilder.db2SqlBuilder)];
+                    ("DB2",           SqlBuilder.db2SqlBuilder),
+                    ("MySQL",         MySqlBuilder.mySqlBuilder),
+                    ("PostgreSQL",    PostgreSqlBuilder.postgreSqlBuilder)
+                   ];
 
         testWithBuilder :: String -> SqlBuilder -> String;
         testWithBuilder !name !builder = 
