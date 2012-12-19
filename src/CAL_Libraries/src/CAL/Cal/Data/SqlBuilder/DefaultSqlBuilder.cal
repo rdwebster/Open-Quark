@@ -825,7 +825,7 @@ default_functionToSql !builder !builderState !func !arguments =
             in
                 spread ([arg1Text,
                          text "OVER",
-                         text "(PARTITION BY",
+                         text (if isEmpty arg2ListExprs then "(" else "(PARTITION BY"),
                          buildExpressionList builder builderState arg2ListExprs,
                          orderingText
                         ]
