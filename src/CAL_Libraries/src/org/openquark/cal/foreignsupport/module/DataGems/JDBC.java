@@ -1084,8 +1084,9 @@ public class JDBC {
         
         // Connection URL and properties for creating a connection lazily.
         private String connectionUrl;
-        private java.util.Properties connectionProperties; 
-        		
+        private java.util.Properties connectionProperties;
+        private String runAfterConnect;
+        
         private Statement jdbcStatement;
 
         // Static singletons
@@ -1118,9 +1119,10 @@ public class JDBC {
          * @param url the URL identifying the database (e.g. "jdbc:odbc:MyDatabase")
          * @param login the user account valid for accessing the given database
          * @param password the password on the given account
+         * @param runAfterConnect a statement to run after connecting to the database
          * @return Connection the connection object
          */
-        public Connection(String url, String login, String password) {
+        public Connection(String url, String login, String password, String runAfterConnect) {
             java.util.Properties properties = new java.util.Properties();
             if (login != null) {
                 properties.put("user", login);
@@ -1136,6 +1138,7 @@ public class JDBC {
             
             this.connectionUrl = url;
             this.connectionProperties = properties;
+            this.runAfterConnect = runAfterConnect;
         }
         
         /**
@@ -1164,6 +1167,11 @@ public class JDBC {
 	                // Clear the connection properties as they are no longer needed, and could contain password info.
 	                this.connectionUrl = null;
 	                this.connectionProperties = null;
+	                
+                    // If a statement is provided to run after connection, then execute it here.
+                    if (runAfterConnect != null && runAfterConnect.length() > 0) {
+                        executeUpdate(runAfterConnect, CancelNotifier.NON_FIRING_NOTIFIER);
+                    }
 	            }
 	            catch (SQLException e) {
 	                throw new DatabaseException("Failed to connect: url=" + connectionUrl + ", userID=" + connectionProperties.get("user"), e);
@@ -1654,9 +1662,24 @@ public class JDBC {
      * @return Connection the connection object
      */
     public static Connection connect(String url, String login, String password) {
-    	return new Connection(url, login, password);
+    	return connect(url, login, password, null);
     }
 
+    /**
+     * Create a connection to a given database, given by the URL, authenticated
+     * by the login and password.
+     * The underlying JDBC connection will only be opened when/if needed.
+     * Once connected, the specified runAfterConnect statement, if any, is run.
+     * 
+     * @param url the URL identifying the database (e.g. "jdbc:odbc:MyDatabase")
+     * @param login the user account valid for accessing the given database
+     * @param password the password on the given account
+     * @return Connection the connection object
+     */
+    public static Connection connect(String url, String login, String password, String runAfterConnect) {
+        return new Connection(url, login, password, runAfterConnect);
+    }
+    
     /**
      * Construct a JDBCQueryResult to wrap the specified JDBC resultSet.
      */

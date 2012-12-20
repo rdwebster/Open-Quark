@@ -194,7 +194,7 @@ foreign unsafe import jvm "static method org.openquark.cal.foreignsupport.module
 
 /**
  * Connect to a JDBC database.
- * Use this if you don't know the driver is already loaded.
+ * Use this if you know the driver is already loaded.
  * @arg url       the JDBC connection URL
  * @arg userName  the user ID for the database 
  * @arg password  the password for the database 
@@ -202,6 +202,18 @@ foreign unsafe import jvm "static method org.openquark.cal.foreignsupport.module
  */
 foreign unsafe import jvm "static method org.openquark.cal.foreignsupport.module.DataGems.JDBC.connect"
     public jdbcConnection :: String -> String -> String -> JDBCConnection;
+
+/**
+ * Connect to a JDBC database, running a specified statement after the connection is opened.
+ * Use this if you know the driver is already loaded.
+ * @arg url       the JDBC connection URL
+ * @arg userName  the user ID for the database 
+ * @arg password  the password for the database 
+ * @arg runAfterConnect  a statement to be executed after opening the connection
+ * @return        a connection to the database
+ */
+foreign unsafe import jvm "static method org.openquark.cal.foreignsupport.module.DataGems.JDBC.connect"
+    public jdbcConnectionWithInitStmt :: String -> String -> String -> String -> JDBCConnection;
 
 /**
  * Use this if you don't know the driver is already loaded.
