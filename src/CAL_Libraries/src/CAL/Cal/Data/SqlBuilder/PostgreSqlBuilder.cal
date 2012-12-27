@@ -248,10 +248,10 @@ postgreSql_operatorText operator =
 
 
 /**
-* Generates timestamps in the following form:  '2005-05-20 13:23:45.0'
+* Generates timestamps in the following form:  TIMESTAMP '2005-05-20 13:23:45.0'
 */
 postgreSql_timestampPattern :: String;
-postgreSql_timestampPattern = "''yyyy-MM-dd HH:mm:ss.S''";      // TODO: should this be prefixed with "TIMESTAMP "?
+postgreSql_timestampPattern = "'TIMESTAMP' ''yyyy-MM-dd HH:mm:ss.S''";
 
 postgreSql_timeToSql :: Time -> TimeZone -> Document;
 postgreSql_timeToSql timeVal timeZone = 
