@@ -142,7 +142,7 @@ public final class Time implements Comparable<Time>, Serializable {
      * Constructor Time
      * 
      * Constructs a Time from a year, month, day, hour, minute, second and ticks in the Gregorian calendar
-     * using the specifed time zone.
+     * using the specified time zone.
      * 
      * @param year    - Gregorian year
      * @param month   - Gregorian month (1-origin)
@@ -154,7 +154,35 @@ public final class Time implements Comparable<Time>, Serializable {
      * @param tz      - time zone
      */
     public Time (int year, int month, int day, int hour, int minute, int second, int ticks, TimeZone tz) {
-    	Calendar cal = tz.getICUCalendar();
+        this(year, month, day, hour, minute, second, ticks, tz, Calendar.WALLTIME_LAST, Calendar.WALLTIME_LAST);
+    }
+    
+    /**
+     * Constructor Time
+     * 
+     * Constructs a Time from a year, month, day, hour, minute, second and ticks in the Gregorian calendar
+     * using the specified time zone.
+     * 
+     * @param year    - Gregorian year
+     * @param month   - Gregorian month (1-origin)
+     * @param day     - Gregorian day (1-origin)
+     * @param hour    - hour
+     * @param minute  - minute
+     * @param second  - second
+     * @param ticks   - ticks (100 ns units)
+     * @param tz      - time zone
+     * @param repeatedWallTimeOption - indicates handling of cases where DST changes causes clock time to be repeated.
+     *                                 0 = use last wall time
+     *                                 1 = use first wall time
+     * @param skippedWallTimeOption  - indicates handling of cases where DST changes cause clock time to be skipped.
+     *                                 0 = use last wall time
+     *                                 1 = use first wall time
+     *                                 2 = use next valid wall time
+     */
+    public Time (int year, int month, int day, int hour, int minute, int second, int ticks, TimeZone tz, int repeatedWallTimeOption, int skippedWallTimeOption) {
+        Calendar cal = Calendar.getInstance(tz.toICUTimeZone());
+        cal.setRepeatedWallTimeOption(repeatedWallTimeOption);
+        cal.setSkippedWallTimeOption(skippedWallTimeOption);
 
         cal.set(year, month - 1, day, hour, minute, second);
         cal.set(Calendar.MILLISECOND, 0);  

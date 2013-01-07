@@ -85,6 +85,47 @@ foreign unsafe import jvm "constructor"
     public makeTimeValue :: Int -> Int -> Int -> Int -> Int -> Int -> Int -> TimeZone -> Time;
 
 /**
+ * @arg year
+ * @arg month
+ * @arg day
+ * @arg hour
+ * @arg min
+ * @arg sec
+ * @arg ticks
+ * @arg timeZone
+ * @arg repeatedWallTimeOption - indicates handling of cases where DST changes causes clock time to be repeated.
+ * @arg skippedWallTimeOption  - indicates handling of cases where DST changes cause clock time to be skipped.
+ * @return a {@link typeConstructor=Time@} value from a year, month, day, hour, minute, second, ticks and time zone.
+ */
+makeTimeValue2 :: Int -> Int -> Int -> Int -> Int -> Int -> Int -> TimeZone -> WallTimeOption -> WallTimeOption -> Time;
+public makeTimeValue2 !year !month !day !hour !min !sec !ticks !timeZone !repeatedWallTimeOption !skippedWallTimeOption = 
+    jMakeTimeValue2 year month day hour min sec ticks timeZone (toJWallTimeOption repeatedWallTimeOption) (toJWallTimeOption skippedWallTimeOption);
+
+foreign unsafe import jvm "constructor" jMakeTimeValue2 :: Int -> Int -> Int -> Int -> Int -> Int -> Int -> TimeZone -> Int -> Int -> Time;
+
+/**
+ * Options which control how ambigous time interpretations should be resolved.
+ * These situations typically occur at Daylight-Savings-Time changes when the wall
+ * clock jumps ahead or back.
+ */
+data public WallTimeOption = 
+    public WallTime_Last
+    |
+    public WallTime_First
+    |
+    public WallTime_NextValid
+    ;
+
+toJWallTimeOption :: WallTimeOption -> Int;
+toJWallTimeOption !wallTimeOption = 
+    case wallTimeOption of
+    WallTime_Last -> 0;
+    WallTime_First -> 1;
+    WallTime_NextValid -> 2;
+    ;
+    
+    
+/**
  * @arg ticks
  * @return a {@link typeConstructor=Time@} value from an absolute number of ticks.
  */
