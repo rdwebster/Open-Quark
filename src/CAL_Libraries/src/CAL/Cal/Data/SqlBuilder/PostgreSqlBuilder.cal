@@ -38,7 +38,7 @@
 module Cal.Data.SqlBuilder.PostgreSqlBuilder;
 
 import Cal.Core.Prelude using
-    function = error, intToString, not;
+    function = empty, error, intToString, isEmpty, not;
     typeConstructor = Boolean, Maybe, String;
     dataConstructor = False, True, Nothing, Just;
     ;
@@ -46,7 +46,7 @@ import Cal.Core.Prelude using
 import Cal.Data.Sql using
     typeConstructor = AlterTableAction, DbFunction, Expr, SqlBuilder, SqlBuilderState;
     function = expressionText2;
-    dataConstructor = AlterTableAction_ModifyColumnType;
+    dataConstructor = AlterTableAction_AddIndex, AlterTableAction_DropIndex, AlterTableAction_ModifyColumnType;
     ;
 
 import Cal.Data.SqlBuilder.DefaultSqlBuilder using
@@ -84,10 +84,10 @@ import Cal.Core.Debug using
 import Cal.Collections.List;
 
 import Cal.Data.DatabaseMetadata using
-    typeConstructor = TableDescription, TableIndex, TableReference;
+    typeConstructor = TableConstraint, TableDescription, TableIndex, TableReference;
     function =
         getTableConstraints, getTableFields, getTableIndexes, getTableNameFromReference, getTableReference, makeTableDescription;
-    dataConstructor = TableIndex;
+    dataConstructor = PrimaryKeyConstraint, UniqueConstraint, ForeignKeyConstraint, TableIndex;
     ;
 
 import Cal.Collections.Set using
@@ -131,9 +131,11 @@ public postgreSqlBuilderFunctions =
                     buildFieldType            := postgreSql_buildFieldType,
                     buildCreateTableStatement := postgreSql_buildCreateTableStatement,
                     buildDropTableStatement   := postgreSql_buildDropTableStatement,
+                    buildAlterTableStatement  := postgreSql_buildAlterTableStatement,
                     buildAlterTableAction     := postgreSql_buildAlterTableAction,
                     buildOrderByClause        := DefaultSqlBuilder.buildOrderByClause True "ASC NULLS FIRST" "DESC NULLS LAST",
-                    buildGroupByClause        := DefaultSqlBuilder.buildGroupByClause True
+                    buildGroupByClause        := DefaultSqlBuilder.buildGroupByClause True,
+                    buildTableConstraint      := postgreSq_buildTableConstraint
             };
 
 /**
@@ -306,7 +308,7 @@ postgreSql_buildCreateTableStatement !builder !tableDesc !isTemporary !skipIfTab
         createIndexDoc :: TableIndex -> Document;
         createIndexDoc !tableIndex = 
             text "CREATE INDEX ON " ++ Sql.quoteIdentifier builder (DatabaseMetadata.getTableName tableDesc) 
-            ++ text "(" ++ List.join (text ", ") (List.map (Sql.quoteIdentifier builder) tableIndex.TableIndex.indexFieldNames) ++ text ")";
+            ++ text " (" ++ List.join (text ", ") (List.map (Sql.quoteIdentifier builder) tableIndex.TableIndex.indexFieldNames) ++ text ")";
     in
         Sql.buildCompoundStatement builder $ createTableDoc : List.map createIndexDoc tableIndexes;
         
@@ -319,7 +321,41 @@ postgreSql_buildDropTableStatement !builder !tableRef !isTemporary !onlyIfTableE
     in
         text "DROP TABLE" ++ text ifExistsText ++ singleSpace ++ Sql.quoteIdentifier builder (getTableNameFromReference tableRef);
 
-//TODO: should override the default 'buildAlterTableStatement' function as well to pull out adding/dropping indexes into separate statements (since this cannot be done for all indexes via ALTER TABLE in Postgres).
+postgreSql_buildAlterTableStatement :: SqlBuilder -> TableReference -> [AlterTableAction] -> Document;
+postgreSql_buildAlterTableStatement !builder !tableRef !alterTableActions = 
+    let
+        // Split out any Create/Drop Index actions (as these cannot be done using ALTER TABLE in PostgreSQL).
+        addIndexActions :: [AlterTableAction];
+        (addIndexActions, otherActions1) = List.partition (\!action -> case action of AlterTableAction_AddIndex {} -> True; _ -> False;) alterTableActions;
+        (dropIndexActions, otherActions) = List.partition (\!action -> case action of AlterTableAction_DropIndex {} -> True; _ -> False;) otherActions1;
+        
+        addIndexDoc :: AlterTableAction -> Document;
+        addIndexDoc !createIndexAction = 
+            case createIndexAction of
+            AlterTableAction_AddIndex {indexName, indexColumnNames} -> 
+                let
+                    nameText = 
+                        case indexName of
+                        Nothing -> "";
+                        Just name -> " " ++ name;
+                        ;
+                in
+                    text "CREATE INDEX" ++ text nameText ++ text " ON " ++ Sql.quoteIdentifier builder (getTableNameFromReference tableRef) ++ 
+                    text " (" ++ List.join (text ", ") (List.map (Sql.quoteIdentifier builder) indexColumnNames) ++ text ")";
+            ;
+        
+        dropIndexDoc :: AlterTableAction -> Document;
+        dropIndexDoc !dropIndexAction = 
+            case dropIndexAction of
+            AlterTableAction_DropIndex {indexName} -> 
+                text "DROP INDEX " ++ Sql.quoteIdentifier builder indexName;
+            ;
+        
+        otherActionsDoc :: Document;
+        otherActionsDoc = defaultSqlBuilderFunctions.buildAlterTableStatement builder tableRef otherActions;
+    in
+        Sql.buildCompoundStatement builder $ otherActionsDoc : List.map addIndexDoc addIndexActions ++ List.map dropIndexDoc dropIndexActions;
+
 postgreSql_buildAlterTableAction :: SqlBuilder -> AlterTableAction -> Document;
 postgreSql_buildAlterTableAction !builder !action = 
     case action of
@@ -329,4 +365,33 @@ postgreSql_buildAlterTableAction !builder !action =
     _ -> 
         defaultSqlBuilderFunctions.buildAlterTableAction builder action;
     ;
+
+/** Omit the 'CONSTRAINT' keyword if no name is provided. */
+postgreSq_buildTableConstraint :: SqlBuilder -> Maybe String -> TableConstraint -> Document;
+postgreSq_buildTableConstraint !builder !maybeConstraintName !constraint = 
+    let
+        keywordAndNameText = 
+            case maybeConstraintName of
+            Nothing -> empty;
+            Just name -> text "CONSTRAINT" ++ singleSpace ++ text name ++ singleSpace;
+            ;
+    in
+        case constraint of
+        PrimaryKeyConstraint {primaryKeyFieldNames} -> 
+            if isEmpty primaryKeyFieldNames then empty
+            else keywordAndNameText ++ text "PRIMARY KEY" ++ singleSpace 
+                ++ text "(" ++ List.join (text ", ") (List.map (Sql.quoteIdentifier builder) primaryKeyFieldNames) ++ text ")";
+    
+        UniqueConstraint {uniqueFieldNames} -> 
+            if isEmpty uniqueFieldNames then empty
+            else keywordAndNameText ++ text "UNIQUE" ++ singleSpace 
+                ++ text "(" ++ List.join (text ", ") (List.map (Sql.quoteIdentifier builder) uniqueFieldNames) ++ text ")";
+    
+        ForeignKeyConstraint {foreignTableRef, referencedFields} -> 
+            if isEmpty referencedFields then empty
+            else keywordAndNameText ++ text "FOREIGN KEY" ++ singleSpace 
+                ++ text "(" ++ List.join (text ", ") (List.map (\pr -> Sql.quoteIdentifier builder pr.#1) referencedFields) ++ text ")"
+                ++ singleSpace ++ text "REFERENCES" ++ singleSpace ++ Sql.quoteIdentifier builder (getTableNameFromReference foreignTableRef) ++ singleSpace 
+                ++ text "(" ++ List.join(text ", ") (List.map (\pr -> Sql.quoteIdentifier builder pr.#2) referencedFields) ++ text ")";
+        ;
 

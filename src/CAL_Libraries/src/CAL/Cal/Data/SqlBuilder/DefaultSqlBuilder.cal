@@ -54,8 +54,9 @@ import Cal.Data.Sql using
         SqlBuilderState, TypedExpr;
     function = addParensForZeroArgFunction, exprOperatorPrecedence, expressionText2, operatorPrecedence, toUntypedExpr;
     dataConstructor =
-        AlterTableAction_AddIndex, AlterTableAction_DropIndex, AlterTableAction_AddColumn, AlterTableAction_ModifyColumnType,
-        AlterTableAction_SetColumnDefault, AlterTableAction_DropColumn, OverPartitionFunction;
+        AlterTableAction_AddIndex, AlterTableAction_DropIndex, AlterTableAction_AddConstraint, AlterTableAction_DropConstraint,
+        AlterTableAction_AddColumn, AlterTableAction_ModifyColumnType, AlterTableAction_SetColumnDefault,
+        AlterTableAction_DropColumn, OverPartitionFunction;
     ;
 
 import Cal.Utilities.PrettyPrinter using
@@ -64,7 +65,7 @@ import Cal.Utilities.PrettyPrinter using
     ;
 
 import Cal.Data.DatabaseMetadata using
-    typeConstructor = DatabaseReference, FieldDescription, TableDescription, TableIndex, TableReference;
+    typeConstructor = DatabaseReference, FieldDescription, TableConstraint, TableDescription, TableIndex, TableReference;
     function =
         getDatabaseNameFromReference, getFieldDataType, getFieldName, getTableConstraints, getTableFields, getTableIndexes,
         getTableNameFromReference, getTableReference, isFieldNullable;
@@ -140,6 +141,7 @@ public defaultSqlBuilderFunctions =
         buildCommitStatement            = default_buildCommitStatement,
         buildCompoundStatement          = default_buildCompoundStatement,
  
+        buildTableConstraint    = default_buildTableConstraint,
         buildFieldDescription   = default_buildFieldDescription,
         buildFieldType          = default_buildFieldType,
         parameterToSql          = default_parameterToSql,
@@ -401,28 +403,21 @@ public buildCreateTableStatement !preStatementNameText !preTableNameText !postTa
         constraintDefinitions = mapIndexed constraintDescriptionText constraints;
         indexDefinitions = List.map indexDescriptionText indexes;
 
+        constraintName :: String -> Int -> String;
         constraintName suffix constraintN = 
-            text (Sql.makeSafeSqlName builder (tableNameText ++ "_" ++ suffix ++ (if (constraintN == 0) then "" else intToString constraintN)));
-
-        constraintDescriptionText constraint constraintN = 
-            case constraint of
-            PrimaryKeyConstraint {primaryKeyFieldNames} -> 
-                if (isEmpty primaryKeyFieldNames) then empty
-                else text "CONSTRAINT" ++ singleSpace ++ constraintName "PK" constraintN ++ singleSpace ++ text "PRIMARY KEY" ++ singleSpace 
-                    ++ text "(" ++ join (text ", ") (map (Sql.quoteIdentifier builder) primaryKeyFieldNames) ++ text ")";
-
-            UniqueConstraint {uniqueFieldNames} -> 
-                if (isEmpty uniqueFieldNames) then empty
-                else text "CONSTRAINT" ++ singleSpace ++ constraintName "UNQ" constraintN ++ singleSpace ++ text "UNIQUE" ++ singleSpace 
-                    ++ text "(" ++ join (text ", ") (map (Sql.quoteIdentifier builder) uniqueFieldNames) ++ text ")";
-
-            ForeignKeyConstraint {foreignTableRef, referencedFields} -> 
-                if (isEmpty referencedFields) then empty
-                else text "CONSTRAINT" ++ singleSpace ++ constraintName "FK" constraintN ++ singleSpace ++ text "FOREIGN KEY" ++ singleSpace 
-                    ++ text "(" ++ join (text ", ") (map (\pr -> Sql.quoteIdentifier builder (field1 pr)) referencedFields) ++ text ")"
-                    ++ singleSpace ++ text "REFERENCES" ++ singleSpace ++ Sql.quoteIdentifier builder (getTableNameFromReference foreignTableRef) ++ singleSpace 
-                    ++ text "(" ++ join(text ", ") (map (\pr -> Sql.quoteIdentifier builder (field2 pr)) referencedFields) ++ text ")";
-            ;
+            Sql.makeSafeSqlName builder (tableNameText ++ "_" ++ suffix ++ (if constraintN == 0 then "" else intToString constraintN));
+        
+        constraintDescriptionText :: TableConstraint -> Int -> Document;
+        constraintDescriptionText !constraint !constraintN = 
+            let
+                name = 
+                    case constraint of
+                    PrimaryKeyConstraint {} -> constraintName "PK" constraintN;
+                    UniqueConstraint {} -> constraintName "UNQ" constraintN;
+                    ForeignKeyConstraint {} -> constraintName "FK" constraintN;
+                    ;
+            in
+                Sql.tableConstraintText builder (Just name) constraint;
         
         indexDescriptionText :: TableIndex -> Document;
         indexDescriptionText !tableIndex = 
@@ -439,6 +434,37 @@ public buildCreateTableStatement !preStatementNameText !preTableNameText !postTa
             ++ nest 4 (line ++ fillSeparatedList True "," (fieldDefinitions ++ constraintDefinitions ++ indexDefinitions))
             ++ line ++ text ")"
             );
+
+/**
+ * Builds the text for a table constraints, optionally including the constraint name.
+ */
+default_buildTableConstraint :: SqlBuilder -> Maybe String -> TableConstraint -> Document;
+default_buildTableConstraint !builder !maybeConstraintName !constraint = 
+    let
+        nameText = 
+            case maybeConstraintName of
+            Nothing -> empty;
+            Just name -> singleSpace ++ text name;
+            ;
+    in
+        case constraint of
+        PrimaryKeyConstraint {primaryKeyFieldNames} -> 
+            if (isEmpty primaryKeyFieldNames) then empty
+            else text "CONSTRAINT" ++ nameText ++ singleSpace ++ text "PRIMARY KEY" ++ singleSpace 
+                ++ text "(" ++ join (text ", ") (map (Sql.quoteIdentifier builder) primaryKeyFieldNames) ++ text ")";
+    
+        UniqueConstraint {uniqueFieldNames} -> 
+            if (isEmpty uniqueFieldNames) then empty
+            else text "CONSTRAINT" ++ nameText ++ singleSpace ++ text "UNIQUE" ++ singleSpace 
+                ++ text "(" ++ join (text ", ") (map (Sql.quoteIdentifier builder) uniqueFieldNames) ++ text ")";
+    
+        ForeignKeyConstraint {foreignTableRef, referencedFields} -> 
+            if (isEmpty referencedFields) then empty
+            else text "CONSTRAINT" ++ nameText ++ singleSpace ++ text "FOREIGN KEY" ++ singleSpace 
+                ++ text "(" ++ join (text ", ") (map (\pr -> Sql.quoteIdentifier builder (field1 pr)) referencedFields) ++ text ")"
+                ++ singleSpace ++ text "REFERENCES" ++ singleSpace ++ Sql.quoteIdentifier builder (getTableNameFromReference foreignTableRef) ++ singleSpace 
+                ++ text "(" ++ join(text ", ") (map (\pr -> Sql.quoteIdentifier builder (field2 pr)) referencedFields) ++ text ")";
+        ;
 
 default_buildCreateViewStatement :: SqlBuilder -> TableReference -> Query -> Boolean -> Document;
 default_buildCreateViewStatement = buildCreateViewStatement Nothing Nothing Nothing;
@@ -473,11 +499,8 @@ default_buildAlterTableStatement !builder !tableRef !alterTableActions =
 default_buildAlterTableAction :: SqlBuilder -> AlterTableAction -> Document;
 default_buildAlterTableAction !builder !action = 
     case action of
-    AlterTableAction_AddIndex {unique, indexName, indexColumnNames} -> 
+    AlterTableAction_AddIndex {indexName, indexColumnNames} -> 
         let
-            addIndexText :: String;
-            addIndexText = if unique then "ADD UNIQUE INDEX" else "ADD INDEX";
-            
             indexNameText :: String;
             indexNameText = 
                 case indexName of
@@ -485,12 +508,18 @@ default_buildAlterTableAction !builder !action =
                 Just name -> " " ++ name;
                 ;
         in
-            spread [text (addIndexText ++ indexNameText), 
+            spread [text ("ADD INDEX" ++ indexNameText), 
                     text "(" ++ join (text ", ") (map (Sql.quoteIdentifier builder) indexColumnNames) ++ text ")"
                    ];
     
     AlterTableAction_DropIndex {indexName} -> 
         spread [text "DROP INDEX", Sql.quoteIdentifier builder indexName];
+    
+    AlterTableAction_AddConstraint {constraintName, constraint} -> 
+        spread [text "ADD", Sql.tableConstraintText builder constraintName constraint];
+    
+    AlterTableAction_DropConstraint {constraintName, constraint} ->
+        spread [text "DROP CONSTRAINT", Sql.quoteIdentifier builder constraintName];
     
     AlterTableAction_AddColumn {columnDesc} -> 
         spread [text "ADD COLUMN", Sql.fieldDescriptionText builder columnDesc];
