@@ -115,6 +115,11 @@ public final class RTExecutionContext extends ExecutionContextImpl {
     private final Set<Cleanable> cancelListeners = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<Cleanable, Boolean>()));
     
     /**
+     * A thread-local variable to contain the execution context (if any) currently being used for execution by the current thread.
+     */
+    private static final ThreadLocal<RTExecutionContext> currentThreadExecutionContext = new ThreadLocal<RTExecutionContext>();
+    
+    /**
      * Constructs an instance of this class with the specified properties.
      * @param properties the properties to be associated with the execution context.
      * @param runtimeEnvironment
@@ -326,6 +331,27 @@ public final class RTExecutionContext extends ExecutionContextImpl {
                 cancelListeners.remove(listener);
             }
         };
+    }
+    
+    /**
+     * Return the current execution context associated with execution on this thread,
+     * or the specified default if no evaluation context is associated with this thread.
+     */
+    public static RTExecutionContext getCurrentThreadExecutionContext(RTExecutionContext defaultContext) {
+        // If an execution context is specified for the current thread, then use this.
+        // Otherwise use the one which created this comparator.
+        RTExecutionContext ec = currentThreadExecutionContext.get();
+        return (ec == null) ? defaultContext : ec;
+    }
+
+    /**
+     * Associates a execution context with this thread for the current CAL evaluation.
+     * Returns the previously associated execution context, if any. 
+     */
+    public static RTExecutionContext setCurrentThreadExecutionContext(RTExecutionContext newEvalContext) {
+        RTExecutionContext prevEvalCtx = currentThreadExecutionContext.get();
+        currentThreadExecutionContext.set(newEvalContext);
+        return prevEvalCtx;
     }
 }
 

@@ -76,8 +76,9 @@ public final class RTEquivalenceRelation implements EquivalenceRelation<RTValue>
     public boolean equivalent(RTValue object1, RTValue object2) {
         
         try {
-            
-            return eqFunction.apply(object1, object2).evaluate(executionContext).getBooleanValue();
+            // If an execution context is specified for the current thread, then use this.
+            // Otherwise use the one which created this comparator.
+            return eqFunction.apply(object1, object2).evaluate(RTExecutionContext.getCurrentThreadExecutionContext(executionContext)).getBooleanValue();
             
         } catch (CALExecutorException executorException) {
             //wrap the exception up in a non-checked exception and rethrow.

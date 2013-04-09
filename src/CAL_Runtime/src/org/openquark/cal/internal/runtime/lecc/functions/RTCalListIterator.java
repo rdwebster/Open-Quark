@@ -75,7 +75,9 @@ public final class RTCalListIterator implements Iterator<Object> {
         //evaluate calListValue to WHNF and see if it is a Cons. This means there is a next value
         
         try {
-            calListValue = calListValue.evaluate(executionContext);            
+            // If an execution context is specified for the current thread, then use this.
+            // Otherwise use the one which created this comparator.
+            calListValue = calListValue.evaluate(RTExecutionContext.getCurrentThreadExecutionContext(executionContext));            
             //0 == Prelude.Nil
             //1 == Prelude.Cons
             return calListValue.getOrdinalValue() == 1;
@@ -87,7 +89,11 @@ public final class RTCalListIterator implements Iterator<Object> {
 
     public Object next() {
         try {
-            calListValue = calListValue.evaluate(executionContext);
+            // If an execution context is specified for the current thread, then use this.
+            // Otherwise use the one which created this comparator.
+            RTExecutionContext ec = RTExecutionContext.getCurrentThreadExecutionContext(executionContext);
+
+            calListValue = calListValue.evaluate(ec);
             switch (calListValue.getOrdinalValue()) {
                 case 0:
                 {
@@ -102,7 +108,7 @@ public final class RTCalListIterator implements Iterator<Object> {
                     RTValue headValue = listCons.getFieldByIndex(1, 0, null);
                     calListValue = listCons.getFieldByIndex(1, 1, null);
                     
-                    return elementMarshalingFunction.apply(headValue).evaluate(executionContext).getOpaqueValue();
+                    return elementMarshalingFunction.apply(headValue).evaluate(ec).getOpaqueValue();
                 }
                     
                 default:

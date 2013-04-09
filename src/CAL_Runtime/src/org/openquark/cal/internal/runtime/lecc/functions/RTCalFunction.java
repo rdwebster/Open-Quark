@@ -71,9 +71,10 @@ public final class RTCalFunction implements CalFunction {
         
         //evaluate (calFunction argument).
         
-         try {          
-             
-            return calFunction.apply(CAL_Opaque.make(argument)).evaluate(executionContext).getOpaqueValue();
+         try {
+             // If an execution context is specified for the current thread, then use this.
+             // Otherwise use the one which created this comparator.
+             return calFunction.apply(CAL_Opaque.make(argument)).evaluate(RTExecutionContext.getCurrentThreadExecutionContext(executionContext)).getOpaqueValue();
             
         } catch (CALExecutorException executorException) {
             //wrap the exception up in a non-checked exception and rethrow.            

@@ -77,8 +77,9 @@ public final class RTComparator implements Comparator<RTValue> {
     public int compare(RTValue o1, RTValue o2) {
         
         try {
-            
-            switch (comparisonFunction.apply(o1, o2).evaluate(executionContext).getOrdinalValue()) {
+            // If an execution context is specified for the current thread, then use this.
+            // Otherwise use the one which created this comparator.
+            switch (comparisonFunction.apply(o1, o2).evaluate(RTExecutionContext.getCurrentThreadExecutionContext(executionContext)).getOrdinalValue()) {
             
                 case 0: {
                     // Prelude.LT

@@ -144,6 +144,9 @@ public class Executor implements CALExecutor {
         Object result = null;
         RTValue startPoint = null;
 
+        // Register the current execution context which is executing on this thread.
+        RTExecutionContext prevExecCtx = RTExecutionContext.setCurrentThreadExecutionContext(executionContext);
+        
         try {
             instrument (new ExecTimeInfo(true,
                                          executionContext.getNReductions(),
@@ -213,6 +216,9 @@ public class Executor implements CALExecutor {
             instrument (new CallCountInfo (executionContext.getCafFunctionCounts(), "CAF call counts:"));
         }
 
+        // Restore the previous value of the thread-local execution context.
+        RTExecutionContext.setCurrentThreadExecutionContext(prevExecCtx);
+        
         finishedInitialExecution ();
 
         if (error != null) {
