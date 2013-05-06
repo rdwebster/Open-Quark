@@ -155,13 +155,11 @@ private isLeapYear !year =
     else
         (year % 4) == 0;
 
-daysInMonth :: Int -> Int;
-private daysInMonth !n = subscript [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31] (n - 1);
-
-daysInMonth2 :: Int -> Int -> Int;
-private daysInMonth2 year !month =
+/** Returns the number of days in the specified month, taking leap years into account. */
+daysInMonth :: Int -> Int -> Int;
+public daysInMonth year !month =
     if month != 2 then
-        daysInMonth month
+        subscript [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31] (month - 1)
     else if isLeapYear year then
         29
     else
@@ -176,7 +174,7 @@ public makeRelativeDateValue !year !month !day =
     else if month < 1 || month > 12 then
         error "Invalid month."
 
-    else if day < 1 || day > (daysInMonth2 year month) then
+    else if day < 1 || day > (daysInMonth year month) then
         error "Invalid day."
 
     else
@@ -454,44 +452,46 @@ public dateAdd !intervalType !nIntervals !dateTime =
         date = getDatePart dateTime;
         time = getTimePart dateTime;
     in
-        case intervalType of
-
-        YearAdd -> 
-            case dateToYearMonthDay date of
-            (year, month, day) -> 
-                let
-                    resultYear = year + nIntervals;
-                    resultDay = if day == 29 && month == 2 && not (isLeapYear resultYear) then 28 else day;
-                in
-                    RelativeDateTime (makeRelativeDateValue resultYear month resultDay) time;
+        // Optimize the case where no intervals are being added.
+        if nIntervals == 0 then dateTime
+        else
+            case intervalType of
+            YearAdd -> 
+                case dateToYearMonthDay date of
+                (year, month, day) -> 
+                    let
+                        resultYear = year + nIntervals;
+                        resultDay = if day == 29 && month == 2 && not (isLeapYear resultYear) then 28 else day;
+                    in
+                        RelativeDateTime (makeRelativeDateValue resultYear month resultDay) time;
+                ;
+         
+            QuarterAdd -> dateAdd MonthAdd (3 * nIntervals) dateTime;
+    
+            MonthAdd -> 
+                case dateToYearMonthDay date of
+                (year, month, day) -> 
+                    let
+                        temp = (month - 1) + nIntervals;
+                        //we use rem and div instead of Prelude.mod and Prelude.divide to handle the case of negative temp correctly. 
+                        resultMonth = rem temp 12 + 1;                       
+                        resultYear = year + div temp 12; 
+                        nDaysInResultMonth = daysInMonth resultYear resultMonth;
+                        resultDay = if day <= 28 || day <= nDaysInResultMonth then day else nDaysInResultMonth;
+                    in
+                        RelativeDateTime (makeRelativeDateValue resultYear resultMonth resultDay) time;
+                ;   
+    
+            DayAdd -> RelativeDateTime (addDaysToDate nIntervals date) time;
+    
+            WeekAdd -> dateAdd DayAdd (7 * nIntervals) dateTime;
+    
+            HourAdd -> dateAdd SecondAdd (3600 * nIntervals) dateTime;
+    
+            MinuteAdd -> dateAdd SecondAdd (60 * nIntervals) dateTime;
+    
+            SecondAdd -> addSecondsToDateTime nIntervals dateTime;
             ;
-     
-        QuarterAdd -> dateAdd MonthAdd (3 * nIntervals) dateTime;
-
-        MonthAdd -> 
-            case dateToYearMonthDay date of
-            (year, month, day) -> 
-                let
-                    temp = (month - 1) + nIntervals;
-                    //we use rem and div instead of Prelude.mod and Prelude.divide to handle the case of negative temp correctly. 
-                    resultMonth = rem temp 12 + 1;                       
-                    resultYear = year + div temp 12; 
-                    nDaysInResultMonth = daysInMonth2 resultYear resultMonth;
-                    resultDay = if day <= 28 || day <= nDaysInResultMonth then day else nDaysInResultMonth;
-                in
-                    RelativeDateTime (makeRelativeDateValue resultYear resultMonth resultDay) time;
-            ;   
-
-        DayAdd -> RelativeDateTime (addDaysToDate nIntervals date) time;
-
-        WeekAdd -> dateAdd DayAdd (7 * nIntervals) dateTime;
-
-        HourAdd -> dateAdd SecondAdd (3600 * nIntervals) dateTime;
-
-        MinuteAdd -> dateAdd SecondAdd (60 * nIntervals) dateTime;
-
-        SecondAdd -> addSecondsToDateTime nIntervals dateTime;
-        ;
 
 /* @example */
 private dateAddExamples =
@@ -501,6 +501,60 @@ private dateAddExamples =
     assert ((dateAdd QuarterAdd 17 (makeRelativeDateTimeValue2 1999 9 28)) == (makeRelativeDateTimeValue2 2003 12 28)) &&
     assert ((dateAdd HourAdd (-400) (makeRelativeDateTimeValue2 1999 9 28)) == (makeRelativeDateTimeValue 1999 9 11 8 0 0))
     ;
+
+
+/**
+ * {@link relativeDateAdd@} is used to add intervals of time to a {@link typeConstructor = RelativeDate@} value. Its main feature
+ * is that the date-time returned will always be valid. For example, {@link dateAdd@} takes into account such factors as
+ * the number of days in a month and leap years. 
+ *  
+ * @arg intervalType  the type of interval to be added.  If the interval is smaller than a day, then the result will be trimmed to 
+ *     the start of a day.
+ * @arg nIntervals the number of intervals to be added. It can be positive (to get date-times in the future) or negative
+ *     (to get date-times in the past).
+ * @arg date the date value to which the intervals are to be added
+ * @return a date value to which a specified number of time intervals have been added. 
+ */
+relativeDateAdd :: DateAddType -> Int -> RelativeDate -> RelativeDate;
+public relativeDateAdd !intervalType !nIntervals !date = 
+    // Optimize the case where no intervals are being added.
+    if nIntervals == 0 then date
+    else
+        case intervalType of
+        YearAdd -> 
+            case dateToYearMonthDay date of
+            (year, month, day) -> 
+                let
+                    resultYear = year + nIntervals;
+                    resultDay = if day == 29 && month == 2 && not (isLeapYear resultYear) then 28 else day;
+                in
+                    makeRelativeDateValue resultYear month resultDay;
+            ;
+     
+        QuarterAdd -> relativeDateAdd MonthAdd (3 * nIntervals) date;
+    
+        MonthAdd -> 
+            case dateToYearMonthDay date of
+            (year, month, day) -> 
+                let
+                    temp = (month - 1) + nIntervals;
+                    //we use rem and div instead of Prelude.mod and Prelude.divide to handle the case of negative temp correctly. 
+                    resultMonth = rem temp 12 + 1;                       
+                    resultYear = year + div temp 12; 
+                    nDaysInResultMonth = daysInMonth resultYear resultMonth;
+                    resultDay = if day <= 28 || day <= nDaysInResultMonth then day else nDaysInResultMonth;
+                in
+                    makeRelativeDateValue resultYear resultMonth resultDay;
+            ;   
+    
+        DayAdd -> addDaysToDate nIntervals date;
+    
+        WeekAdd -> relativeDateAdd DayAdd (7 * nIntervals) date;
+    
+        _ -> 
+            getDatePart $ dateAdd intervalType nIntervals $ toDateTime date;
+        ;
+
 
 /**
  * Type to specify the units for the result of performing a difference between 2 date-time values.
@@ -588,6 +642,45 @@ private dateDiffExamples =
     assert (dateDiff FirstDayOfWeekDiff (makeRelativeDateTimeValue2 1999 10 5) (makeRelativeDateTimeValue2 1999 10 27) (Just Wednesday) == 4)
     
     ;
+
+
+/**
+ * @arg dateDiffType
+ * @arg date1
+ * @arg date2
+ * @arg maybeFirstDayOfWeek if Nothing, then {@link Sunday@} is assumed.
+ */
+relativeDateDiff :: DateDiffType -> RelativeDate -> RelativeDate -> Maybe DayOfWeek -> Int;
+public relativeDateDiff !dateDiffType !date1 !date2 maybeFirstDayOfWeek =
+    let
+        firstDayOfWeek = fromMaybe Sunday maybeFirstDayOfWeek;
+
+        yearDiff = year date2 - year date1;
+        dayDiff = getInternalDate date2 - getInternalDate date1;
+    in
+        case dateDiffType of
+        
+        YearDiff -> yearDiff;
+
+        QuarterDiff -> 4 * yearDiff + (month date2 - 1) /3 - (month date1 - 1) / 3;
+
+        MonthDiff -> 12 * yearDiff + (month date2 - month date1);
+
+        DayDiff -> dayDiff;
+
+        WeekDiff -> dayDiff / 7;
+
+        FirstDayOfWeekDiff ->
+            let
+                //returns the closest date less than or equal to d that falls on firstDayOfWeek.
+                roundDownToFirstDayOfWeek d = addDaysToDate (-(rem (dayOfWeek d - fromEnumDayOfWeek firstDayOfWeek) 7)) d;
+            in 
+                (getInternalDate (roundDownToFirstDayOfWeek date2) - getInternalDate (roundDownToFirstDayOfWeek date1)) / 7;
+
+        (HourDiff | MinuteDiff | SecondDiff) -> 0;
+        ;
+
+
 
 /**
  * @return the day of week that a date occurs on with Sunday = 1, Monday = 2, ..., Saturday = 7.
