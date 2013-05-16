@@ -53,7 +53,7 @@
  */
 module Cal.Utilities.RelativeTime;
 import Cal.Core.Prelude using
-    typeClass = Eq, Inputable, Ord, Outputable;
+    typeClass = Enum, Eq, Inputable, IntEnum, Ord, Outputable;
     typeConstructor = Boolean, Double, Int, JObject, Maybe, String;
     dataConstructor = Nothing, Just;
     function = assert, error, fromMaybe, fst, input, intToString, negate, not, output, snd, toDouble, truncate;
@@ -396,7 +396,7 @@ data public DayOfWeek =
     public Thursday |
     public Friday |
     public Saturday
-    deriving Eq, Show, Arbitrary;
+    deriving Eq, Ord, Enum, IntEnum, Show, Arbitrary;
 
 fromEnumDayOfWeek :: DayOfWeek -> Int;
 private fromEnumDayOfWeek !dayOfWeek =
