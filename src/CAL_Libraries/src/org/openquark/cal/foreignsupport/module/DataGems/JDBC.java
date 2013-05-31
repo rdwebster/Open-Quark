@@ -1366,7 +1366,7 @@ public class JDBC {
                 throw new DatabaseException(e);
             } catch (SQLException e) {
                 // Log any additional SQL exceptions attached to this exception.
-                for (SQLException next = e.getNextException(); next != null; next = e.getNextException()) {
+                for (SQLException next = e.getNextException(); next != null; next = next.getNextException()) {
                     logger.error("Additional SQLException", next);
                 }
                 throw new DatabaseException(e);
