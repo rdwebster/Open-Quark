@@ -3849,8 +3849,8 @@ data public SqlBuilder =
             (DatabaseReference -> Boolean -> Document)
 
         buildCreateTableStatementFn ::
-            // (tableDesc isTemporary skipIfTableExists)
-            (TableDescription -> Boolean -> Boolean -> Document)
+            // (tableDesc isTemporary skipIfTableExists columnDefaults)
+            (TableDescription -> Boolean -> Boolean -> [(String, Expr)] -> Document)
 
         buildCreateViewStatementFn :: 
             // (viewRef viewDefinition)
@@ -3966,7 +3966,7 @@ makeSqlBuilder :: { prepareQuery                    :: SqlBuilderState -> Query 
                      
                     buildCreateDatabaseStatement    :: SqlBuilder -> DatabaseReference -> Boolean -> Document,
                     buildDropDatabaseStatement      :: SqlBuilder -> DatabaseReference -> Boolean -> Document,
-                    buildCreateTableStatement       :: SqlBuilder -> TableDescription -> Boolean -> Boolean -> Document,
+                    buildCreateTableStatement       :: SqlBuilder -> TableDescription -> Boolean -> Boolean -> [(String, Expr)] -> Document,
                     buildCreateViewStatement        :: SqlBuilder -> TableReference -> Query -> Boolean -> Document,
                     buildDropTableStatement         :: SqlBuilder -> TableReference -> Boolean -> Boolean -> Document,
                     buildDropViewStatement          :: SqlBuilder -> TableReference -> Boolean -> Document,                    
@@ -4689,6 +4689,7 @@ data public Statement =
         tableDesc         :: TableDescription 
         isTemporary       :: Boolean
         skipIfTableExists :: Boolean
+        columnDefaults    :: [(String, Expr)]       // Default values for specified columns.
     |
     private CreateViewStatement
         viewRef           :: TableReference 
@@ -4776,11 +4777,15 @@ makeDropDatabaseStatement :: DatabaseReference -> Boolean -> Statement;
 public makeDropDatabaseStatement = DropDatabaseStatement;
 
 makeCreateTableStatement :: TableDescription -> Boolean -> Statement;
-public makeCreateTableStatement !tableDesc !skipIfTableExists = CreateTableStatement tableDesc False skipIfTableExists;
+public makeCreateTableStatement !tableDesc !skipIfTableExists = CreateTableStatement tableDesc False skipIfTableExists [];
+
+makeCreateTableStatementWithDefaults :: TableDescription -> Boolean -> [(String, Expr)] -> Statement;
+public makeCreateTableStatementWithDefaults !tableDesc !skipIfTableExists !columnDefaults = CreateTableStatement tableDesc False skipIfTableExists columnDefaults;
+
 
 makeCreateTemporaryTableStatement :: TableDescription -> Boolean -> Statement;
-public makeCreateTemporaryTableStatement !tableDesc !skipIfTableExists = CreateTableStatement tableDesc True skipIfTableExists;
-        
+public makeCreateTemporaryTableStatement !tableDesc !skipIfTableExists = CreateTableStatement tableDesc True skipIfTableExists [];
+
 makeCreateViewStatement :: TableReference -> Query -> Boolean -> Statement;
 public makeCreateViewStatement = CreateViewStatement;
 
@@ -4934,8 +4939,8 @@ public statementText !builder !forDisplay statement =
                     buildCreateDatabaseStatementFn databaseRef skipIfDatabaseExists;
                 DropDatabaseStatement {databaseRef, onlyIfDatabaseExists} ->
                     buildDropDatabaseStatementFn databaseRef onlyIfDatabaseExists;
-                CreateTableStatement {tableDesc, isTemporary, skipIfTableExists} -> 
-                    buildCreateTableStatementFn tableDesc isTemporary skipIfTableExists;
+                CreateTableStatement {tableDesc, isTemporary, skipIfTableExists, columnDefaults} -> 
+                    buildCreateTableStatementFn tableDesc isTemporary skipIfTableExists columnDefaults;
                 CreateViewStatement {viewRef, viewDefinition, skipIfViewExists} -> 
                     buildCreateViewStatementFn viewRef viewDefinition skipIfViewExists;
                 DropTableStatement {tableRef, isTemporary, onlyIfTableExists} -> 

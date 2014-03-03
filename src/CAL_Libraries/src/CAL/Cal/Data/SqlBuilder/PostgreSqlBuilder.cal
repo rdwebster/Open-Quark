@@ -292,8 +292,8 @@ postgreSql_buildFieldType !dataType =
     _ -> error ("Unsupported data type '" ++ show dataType ++ "'.");
     ;
 
-postgreSql_buildCreateTableStatement :: SqlBuilder -> TableDescription -> Boolean -> Boolean -> Document;
-postgreSql_buildCreateTableStatement !builder !tableDesc !isTemporary !skipIfTableExists = 
+postgreSql_buildCreateTableStatement :: SqlBuilder -> TableDescription -> Boolean -> Boolean -> [(String, Expr)] -> Document;
+postgreSql_buildCreateTableStatement !builder !tableDesc !isTemporary !skipIfTableExists !columnDefaults = 
     let
         skipIfExistsText :: Maybe Document;
         skipIfExistsText = if skipIfTableExists then Just (text "IF NOT EXISTS") else Nothing;
@@ -303,7 +303,7 @@ postgreSql_buildCreateTableStatement !builder !tableDesc !isTemporary !skipIfTab
         tableDescNoIndexes = makeTableDescription (getTableReference tableDesc) (getTableFields tableDesc) (getTableConstraints tableDesc);
         tableIndexes = getTableIndexes tableDesc;
         
-        createTableDoc = DefaultSqlBuilder.buildCreateTableStatement Nothing skipIfExistsText Nothing builder tableDescNoIndexes isTemporary False;
+        createTableDoc = DefaultSqlBuilder.buildCreateTableStatement Nothing skipIfExistsText Nothing builder tableDescNoIndexes isTemporary False columnDefaults;
         
         createIndexDoc :: TableIndex -> Document;
         createIndexDoc !tableIndex = 

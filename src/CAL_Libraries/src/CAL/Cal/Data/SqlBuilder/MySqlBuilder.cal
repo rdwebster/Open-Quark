@@ -297,13 +297,13 @@ mySql_buildDropDatabaseStatement !builder !databaseRef !onlyIfDatabaseExists =
     in
         text "DROP DATABASE" ++ text ifExistsText ++ singleSpace ++ Sql.quoteIdentifier builder databaseNameText;
 
-mySql_buildCreateTableStatement :: SqlBuilder -> TableDescription -> Boolean -> Boolean -> Document;
-mySql_buildCreateTableStatement !builder !tableDesc !isTemporary !skipIfTableExists = 
+mySql_buildCreateTableStatement :: SqlBuilder -> TableDescription -> Boolean -> Boolean -> [(String, Expr)] -> Document;
+mySql_buildCreateTableStatement !builder !tableDesc !isTemporary !skipIfTableExists !columnDefaults = 
     let
         skipIfExistsText :: Maybe Document;
         skipIfExistsText = if skipIfTableExists then Just (text "IF NOT EXISTS") else Nothing;
     in
-        DefaultSqlBuilder.buildCreateTableStatement Nothing skipIfExistsText Nothing builder tableDesc isTemporary False;
+        DefaultSqlBuilder.buildCreateTableStatement Nothing skipIfExistsText Nothing builder tableDesc isTemporary False columnDefaults;
 
 mySql_buildDropTableStatement :: SqlBuilder -> TableReference -> Boolean -> Boolean -> Document;
 mySql_buildDropTableStatement !builder !tableRef !isTemporary !onlyIfTableExists = 

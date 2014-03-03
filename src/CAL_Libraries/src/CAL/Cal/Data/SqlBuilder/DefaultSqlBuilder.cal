@@ -381,14 +381,14 @@ default_buildDropDatabaseStatement !builder !databaseRef !onlyIfDatabaseExists =
         text "DROP DATABASE" ++ singleSpace ++ Sql.quoteIdentifier builder databaseNameText;
     
 // TODO: make use of the 'skipIfTableExists' flag...
-default_buildCreateTableStatement :: SqlBuilder -> TableDescription -> Boolean -> Boolean -> Document;
+default_buildCreateTableStatement :: SqlBuilder -> TableDescription -> Boolean -> Boolean -> [(String, Expr)] -> Document;
 default_buildCreateTableStatement = buildCreateTableStatement Nothing Nothing Nothing;
 
 /**
  * Builds the SQL statement for a CREATE TABLE statement with optional text fragments inserted at various locations.
  */
-buildCreateTableStatement :: Maybe Document -> Maybe Document -> Maybe Document -> SqlBuilder -> TableDescription -> Boolean -> Boolean -> Document;
-public buildCreateTableStatement !preStatementNameText !preTableNameText !postTableNameText !builder !tableDesc !isTemporary !skipIfTableExists = 
+buildCreateTableStatement :: Maybe Document -> Maybe Document -> Maybe Document -> SqlBuilder -> TableDescription -> Boolean -> Boolean -> [(String, Expr)] -> Document;
+public buildCreateTableStatement !preStatementNameText !preTableNameText !postTableNameText !builder !tableDesc !isTemporary !skipIfTableExists !columnDefaults = 
     let
         statementName :: String;
         statementName = if isTemporary then "CREATE TEMPORARY TABLE" else "CREATE TABLE";
@@ -398,8 +398,21 @@ public buildCreateTableStatement !preStatementNameText !preTableNameText !postTa
         constraints = getTableConstraints tableDesc;
         indexes = getTableIndexes tableDesc;
         tableNameText = getTableNameFromReference tableRef;
-
-        fieldDefinitions = map (Sql.fieldDescriptionText builder) fieldDescriptions;
+        
+        columnText :: FieldDescription -> Document;
+        columnText !columnDesc = 
+            let
+                defaultValDoc :: Document;
+                defaultValDoc = 
+                    case List.lookup (getFieldName columnDesc) columnDefaults of
+                    Nothing -> empty;
+                    Just defaultExpr -> 
+                        text " DEFAULT " ++ text (Sql.expressionText builder defaultExpr); 
+                    ;
+            in
+                Sql.fieldDescriptionText builder columnDesc ++ defaultValDoc;
+        
+        fieldDefinitions = map columnText fieldDescriptions;
         constraintDefinitions = mapIndexed constraintDescriptionText constraints;
         indexDefinitions = List.map indexDescriptionText indexes;
 
@@ -516,7 +529,12 @@ default_buildAlterTableAction !builder !action =
         spread [text "DROP INDEX", Sql.quoteIdentifier builder indexName];
     
     AlterTableAction_AddConstraint {constraintName, constraint} -> 
-        spread [text "ADD", Sql.tableConstraintText builder constraintName constraint];
+        let
+            constraintDoc :: Document;
+            constraintDoc = Sql.tableConstraintText builder constraintName constraint;
+        in
+            if isEmpty constraintDoc then empty
+            else spread [text "ADD", constraintDoc];
     
     AlterTableAction_DropConstraint {constraintName, constraint} ->
         spread [text "DROP CONSTRAINT", Sql.quoteIdentifier builder constraintName];

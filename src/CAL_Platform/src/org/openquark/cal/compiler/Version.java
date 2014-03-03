@@ -155,7 +155,7 @@ public final class Version {
     private static final int updateVersion = 2;
     
     /** build should be incremented by 1 for each build. */
-    private static final int build = 63;
+    private static final int build = 64;
     
     private Version() {}
     

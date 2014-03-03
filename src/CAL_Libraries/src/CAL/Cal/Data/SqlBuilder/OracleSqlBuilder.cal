@@ -276,12 +276,12 @@ oracle_buildFieldType !dataType =
     _ -> error ("Unsupported data type '" ++ show dataType ++ "'.");
     ;
 
-oracle_buildCreateTableStatement :: SqlBuilder -> TableDescription -> Boolean -> Boolean -> Document;
-oracle_buildCreateTableStatement builder !tableDesc !isTemporary !skipIfTableExists =
+oracle_buildCreateTableStatement :: SqlBuilder -> TableDescription -> Boolean -> Boolean -> [(String, Expr)] -> Document;
+oracle_buildCreateTableStatement builder !tableDesc !isTemporary !skipIfTableExists !columnDefaults =
     let
         // TODO escape single quote
         createTableText :: Document;
-        createTableText = defaultSqlBuilderFunctions.buildCreateTableStatement builder tableDesc isTemporary False;
+        createTableText = defaultSqlBuilderFunctions.buildCreateTableStatement builder tableDesc isTemporary False columnDefaults;
     in
         if (skipIfTableExists) then
             text "DECLARE tab_exist PLS_INTEGER;" ++ line
