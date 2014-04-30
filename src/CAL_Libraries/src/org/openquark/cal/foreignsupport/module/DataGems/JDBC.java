@@ -1316,7 +1316,7 @@ public class JDBC {
                         }
                         finally {
                             long endTime = System.currentTimeMillis();
-                            logger.info("Time to execute query: " + (endTime - startTime) + " ms");
+                            logger.info("Time to execute query: " + (endTime - startTime) + " ms    " + sqlQuery);
                         }
                     }};
                     
