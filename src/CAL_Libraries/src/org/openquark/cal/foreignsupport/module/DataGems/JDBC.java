@@ -1400,7 +1400,7 @@ public class JDBC {
                 throw new DatabaseException(e);
             } finally {
                 long end = System.currentTimeMillis();
-                logger.info("Time to execute update: " + (end - start) + " ms");
+                logger.info("Time to execute update: " + (end - start) + " ms    " + updateSQL);
             }
         }
         
